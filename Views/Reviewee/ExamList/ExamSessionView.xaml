@@ -1,0 +1,304 @@
+<UserControl
+    x:Class="Views.Reviewee.ExamSessionView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    Background="{DynamicResource MaterialDesignPaper}">
+
+    <UserControl.Resources>
+        <Storyboard x:Key="TransitionToExam">
+            <DoubleAnimation
+                Storyboard.TargetName="pnlExamList"
+                Storyboard.TargetProperty="Opacity"
+                To="0"
+                Duration="0:0:0.2" />
+            <DoubleAnimation
+                Storyboard.TargetName="pnlExamList"
+                Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
+                To="-50"
+                Duration="0:0:0.2" />
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="pnlExamList" Storyboard.TargetProperty="Visibility">
+                <DiscreteObjectKeyFrame KeyTime="0:0:0.2" Value="{x:Static Visibility.Collapsed}" />
+            </ObjectAnimationUsingKeyFrames>
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="pnlActiveExam" Storyboard.TargetProperty="Visibility">
+                <DiscreteObjectKeyFrame KeyTime="0:0:0.2" Value="{x:Static Visibility.Visible}" />
+            </ObjectAnimationUsingKeyFrames>
+            <DoubleAnimation
+                BeginTime="0:0:0.2"
+                Storyboard.TargetName="pnlActiveExam"
+                Storyboard.TargetProperty="Opacity"
+                To="1"
+                Duration="0:0:0.3" />
+        </Storyboard>
+
+        <Storyboard x:Key="ExitExamAnimation">
+            <DoubleAnimation
+                Storyboard.TargetName="pnlActiveExam"
+                Storyboard.TargetProperty="Opacity"
+                To="0"
+                Duration="0:0:0.2" />
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="pnlActiveExam" Storyboard.TargetProperty="Visibility">
+                <DiscreteObjectKeyFrame KeyTime="0:0:0.2" Value="{x:Static Visibility.Collapsed}" />
+            </ObjectAnimationUsingKeyFrames>
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="pnlExamList" Storyboard.TargetProperty="Visibility">
+                <DiscreteObjectKeyFrame KeyTime="0:0:0.2" Value="{x:Static Visibility.Visible}" />
+            </ObjectAnimationUsingKeyFrames>
+            <DoubleAnimation
+                BeginTime="0:0:0.2"
+                Storyboard.TargetName="pnlExamList"
+                Storyboard.TargetProperty="Opacity"
+                To="1"
+                Duration="0:0:0.2" />
+            <DoubleAnimation
+                BeginTime="0:0:0.2"
+                Storyboard.TargetName="pnlExamList"
+                Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
+                To="0"
+                Duration="0:0:0.2" />
+        </Storyboard>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid x:Name="pnlExamList">
+            <Grid.RenderTransform>
+                <TranslateTransform X="0" />
+            </Grid.RenderTransform>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Border Padding="12,16" Background="#1A1A1A">
+                <TextBlock
+                    FontSize="11"
+                    FontWeight="Black"
+                    Foreground="White"
+                    Text="AVAILABLE EXAMINATIONS" />
+            </Border>
+
+            <StackPanel Grid.Row="1" Background="#EEE">
+                <ComboBox
+                    x:Name="cmbSearchDiff"
+                    Background="White"
+                    BorderThickness="0"
+                    SelectionChanged="FilterExams_Local">
+                    <ComboBox.Padding>12,12</ComboBox.Padding>
+                    <ComboBoxItem Content="All Difficulties" IsSelected="True" />
+                    <ComboBoxItem Content="Easy" />
+                    <ComboBoxItem Content="Medium" />
+                    <ComboBoxItem Content="Hard" />
+                </ComboBox>
+
+                <ComboBox
+                    x:Name="cmbFocusType"
+                    Background="White"
+                    BorderThickness="0,1,0,0"
+                    SelectionChanged="FilterExams_Local">
+                    <ComboBox.Padding>12,12</ComboBox.Padding>
+                    <ComboBoxItem Content="All Types" IsSelected="True" />
+                    <ComboBoxItem Content="Comprehensive" />
+                    <ComboBoxItem Content="Weak Areas" />
+                </ComboBox>
+            </StackPanel>
+
+            <ScrollViewer Grid.Row="2">
+                <ItemsControl x:Name="lstExams" Margin="0,0,0,40">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <Border Padding="12,4" Background="#E0E0E0">
+                                    <TextBlock
+                                        FontSize="10"
+                                        FontWeight="Black"
+                                        Opacity="0.7"
+                                        Text="{Binding exam_date}" />
+                                </Border>
+                                <ListBox
+                                    BorderThickness="0"
+                                    ItemsSource="{Binding exams}"
+                                    SelectionChanged="ExamSelection_Changed"
+                                    Style="{StaticResource MaterialDesignListBox}">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Padding="16">
+                                                <Grid>
+                                                    <StackPanel>
+                                                        <TextBlock
+                                                            FontSize="14"
+                                                            FontWeight="Bold"
+                                                            Text="{Binding focus}" />
+                                                        <TextBlock
+                                                            Margin="0,2,0,0"
+                                                            FontSize="10"
+                                                            Opacity="0.5"
+                                                            Text="{Binding difficulty}" />
+                                                    </StackPanel>
+                                                    <materialDesign:PackIcon
+                                                        HorizontalAlignment="Right"
+                                                        VerticalAlignment="Center"
+                                                        Kind="ChevronRight"
+                                                        Opacity="0.3" />
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Grid>
+
+        <Grid
+            x:Name="pnlActiveExam"
+            Background="#F4F4F4"
+            Opacity="0"
+            Visibility="Collapsed">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Border Padding="24,32" Background="#1A1A1A">
+                <Grid>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock
+                            x:Name="txtActiveFocus"
+                            FontSize="28"
+                            FontWeight="Black"
+                            Foreground="White" />
+                        <StackPanel Margin="0,4,0,0" Orientation="Horizontal">
+                            <TextBlock
+                                x:Name="txtActiveMeta"
+                                VerticalAlignment="Center"
+                                FontSize="11"
+                                Foreground="Gray" />
+
+                            <Border
+                                x:Name="brdAttemptBadge"
+                                Margin="12,0,0,0"
+                                Padding="8,2"
+                                Background="#33B71C1C"
+                                CornerRadius="4">
+                                <TextBlock
+                                    x:Name="txtAttemptCounter"
+                                    VerticalAlignment="Center"
+                                    FontSize="10"
+                                    FontWeight="Black"
+                                    Foreground="#B71C1C">
+                                    <Run Text="ATTEMPT: " />
+                                    <Run x:Name="runCurrentAttempt" Text="0" />
+                                    <Run Text="/ 5" />
+                                </TextBlock>
+                            </Border>
+                        </StackPanel>
+                    </StackPanel>
+                    <Button
+                        HorizontalAlignment="Right"
+                        BorderBrush="#444"
+                        Click="ExitExam_Click"
+                        Foreground="White"
+                        Style="{StaticResource MaterialDesignOutlinedButton}">
+                        <TextBlock
+                            FontSize="10"
+                            FontWeight="Black"
+                            Text="EXIT EXAM" />
+                    </Button>
+                </Grid>
+            </Border>
+
+            <Grid Grid.Row="1">
+                <ScrollViewer Grid.Row="1" Padding="32,24">
+                    <ItemsControl x:Name="lstQuestions">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border
+                                    Margin="0,0,0,16"
+                                    Padding="20"
+                                    Background="White"
+                                    BorderBrush="#EEE"
+                                    BorderThickness="1"
+                                    CornerRadius="8">
+                                    <StackPanel>
+                                        <TextBlock
+                                            Margin="0,0,0,12"
+                                            FontSize="14"
+                                            FontWeight="Bold"
+                                            Text="{Binding question_text}"
+                                            TextWrapping="Wrap" />
+                                        <ItemsControl ItemsSource="{Binding choices}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <RadioButton
+                                                        Margin="0,4"
+                                                        Checked="RadioButton_Checked"
+                                                        Content="{Binding Value}"
+                                                        GroupName="{Binding DataContext.id, RelativeSource={RelativeSource AncestorType=Border}}"
+                                                        Tag="{Binding Key}" />
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+                <Grid
+                    x:Name="pnlAttemptLock"
+                    IsHitTestVisible="False"
+                    Visibility="Collapsed">
+                    <Border Background="White" Opacity="0.7" />
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <materialDesign:PackIcon
+                            Width="120"
+                            Height="120"
+                            HorizontalAlignment="Center"
+                            Foreground="#B71C1C"
+                            Kind="Lock"
+                            Opacity="0.1" />
+                        <TextBlock
+                            FontSize="64"
+                            FontWeight="Black"
+                            Foreground="#B71C1C"
+                            Opacity="0.05"
+                            RenderTransformOrigin="0.5,0.5"
+                            Text="PREVIEW MODE">
+                            <TextBlock.RenderTransform>
+                                <RotateTransform Angle="-25" />
+                            </TextBlock.RenderTransform>
+                        </TextBlock>
+                        <TextBlock
+                            Margin="0,20,0,0"
+                            HorizontalAlignment="Center"
+                            FontSize="14"
+                            FontWeight="Black"
+                            Foreground="#B71C1C"
+                            Text="MAXIMUM ATTEMPTS REACHED" />
+                    </StackPanel>
+                </Grid>
+            </Grid>
+
+            <Border
+                Grid.Row="2"
+                Padding="32,24"
+                Background="White"
+                BorderBrush="#DDD"
+                BorderThickness="0,1,0,0">
+                <Button
+                    x:Name="btnSubmit"
+                    Height="54"
+                    Background="#1A1A1A"
+                    BorderBrush="#1A1A1A"
+                    Click="SubmitExam_Click"
+                    Content="FINALIZE AND SUBMIT"
+                    FontWeight="Black"
+                    Foreground="White"
+                    Style="{StaticResource MaterialDesignRaisedButton}" />
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

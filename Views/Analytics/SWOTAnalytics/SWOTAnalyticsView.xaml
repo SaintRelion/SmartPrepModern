@@ -1,0 +1,261 @@
+<UserControl
+    x:Class="Views.Analytics.SWOTAnalyticsView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    Background="{DynamicResource MaterialDesignPaper}">
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <materialDesign:BooleanToVisibilityConverter
+            x:Key="InverseBoolToVis"
+            FalseValue="Visible"
+            TrueValue="Collapsed" />
+    </UserControl.Resources>
+
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <materialDesign:Card
+            Grid.Row="0"
+            Margin="0,0,0,24"
+            Padding="16"
+            Background="#1A1A1A">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                    <StackPanel Margin="0,0,40,0">
+                        <TextBlock
+                            FontSize="10"
+                            FontWeight="Black"
+                            Foreground="Gray"
+                            Text="SYSTEM PROFICIENCY" />
+                        <TextBlock
+                            x:Name="txtGlobalAvg"
+                            FontSize="24"
+                            FontWeight="Black"
+                            Foreground="White"
+                            Text="0.0%" />
+                    </StackPanel>
+                    <StackPanel>
+                        <TextBlock
+                            FontSize="10"
+                            FontWeight="Black"
+                            Foreground="Gray"
+                            Text="CRITICAL SYSTEM WEAKNESS" />
+                        <TextBlock
+                            x:Name="txtCritWeak"
+                            FontSize="18"
+                            FontWeight="Bold"
+                            Foreground="#B71C1C"
+                            Text="STABLE" />
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <ComboBox
+                        x:Name="cmbLimit"
+                        Width="100"
+                        Margin="0,0,12,0"
+                        materialDesign:HintAssist.Foreground="LightGray"
+                        materialDesign:HintAssist.Hint="Show Top"
+                        Foreground="White"
+                        Style="{StaticResource MaterialDesignFloatingHintComboBox}">
+                        <ComboBox.ItemContainerStyle>
+                            <Style BasedOn="{StaticResource MaterialDesignComboBoxItemStyle}" TargetType="ComboBoxItem">
+                                <Setter Property="Foreground" Value="#2D2D2D" />
+                            </Style>
+                        </ComboBox.ItemContainerStyle>
+                        <ComboBoxItem Content="3" IsSelected="True" />
+                        <ComboBoxItem Content="10" IsSelected="True" />
+                        <ComboBoxItem Content="20" IsSelected="True" />
+                        <ComboBoxItem Content="50" IsSelected="True" />
+                        <ComboBoxItem Content="100" />
+                        <ComboBoxItem Content="All" />
+                    </ComboBox>
+
+                    <ComboBox
+                        x:Name="cmbSortMode"
+                        Width="180"
+                        materialDesign:HintAssist.Foreground="LightGray"
+                        materialDesign:HintAssist.Hint="Sort Intelligence"
+                        Foreground="White"
+                        Style="{StaticResource MaterialDesignFloatingHintComboBox}">
+                        <ComboBox.ItemContainerStyle>
+                            <Style BasedOn="{StaticResource MaterialDesignComboBoxItemStyle}" TargetType="ComboBoxItem">
+                                <Setter Property="Foreground" Value="#2D2D2D" />
+                            </Style>
+                        </ComboBox.ItemContainerStyle>
+                        <ComboBoxItem Content="Highest Proficiency" IsSelected="True" />
+                        <ComboBoxItem Content="Lowest Proficiency" />
+                        <ComboBoxItem Content="Critical Failures First" />
+                    </ComboBox>
+
+                    <Button
+                        Margin="16,0,0,0"
+                        Background="{StaticResource CriminologyRed}"
+                        BorderBrush="Transparent"
+                        Click="Refresh_Click"
+                        Style="{StaticResource MaterialDesignFloatingActionMiniButton}">
+                        <materialDesign:PackIcon Kind="Refresh" />
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </materialDesign:Card>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <ItemsControl x:Name="lstDossiers">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <materialDesign:Card Margin="0,0,0,16" Padding="0">
+                            <Expander HorizontalAlignment="Stretch">
+                                <Expander.Header>
+                                    <Grid Width="{Binding RelativeSource={RelativeSource AncestorType=ContentPresenter}, Path=ActualWidth}" Margin="0,8">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel>
+                                            <TextBlock
+                                                FontSize="18"
+                                                FontWeight="Black"
+                                                Text="{Binding username}" />
+                                            <TextBlock
+                                                FontSize="10"
+                                                Opacity="0.5"
+                                                Text="PERSONNEL DOSSIER" />
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Margin="0,0,20,0">
+                                            <TextBlock
+                                                HorizontalAlignment="Right"
+                                                FontSize="22"
+                                                FontWeight="Black"
+                                                Foreground="{Binding CompetencyBrush}"
+                                                Text="{Binding overall_competency, StringFormat={}{0:F1}%}" />
+                                            <TextBlock
+                                                HorizontalAlignment="Right"
+                                                FontSize="9"
+                                                Opacity="0.5"
+                                                Text="ACCURACY RATE" />
+                                        </StackPanel>
+                                    </Grid>
+                                </Expander.Header>
+
+                                <Border
+                                    Padding="20"
+                                    Background="#FAFAFA"
+                                    BorderBrush="#EEE"
+                                    BorderThickness="0,1,0,0">
+                                    <StackPanel>
+                                        <Border
+                                            Margin="0,0,0,20"
+                                            Padding="12"
+                                            Background="#E3F2FD"
+                                            CornerRadius="4">
+                                            <StackPanel Orientation="Horizontal">
+                                                <materialDesign:PackIcon
+                                                    VerticalAlignment="Center"
+                                                    Foreground="#1976D2"
+                                                    Kind="Information" />
+                                                <TextBlock
+                                                    Margin="10,0,0,0"
+                                                    VerticalAlignment="Center"
+                                                    FontSize="11"
+                                                    Foreground="#1976D2"
+                                                    TextWrapping="Wrap">
+                                                    <Run FontWeight="Bold">Metric Definition:</Run>
+                                                    Percentages reflect the lifetime accuracy rate (Correct/Total) per subject across all examinations taken.<Run FontWeight="Bold">Strengths</Run>
+                                                    (≥75%).<Run FontWeight="Bold">Weaknesses</Run>
+                                                    (&lt;75%).</TextBlock>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                                                <TextBlock
+                                                    Margin="0,0,0,10"
+                                                    FontSize="11"
+                                                    FontWeight="Black"
+                                                    Foreground="Green"
+                                                    Text="IDENTIFIED STRENGTHS" />
+                                                <TextBlock
+                                                    FontSize="11"
+                                                    FontStyle="Italic"
+                                                    Opacity="0.5"
+                                                    Text="No areas meeting 75% threshold."
+                                                    Visibility="{Binding HasStrengths, Converter={StaticResource InverseBoolToVis}}" />
+                                                <ItemsControl ItemsSource="{Binding StrengthList}">
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <Grid Margin="0,0,0,6">
+                                                                <TextBlock
+                                                                    MaxWidth="160"
+                                                                    FontSize="12"
+                                                                    Text="{Binding label}"
+                                                                    TextTrimming="CharacterEllipsis" />
+                                                                <TextBlock
+                                                                    HorizontalAlignment="Right"
+                                                                    FontWeight="Black"
+                                                                    Foreground="Green"
+                                                                    Text="{Binding percentage, StringFormat={}{0:F0}%}" />
+                                                            </Grid>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                            </StackPanel>
+
+                                            <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                                                <TextBlock
+                                                    Margin="0,0,0,10"
+                                                    FontSize="11"
+                                                    FontWeight="Black"
+                                                    Foreground="#B71C1C"
+                                                    Text="CRITICAL WEAKNESSES" />
+                                                <TextBlock
+                                                    FontSize="11"
+                                                    FontStyle="Italic"
+                                                    Opacity="0.5"
+                                                    Text="No critical weaknesses identified."
+                                                    Visibility="{Binding HasWeaknesses, Converter={StaticResource InverseBoolToVis}}" />
+                                                <ItemsControl ItemsSource="{Binding WeaknessList}">
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <Grid Margin="0,0,0,6">
+                                                                <TextBlock
+                                                                    MaxWidth="160"
+                                                                    FontSize="12"
+                                                                    Text="{Binding label}"
+                                                                    TextTrimming="CharacterEllipsis" />
+                                                                <TextBlock
+                                                                    HorizontalAlignment="Right"
+                                                                    FontWeight="Black"
+                                                                    Foreground="#B71C1C"
+                                                                    Text="{Binding percentage, StringFormat={}{0:F0}%}" />
+                                                            </Grid>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                            </StackPanel>
+                                        </Grid>
+                                    </StackPanel>
+                                </Border>
+                            </Expander>
+                        </materialDesign:Card>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

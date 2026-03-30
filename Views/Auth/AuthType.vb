@@ -1,0 +1,1 @@
+Public Delegate Sub LoginSuccessHandler(role As String, userId As Integer)

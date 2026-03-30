@@ -1,0 +1,170 @@
+<UserControl
+        x:Class="Views.ReviewDirector.GenerateView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        x:Name="ThisView"
+        Background="{DynamicResource MaterialDesignPaper}">
+
+        <UserControl.Resources>
+                <SolidColorBrush x:Key="CriminologyRed" Color="#B71C1C" />
+        </UserControl.Resources>
+
+        <Grid Margin="24">
+                <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0" Margin="0,0,0,24">
+                        <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon
+                                        Width="32"
+                                        Height="32"
+                                        VerticalAlignment="Center"
+                                        Foreground="{StaticResource CriminologyRed}"
+                                        Kind="Brain" />
+                                <TextBlock
+                                        Margin="12,0,0,0"
+                                        FontWeight="Black"
+                                        Foreground="{StaticResource CriminologyRed}"
+                                        Style="{StaticResource MaterialDesignHeadline4TextBlock}"
+                                        Text="EXAM GENERATION ENGINE" />
+                        </StackPanel>
+                        <TextBlock
+                                Margin="44,4,0,0"
+                                Opacity="0.6"
+                                Style="{StaticResource MaterialDesignBody1TextBlock}"
+                                Text="Configure AI parameters and aggregate intelligence sources." />
+                </StackPanel>
+
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                        <StackPanel MaxWidth="900" HorizontalAlignment="Left">
+
+                                <materialDesign:Card
+                                        Margin="0,0,0,16"
+                                        Padding="20"
+                                        materialDesign:ElevationAssist.Elevation="Dp2">
+                                        <StackPanel>
+                                                <TextBlock
+                                                        Margin="0,0,0,20"
+                                                        FontWeight="Bold"
+                                                        Foreground="#444"
+                                                        Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                                                        Text="I. MISSION PARAMETERS" />
+                                                <WrapPanel>
+                                                        <ComboBox
+                                                                x:Name="cmbDifficulty"
+                                                                Width="180"
+                                                                Margin="0,0,24,0"
+                                                                materialDesign:HintAssist.Hint="Threat Level (Difficulty)"
+                                                                Style="{StaticResource MaterialDesignFloatingHintComboBox}">
+                                                                <ComboBoxItem Content="Easy" />
+                                                                <ComboBoxItem Content="Moderate" IsSelected="True" />
+                                                                <ComboBoxItem Content="Hard" />
+                                                        </ComboBox>
+
+                                                        <ComboBox
+                                                                x:Name="cmbFocus"
+                                                                Width="220"
+                                                                Margin="0,0,24,0"
+                                                                materialDesign:HintAssist.Hint="Operational Focus"
+                                                                Style="{StaticResource MaterialDesignFloatingHintComboBox}">
+                                                                <ComboBoxItem Content="Weak Areas" />
+                                                                <ComboBoxItem Content="Comprehensive Exam" IsSelected="True" />
+                                                        </ComboBox>
+
+                                                        <TextBox
+                                                                Width="160"
+                                                                materialDesign:HintAssist.Hint="Format"
+                                                                IsReadOnly="True"
+                                                                Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                                                                Text="Multiple Choice" />
+                                                </WrapPanel>
+                                        </StackPanel>
+                                </materialDesign:Card>
+
+                                <materialDesign:Card Padding="20" materialDesign:ElevationAssist.Elevation="Dp2">
+                                        <Grid>
+                                                <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto" />
+                                                        <RowDefinition Height="300" />
+                                                        <RowDefinition Height="Auto" />
+                                                </Grid.RowDefinitions>
+
+                                                <DockPanel Margin="0,0,0,16" LastChildFill="False">
+                                                        <TextBlock
+                                                                VerticalAlignment="Center"
+                                                                FontWeight="Bold"
+                                                                Foreground="#444"
+                                                                Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                                                                Text="II. INTELLIGENCE SOURCES" />
+                                                        <Button
+                                                                x:Name="btnAddMaterial"
+                                                                Background="Transparent"
+                                                                BorderBrush="{StaticResource CriminologyRed}"
+                                                                Click="AddMaterial_Click"
+                                                                Content="ADD SOURCE"
+                                                                DockPanel.Dock="Right"
+                                                                Foreground="{StaticResource CriminologyRed}"
+                                                                Style="{StaticResource MaterialDesignOutlinedButton}" />
+                                                </DockPanel>
+
+                                                <DataGrid
+                                                        x:Name="dgMaterialsPicked"
+                                                        Grid.Row="1"
+                                                        materialDesign:DataGridAssist.CellPadding="8"
+                                                        AutoGenerateColumns="False"
+                                                        CanUserAddRows="False"
+                                                        Style="{StaticResource MaterialDesignDataGrid}">
+                                                        <DataGrid.Columns>
+                                                                <DataGridTextColumn
+                                                                        Width="80"
+                                                                        Binding="{Binding items, UpdateSourceTrigger=PropertyChanged}"
+                                                                        Header="Items" />
+
+                                                                <DataGridTemplateColumn Width="*" Header="Document Title">
+                                                                        <DataGridTemplateColumn.CellTemplate>
+                                                                                <DataTemplate>
+                                                                                        <ComboBox
+                                                                                                HorizontalAlignment="Stretch"
+                                                                                                DisplayMemberPath="title_content"
+                                                                                                ItemsSource="{Binding DataContext.AllMaterials, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                                                                SelectedItem="{Binding selected_material, UpdateSourceTrigger=PropertyChanged}"
+                                                                                                Style="{StaticResource MaterialDesignDataGridComboBox}" />
+                                                                                </DataTemplate>
+                                                                        </DataGridTemplateColumn.CellTemplate>
+                                                                </DataGridTemplateColumn>
+
+                                                                <DataGridTemplateColumn Width="50">
+                                                                        <DataGridTemplateColumn.CellTemplate>
+                                                                                <DataTemplate>
+                                                                                        <Button
+                                                                                                Click="RemoveMaterial_Click"
+                                                                                                Foreground="{StaticResource CriminologyRed}"
+                                                                                                Style="{StaticResource MaterialDesignIconButton}">
+                                                                                                <materialDesign:PackIcon Kind="CloseCircleOutline" />
+                                                                                        </Button>
+                                                                                </DataTemplate>
+                                                                        </DataGridTemplateColumn.CellTemplate>
+                                                                </DataGridTemplateColumn>
+                                                        </DataGrid.Columns>
+                                                </DataGrid>
+
+                                                <Button
+                                                        x:Name="btnGenerate"
+                                                        Grid.Row="2"
+                                                        Height="55"
+                                                        Margin="0,24,0,0"
+                                                        Background="{StaticResource CriminologyRed}"
+                                                        BorderBrush="{StaticResource CriminologyRed}"
+                                                        Click="Generate_Click"
+                                                        Content="INITIATE AI GENERATION"
+                                                        FontSize="16"
+                                                        FontWeight="Black" />
+                                        </Grid>
+                                </materialDesign:Card>
+                        </StackPanel>
+                </ScrollViewer>
+        </Grid>
+</UserControl>

@@ -36,6 +36,7 @@ Namespace Views.ReviewDirector
                 Try
                     Using client As New ClientWebSocket()
                         ' Note the clean URL we defined in FastAPI
+                        ' Dim uri As New Uri("ws://smartprep-api.opsularity.space/ws")
                         Dim uri As New Uri("ws://localhost:8000/ws")
                         Await client.ConnectAsync(uri, _cts.Token)
                         AddLog("Socket: Forensic Link Active.")
@@ -66,15 +67,34 @@ Namespace Views.ReviewDirector
             End While
         End Sub
 
+        Private Async Sub Sync_Click(sender As Object, e As RoutedEventArgs)
+            btnSync.IsEnabled = False
+            AddLog("Sync: Initiating forensic recovery for pending modules...")
+
+            Try
+                ' BD AMPL KOS: Force re-queueing of all materials with status 0
+                Dim response = Await MaterialsRepo.sync_pending_materialsAsync()
+                
+                If response.Success Then
+                    AddLog($"Sync: Success. {response.Data.queued_count} modules re-queued.")
+                Else
+                    AddLog("Sync Error: " & response.ErrorMessage)
+                End If
+            Catch ex As Exception
+                AddLog("Sync Failure: " & ex.Message)
+            Finally
+                btnSync.IsEnabled = True
+            End Try
+        End Sub
+
         Private Async Function LoadMaterials() As Task
             Try
-                Dim response = Await MaterialsRepo.get_materialsAsync()
+                Dim req As New GetMaterialsRequest() With { .processed_by_ai = -1 }
+
+                Dim response = Await MaterialsRepo.get_materialsAsync(req)
                 If response.Success Then
                     ' Marshal the UI update to the Dispatcher
                     Me.Dispatcher.Invoke(Sub()
-                        ' Instead of creating a new collection every time, 
-                        ' clearing and adding is often safer for some bindings,
-                        ' but updating the reference on the UI thread is the bare minimum.
                         _materials = New ObservableCollection(Of MaterialListItem)(response.Data)
                         dgMaterials.ItemsSource = _materials
                     End Sub)
@@ -106,8 +126,7 @@ Namespace Views.ReviewDirector
                 Dim fileData = File.ReadAllBytes(txtFilePath.Text)
                 Dim req As New MaterialUploadRequest With {
                     .file = fileData,
-                    .file_name = Path.GetFileNameWithoutExtension(txtFilePath.Text),
-                    .use_gpu = chkUseOllama.IsChecked.GetValueOrDefault()
+                    .file_name = Path.GetFileNameWithoutExtension(txtFilePath.Text)
                 }
 
                 Dim response = Await MaterialsRepo.upload_materialAsync(req)

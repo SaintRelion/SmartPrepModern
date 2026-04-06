@@ -2,169 +2,316 @@
         x:Class="Views.ReviewDirector.GenerateView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:SmartPrepModern.Views.ReviewDirector"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        x:Name="ThisView"
+        x:Name="thisControl"
         Background="{DynamicResource MaterialDesignPaper}">
 
         <UserControl.Resources>
                 <SolidColorBrush x:Key="CriminologyRed" Color="#B71C1C" />
+                <local:MaterialConfigConverter x:Key="ConfigConverter" />
         </UserControl.Resources>
 
-        <Grid Margin="24">
-                <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
+        <Grid Margin="20">
+                <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="450" />
+                        <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
 
-                <StackPanel Grid.Row="0" Margin="0,0,0,24">
-                        <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon
-                                        Width="32"
-                                        Height="32"
-                                        VerticalAlignment="Center"
-                                        Foreground="{StaticResource CriminologyRed}"
-                                        Kind="Brain" />
-                                <TextBlock
-                                        Margin="12,0,0,0"
-                                        FontWeight="Black"
-                                        Foreground="{StaticResource CriminologyRed}"
-                                        Style="{StaticResource MaterialDesignHeadline4TextBlock}"
-                                        Text="EXAM GENERATION ENGINE" />
-                        </StackPanel>
-                        <TextBlock
-                                Margin="44,4,0,0"
-                                Opacity="0.6"
-                                Style="{StaticResource MaterialDesignBody1TextBlock}"
-                                Text="Configure AI parameters and aggregate intelligence sources." />
-                </StackPanel>
+                <Grid Grid.Column="0" Margin="0,0,20,0">
+                        <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="120" />
+                        </Grid.RowDefinitions>
 
-                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-                        <StackPanel MaxWidth="900" HorizontalAlignment="Left">
+                        <materialDesign:Card
+                                Grid.Row="0"
+                                Padding="16"
+                                materialDesign:ElevationAssist.Elevation="Dp2">
+                                <Grid>
+                                        <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="*" />
+                                                <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
 
-                                <materialDesign:Card
-                                        Margin="0,0,0,16"
-                                        Padding="20"
-                                        materialDesign:ElevationAssist.Elevation="Dp2">
-                                        <StackPanel>
-                                                <TextBlock
-                                                        Margin="0,0,0,20"
-                                                        FontWeight="Bold"
-                                                        Foreground="#444"
-                                                        Style="{StaticResource MaterialDesignHeadline6TextBlock}"
-                                                        Text="I. MISSION PARAMETERS" />
-                                                <WrapPanel>
+                                        <StackPanel Grid.Row="0">
+                                                <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+                                                        <materialDesign:PackIcon
+                                                                Width="24"
+                                                                Height="24"
+                                                                Foreground="{StaticResource CriminologyRed}"
+                                                                Kind="FileDocumentEdit" />
+                                                        <TextBlock
+                                                                Margin="8,0,0,0"
+                                                                FontSize="18"
+                                                                FontWeight="Black"
+                                                                Foreground="{StaticResource CriminologyRed}"
+                                                                Text="GENERATE EXAM" />
+                                                </StackPanel>
+
+                                                <TextBox
+                                                        x:Name="txtExamName"
+                                                        Margin="0,0,0,8"
+                                                        materialDesign:HintAssist.Hint="Exam Name"
+                                                        Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
+
+                                                <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="*" />
+                                                                <ColumnDefinition Width="*" />
+                                                        </Grid.ColumnDefinitions>
                                                         <ComboBox
                                                                 x:Name="cmbDifficulty"
-                                                                Width="180"
-                                                                Margin="0,0,24,0"
-                                                                materialDesign:HintAssist.Hint="Threat Level (Difficulty)"
+                                                                Grid.Column="0"
+                                                                Margin="0,0,8,8"
+                                                                materialDesign:HintAssist.Hint="Difficulty"
                                                                 Style="{StaticResource MaterialDesignFloatingHintComboBox}">
                                                                 <ComboBoxItem Content="Easy" />
                                                                 <ComboBoxItem Content="Moderate" IsSelected="True" />
                                                                 <ComboBoxItem Content="Hard" />
                                                         </ComboBox>
-
                                                         <ComboBox
                                                                 x:Name="cmbFocus"
-                                                                Width="220"
-                                                                Margin="0,0,24,0"
-                                                                materialDesign:HintAssist.Hint="Operational Focus"
+                                                                Grid.Column="1"
+                                                                Margin="0,0,0,8"
+                                                                materialDesign:HintAssist.Hint="Focus"
                                                                 Style="{StaticResource MaterialDesignFloatingHintComboBox}">
                                                                 <ComboBoxItem Content="Weak Areas" />
-                                                                <ComboBoxItem Content="Comprehensive Exam" IsSelected="True" />
+                                                                <ComboBoxItem Content="Comprehensive" IsSelected="True" />
                                                         </ComboBox>
-
-                                                        <TextBox
-                                                                Width="160"
-                                                                materialDesign:HintAssist.Hint="Format"
-                                                                IsReadOnly="True"
-                                                                Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                                                                Text="Multiple Choice" />
-                                                </WrapPanel>
+                                                </Grid>
+                                                <Separator
+                                                        Margin="0,4,0,8"
+                                                        Background="{StaticResource CriminologyRed}"
+                                                        Opacity="0.1" />
                                         </StackPanel>
-                                </materialDesign:Card>
 
-                                <materialDesign:Card Padding="20" materialDesign:ElevationAssist.Elevation="Dp2">
-                                        <Grid>
-                                                <Grid.RowDefinitions>
-                                                        <RowDefinition Height="Auto" />
-                                                        <RowDefinition Height="300" />
-                                                        <RowDefinition Height="Auto" />
-                                                </Grid.RowDefinitions>
+                                        <DockPanel Grid.Row="1" Margin="0,0,0,4">
+                                                <TextBlock
+                                                        VerticalAlignment="Center"
+                                                        FontSize="12"
+                                                        FontWeight="Bold"
+                                                        Foreground="#444"
+                                                        Text="SELECTED MODULES" />
+                                                <Button
+                                                        x:Name="btnAddModule"
+                                                        Height="30"
+                                                        Padding="4,0"
+                                                        HorizontalAlignment="Right"
+                                                        Click="AddModule_Click"
+                                                        Foreground="{StaticResource CriminologyRed}"
+                                                        Style="{StaticResource MaterialDesignFlatButton}">
+                                                        <StackPanel Orientation="Horizontal">
+                                                                <materialDesign:PackIcon
+                                                                        Width="16"
+                                                                        VerticalAlignment="Center"
+                                                                        Kind="Plus" />
+                                                                <TextBlock
+                                                                        Margin="4,0,0,0"
+                                                                        VerticalAlignment="Center"
+                                                                        FontSize="11"
+                                                                        Text="ADD ROW" />
+                                                        </StackPanel>
+                                                </Button>
+                                        </DockPanel>
 
-                                                <DockPanel Margin="0,0,0,16" LastChildFill="False">
-                                                        <TextBlock
-                                                                VerticalAlignment="Center"
-                                                                FontWeight="Bold"
-                                                                Foreground="#444"
-                                                                Style="{StaticResource MaterialDesignHeadline6TextBlock}"
-                                                                Text="II. INTELLIGENCE SOURCES" />
-                                                        <Button
-                                                                x:Name="btnAddMaterial"
-                                                                Background="Transparent"
-                                                                BorderBrush="{StaticResource CriminologyRed}"
-                                                                Click="AddMaterial_Click"
-                                                                Content="ADD SOURCE"
-                                                                DockPanel.Dock="Right"
-                                                                Foreground="{StaticResource CriminologyRed}"
-                                                                Style="{StaticResource MaterialDesignOutlinedButton}" />
-                                                </DockPanel>
+                                        <DataGrid
+                                                x:Name="dgStaged"
+                                                Grid.Row="2"
+                                                MinHeight="150"
+                                                AutoGenerateColumns="False"
+                                                CanUserAddRows="False"
+                                                HeadersVisibility="Column"
+                                                Style="{StaticResource MaterialDesignDataGrid}"
+                                                VerticalScrollBarVisibility="Auto">
+                                                <DataGrid.Columns>
+                                                        <DataGridTemplateColumn Width="*" Header="MATERIAL">
+                                                                <DataGridTemplateColumn.CellTemplate>
+                                                                        <DataTemplate>
+                                                                                <ComboBox
+                                                                                        DisplayMemberPath="title_content"
+                                                                                        FontSize="12"
+                                                                                        ItemsSource="{Binding DataContext.AvailableMaterials, ElementName=thisControl}"
+                                                                                        SelectedItem="{Binding SelectedMaterialItem, UpdateSourceTrigger=PropertyChanged}"
+                                                                                        Style="{StaticResource MaterialDesignDataGridComboBox}" />
+                                                                        </DataTemplate>
+                                                                </DataGridTemplateColumn.CellTemplate>
+                                                        </DataGridTemplateColumn>
 
-                                                <DataGrid
-                                                        x:Name="dgMaterialsPicked"
-                                                        Grid.Row="1"
-                                                        materialDesign:DataGridAssist.CellPadding="8"
-                                                        AutoGenerateColumns="False"
-                                                        CanUserAddRows="False"
-                                                        Style="{StaticResource MaterialDesignDataGrid}">
-                                                        <DataGrid.Columns>
-                                                                <DataGridTextColumn
-                                                                        Width="80"
-                                                                        Binding="{Binding items, UpdateSourceTrigger=PropertyChanged}"
-                                                                        Header="Items" />
+                                                        <DataGridTextColumn
+                                                                Width="70"
+                                                                Binding="{Binding items_to_gen, UpdateSourceTrigger=PropertyChanged}"
+                                                                Header="ITEMS" />
 
-                                                                <DataGridTemplateColumn Width="*" Header="Document Title">
-                                                                        <DataGridTemplateColumn.CellTemplate>
-                                                                                <DataTemplate>
-                                                                                        <ComboBox
-                                                                                                HorizontalAlignment="Stretch"
-                                                                                                DisplayMemberPath="title_content"
-                                                                                                ItemsSource="{Binding DataContext.AllMaterials, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                                                                SelectedItem="{Binding selected_material, UpdateSourceTrigger=PropertyChanged}"
-                                                                                                Style="{StaticResource MaterialDesignDataGridComboBox}" />
-                                                                                </DataTemplate>
-                                                                        </DataGridTemplateColumn.CellTemplate>
-                                                                </DataGridTemplateColumn>
+                                                        <DataGridTemplateColumn Width="40">
+                                                                <DataGridTemplateColumn.CellTemplate>
+                                                                        <DataTemplate>
+                                                                                <Button
+                                                                                        Width="20"
+                                                                                        Height="20"
+                                                                                        Padding="0"
+                                                                                        Click="RemoveFromStage_Click"
+                                                                                        Foreground="{StaticResource CriminologyRed}"
+                                                                                        Style="{StaticResource MaterialDesignIconButton}">
+                                                                                        <materialDesign:PackIcon
+                                                                                                Width="14"
+                                                                                                Height="14"
+                                                                                                Kind="CloseCircle" />
+                                                                                </Button>
+                                                                        </DataTemplate>
+                                                                </DataGridTemplateColumn.CellTemplate>
+                                                        </DataGridTemplateColumn>
+                                                </DataGrid.Columns>
+                                        </DataGrid>
 
-                                                                <DataGridTemplateColumn Width="50">
-                                                                        <DataGridTemplateColumn.CellTemplate>
-                                                                                <DataTemplate>
-                                                                                        <Button
-                                                                                                Click="RemoveMaterial_Click"
-                                                                                                Foreground="{StaticResource CriminologyRed}"
-                                                                                                Style="{StaticResource MaterialDesignIconButton}">
-                                                                                                <materialDesign:PackIcon Kind="CloseCircleOutline" />
-                                                                                        </Button>
-                                                                                </DataTemplate>
-                                                                        </DataGridTemplateColumn.CellTemplate>
-                                                                </DataGridTemplateColumn>
-                                                        </DataGrid.Columns>
-                                                </DataGrid>
-
+                                        <StackPanel Grid.Row="3" Margin="0,12,0,0">
                                                 <Button
                                                         x:Name="btnGenerate"
-                                                        Grid.Row="2"
-                                                        Height="55"
-                                                        Margin="0,24,0,0"
+                                                        Height="45"
                                                         Background="{StaticResource CriminologyRed}"
-                                                        BorderBrush="{StaticResource CriminologyRed}"
                                                         Click="Generate_Click"
-                                                        Content="INITIATE AI GENERATION"
-                                                        FontSize="16"
+                                                        Content="START GENERATION"
                                                         FontWeight="Black" />
-                                        </Grid>
-                                </materialDesign:Card>
-                        </StackPanel>
-                </ScrollViewer>
+                                                <ProgressBar
+                                                        x:Name="pnlProgress"
+                                                        Margin="0,8,0,0"
+                                                        Foreground="{StaticResource CriminologyRed}"
+                                                        IsIndeterminate="True"
+                                                        Visibility="Collapsed" />
+                                        </StackPanel>
+                                </Grid>
+                        </materialDesign:Card>
+
+                        <GroupBox
+                                Grid.Row="1"
+                                Margin="0,10,0,0"
+                                Header="SYSTEM LOG"
+                                Style="{StaticResource MaterialDesignCardGroupBox}">
+                                <ListBox
+                                        x:Name="lstLog"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        FontFamily="Consolas"
+                                        FontSize="10" />
+                        </GroupBox>
+                </Grid>
+
+                <materialDesign:Card Grid.Column="1" materialDesign:ElevationAssist.Elevation="Dp2">
+                        <Grid>
+                                <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+
+                                <Grid Height="40" Background="{StaticResource CriminologyRed}">
+                                        <TextBlock
+                                                Margin="15,0,0,0"
+                                                VerticalAlignment="Center"
+                                                FontWeight="Bold"
+                                                Foreground="White"
+                                                Text="DEPLOYMENT REVIEW" />
+
+                                        <Button
+                                                x:Name="btnSyncExams"
+                                                Height="30"
+                                                Margin="0,0,5,0"
+                                                HorizontalAlignment="Right"
+                                                Click="SyncExams_Click"
+                                                Foreground="White"
+                                                Style="{StaticResource MaterialDesignFlatButton}"
+                                                ToolTip="Re-queue pending examinations">
+                                                <StackPanel Orientation="Horizontal">
+                                                        <materialDesign:PackIcon
+                                                                Width="18"
+                                                                VerticalAlignment="Center"
+                                                                Kind="Sync" />
+                                                        <TextBlock
+                                                                Margin="8,0,0,0"
+                                                                VerticalAlignment="Center"
+                                                                FontSize="11"
+                                                                Text="SYNC PENDING" />
+                                                </StackPanel>
+                                        </Button>
+                                </Grid>
+
+                                <DataGrid
+                                        x:Name="dgExams"
+                                        Grid.Row="1"
+                                        AutoGenerateColumns="False"
+                                        IsReadOnly="True"
+                                        ItemsSource="{Binding AdminExams}"
+                                        MouseDoubleClick="dgExams_MouseDoubleClick">
+                                        <DataGrid.Columns>
+                                                <DataGridTextColumn
+                                                        Width="40"
+                                                        Binding="{Binding id}"
+                                                        Header="ID" />
+
+                                                <DataGridTextColumn
+                                                        Width="*"
+                                                        Binding="{Binding focus}"
+                                                        FontWeight="Bold"
+                                                        Header="EXAM FOCUS" />
+
+                                                <DataGridTextColumn
+                                                        Width="130"
+                                                        Binding="{Binding material_config, Converter={StaticResource ConfigConverter}}"
+                                                        FontSize="10"
+                                                        Header="Material (ID:QTY)">
+                                                        <DataGridTextColumn.ElementStyle>
+                                                                <Style TargetType="TextBlock">
+                                                                        <Setter Property="Opacity" Value="0.6" />
+                                                                        <Setter Property="FontStyle" Value="Italic" />
+                                                                        <Setter Property="VerticalAlignment" Value="Center" />
+                                                                </Style>
+                                                        </DataGridTextColumn.ElementStyle>
+                                                </DataGridTextColumn>
+
+                                                <DataGridTextColumn Width="70" Header="PROG.">
+                                                        <DataGridTextColumn.Binding>
+                                                                <MultiBinding StringFormat="{}{0}/{1}">
+                                                                        <Binding Path="generated_count" />
+                                                                        <Binding Path="total_items" />
+                                                                </MultiBinding>
+                                                        </DataGridTextColumn.Binding>
+                                                </DataGridTextColumn>
+
+                                                <DataGridTemplateColumn Width="100" Header="STATUS">
+                                                        <DataGridTemplateColumn.CellTemplate>
+                                                                <DataTemplate>
+                                                                        <TextBlock
+                                                                                x:Name="StatusText"
+                                                                                HorizontalAlignment="Center"
+                                                                                VerticalAlignment="Center"
+                                                                                FontSize="11"
+                                                                                Text="Pending" />
+                                                                        <DataTemplate.Triggers>
+                                                                                <DataTrigger Binding="{Binding processed_by_ai}" Value="1">
+                                                                                        <Setter TargetName="StatusText" Property="Text" Value="Generating..." />
+                                                                                        <Setter TargetName="StatusText" Property="Foreground" Value="Orange" />
+                                                                                </DataTrigger>
+                                                                                <DataTrigger Binding="{Binding processed_by_ai}" Value="2">
+                                                                                        <Setter TargetName="StatusText" Property="Text" Value="Completed" />
+                                                                                        <Setter TargetName="StatusText" Property="Foreground" Value="Green" />
+                                                                                </DataTrigger>
+                                                                                <DataTrigger Binding="{Binding processed_by_ai}" Value="3">
+                                                                                        <Setter TargetName="StatusText" Property="Text" Value="Error" />
+                                                                                        <Setter TargetName="StatusText" Property="Foreground" Value="Red" />
+                                                                                </DataTrigger>
+                                                                        </DataTemplate.Triggers>
+                                                                </DataTemplate>
+                                                        </DataGridTemplateColumn.CellTemplate>
+                                                </DataGridTemplateColumn>
+
+                                                <DataGridTextColumn
+                                                        Width="90"
+                                                        Binding="{Binding created_at, StringFormat=\{0:MM/dd HH:mm\}}"
+                                                        Header="DATE" />
+                                        </DataGrid.Columns>
+                                </DataGrid>
+                        </Grid>
+                </materialDesign:Card>
         </Grid>
 </UserControl>

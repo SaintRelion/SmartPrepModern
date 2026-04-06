@@ -8,13 +8,18 @@ Namespace APISync.Repositories
     Public Class MaterialsRepo
 
         ''' <summary> Calls: GET materials/get_materials </summary>
-        Public Shared Async Function get_materialsAsync() As Task(Of ApiResponse(Of List(Of MaterialListItem)))
-            Return Await ApiService.GetAsync(Of List(Of MaterialListItem))("materials/get_materials")
+        Public Shared Async Function get_materialsAsync(req As GetMaterialsRequest) As Task(Of ApiResponse(Of List(Of MaterialListItem)))
+            Return Await ApiService.GetAsync(Of List(Of MaterialListItem))("materials/get_materials", req)
         End Function
 
         ''' <summary> Calls: GET materials/get_sections </summary>
         Public Shared Async Function get_sectionsAsync(req As GetSectionsRequest) As Task(Of ApiResponse(Of List(Of SectionItem)))
             Return Await ApiService.GetAsync(Of List(Of SectionItem))("materials/get_sections", req)
+        End Function
+
+        ''' <summary> Calls: POST materials/sync_pending_materials </summary>
+        Public Shared Async Function sync_pending_materialsAsync() As Task(Of ApiResponse(Of object))
+            Return Await ApiService.PostAsync(Of object)("materials/sync_pending_materials", Nothing)
         End Function
 
         ''' <summary> Calls: POST materials/upload_material </summary>

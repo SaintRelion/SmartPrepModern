@@ -181,7 +181,7 @@ Namespace Layout
         End Sub
 
         Private Sub Generate_Click(sender As Object, e As RoutedEventArgs)
-            ' MainContent.Content = New SmartPrepModern.Views.ReviewDirector.GenerateView()
+            MainContent.Content = New SmartPrepModern.Views.ReviewDirector.GenerateView()
         End Sub
 
         ' REVIEWEE

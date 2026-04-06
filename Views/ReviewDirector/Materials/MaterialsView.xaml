@@ -49,11 +49,7 @@
                                                 Click="BrowseFile_Click"
                                                 Content="BROWSE FILE"
                                                 Style="{StaticResource MaterialDesignOutlinedButton}" />
-                                        <CheckBox
-                                                x:Name="chkUseOllama"
-                                                Margin="0,0,0,20"
-                                                Content="Use Ollama"
-                                                IsChecked="True" />
+
                                         <Button
                                                 x:Name="btnUpload"
                                                 Height="45"
@@ -95,26 +91,48 @@
                                         <RowDefinition Height="*" />
                                 </Grid.RowDefinitions>
 
-                                <StackPanel Background="{StaticResource CriminologyRed}" Orientation="Horizontal">
-                                        <materialDesign:PackIcon
+                                <Grid Background="{StaticResource CriminologyRed}">
+                                        <StackPanel Orientation="Horizontal">
+                                                <materialDesign:PackIcon
+                                                        VerticalAlignment="Center"
+                                                        Foreground="White"
+                                                        Kind="Database" />
+                                                <TextBlock
+                                                        Margin="12,0,0,0"
+                                                        VerticalAlignment="Center"
+                                                        FontWeight="Bold"
+                                                        Foreground="White"
+                                                        Text="INTELLIGENCE DATABASE" />
+                                        </StackPanel>
+
+                                        <Button
+                                                x:Name="btnSync"
+                                                HorizontalAlignment="Right"
                                                 VerticalAlignment="Center"
+                                                Click="Sync_Click"
                                                 Foreground="White"
-                                                Kind="Database" />
-                                        <TextBlock
-                                                Margin="12,0,0,0"
-                                                VerticalAlignment="Center"
-                                                FontWeight="Bold"
-                                                Foreground="White"
-                                                Text="INTELLIGENCE DATABASE" />
-                                </StackPanel>
+                                                Style="{StaticResource MaterialDesignFlatButton}"
+                                                ToolTip="Re-process pending inductions">
+                                                <StackPanel Orientation="Horizontal">
+                                                        <materialDesign:PackIcon VerticalAlignment="Center" Kind="Sync" />
+                                                        <TextBlock
+                                                                Margin="8,0,0,0"
+                                                                VerticalAlignment="Center"
+                                                                FontSize="12"
+                                                                Text="SYNC PENDING" />
+                                                </StackPanel>
+                                        </Button>
+                                </Grid>
 
                                 <DataGrid
                                         x:Name="dgMaterials"
                                         Grid.Row="1"
                                         AutoGenerateColumns="False"
                                         HeadersVisibility="Column"
-                                        IsReadOnly="True">
+                                        IsReadOnly="True"
+                                        ItemsSource="{Binding _materials}">
                                         <DataGrid.Columns>
+
                                                 <DataGridTextColumn
                                                         Width="*"
                                                         Binding="{Binding title_content}"
@@ -136,6 +154,7 @@
                                                                                         VerticalAlignment="Center"
                                                                                         Text="Pending" />
                                                                         </StackPanel>
+
                                                                         <DataTemplate.Triggers>
                                                                                 <DataTrigger Binding="{Binding processed_by_ai}" Value="1">
                                                                                         <Setter TargetName="StatusIcon" Property="Kind" Value="Brain" />
@@ -158,6 +177,7 @@
                                                         Width="200"
                                                         Binding="{Binding created_at}"
                                                         Header="DATE INDUCTED" />
+
                                         </DataGrid.Columns>
                                 </DataGrid>
                         </Grid>

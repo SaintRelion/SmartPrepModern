@@ -50,6 +50,8 @@ End Class
 - user_id: `Integer`
 - username: `String`
 - email: `String`
+### GetMaterialsRequest
+- processed_by_ai: `Integer`
 ### MaterialListItem
 - id: `Integer`
 - document_path: `String`
@@ -64,23 +66,33 @@ End Class
 ### MaterialUploadRequest
 - file: `Byte()`
 - file_name: `String`
-- use_gpu: `Boolean`
 ### MaterialUploadResponse
 - status: `String`
 - message: `String`
 - material_id: `Integer`
-### GenerateExamRequest
+### ExamGenerationRequest
+- difficulty: `String`
+- focus: `String`
+- total_items: `Integer`
+- materials: `Dictionary(Of String, Integer)`
+### ExamGenerationResponse
+- status: `String`
+- message: `String`
+- examination_id: `Integer`
+### AdminExamStatusOut
+- id: `Integer`
 - focus: `String`
 - difficulty: `String`
-- materials: `List(Of MaterialRequest)`
-### MaterialRequest
-- material_id: `Integer`
-- items: `Integer`
-### GeneratedQuestion
+- total_items: `Integer`
+- material_config: `Dictionary(Of String, Integer)`
+- processed_by_ai: `Integer`
+- created_at: `DateTime`
+- generated_count: `Integer`
+- questions: `List(Of QuestionOut)`
+### QuestionOut
 - id: `Integer`
-- material_id: `Integer`
 - question_text: `String`
-- choices: `List(Of String)`
+- choices: `Dictionary(Of String, String)`
 - correct_answer: `String`
 ### ExamGetRequest
 - user_id: `Integer`
@@ -92,11 +104,6 @@ End Class
 - total_items: `Integer`
 - questions: `List(Of QuestionOut)`
 - user_attempts: `Integer`
-### QuestionOut
-- id: `Integer`
-- question_text: `String`
-- choices: `Dictionary(Of String, String)`
-- correct_answer: `String`
 ### ExamListRequest
 - user_id: `Integer`
 - focus: `String`
@@ -174,15 +181,18 @@ End Class
 - `toggle_statusAsync`(req: `ToggleUserStatusRequest`) -> `DeleteResponse`
 - `update_userAsync`(req: `UpdateUserRequest`) -> `GenericResponse`
 ### MaterialsRepo
-- `get_materialsAsync`() -> `List(Of MaterialListItem)`
+- `get_materialsAsync`(req: `GetMaterialsRequest`) -> `List(Of MaterialListItem)`
 - `get_sectionsAsync`(req: `GetSectionsRequest`) -> `List(Of SectionItem)`
+- `sync_pending_materialsAsync`() -> `object`
 - `upload_materialAsync`(req: `MaterialUploadRequest`) -> `MaterialUploadResponse`
 ### AIRepo
-- `generate_examAsync`(req: `GenerateExamRequest`) -> `List(Of GeneratedQuestion)`
+- `generate_examAsync`(req: `ExamGenerationRequest`) -> `ExamGenerationResponse`
 ### ReviewRepo
+- `admin_list_examsAsync`() -> `List(Of AdminExamStatusOut)`
 - `get_examAsync`(req: `ExamGetRequest`) -> `ExamOut`
 - `list_examsAsync`(req: `ExamListRequest`) -> `List(Of DailyExamListGroup)`
 - `submit_answersAsync`(req: `SubmitAnswerRequest`) -> `SubmissionSummary`
+- `sync_pending_examinationsAsync`() -> `object`
 ### AnalyticsRepo
 - `get_exam_statsAsync`(req: `StatsRequest`) -> `ExamAnalyticsResponse`
 - `get_personnel_statsAsync`(req: `StatsRequest`) -> `PersonnelAnalyticsResponse`

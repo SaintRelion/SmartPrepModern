@@ -55,7 +55,7 @@
                                                 Height="45"
                                                 Background="{StaticResource CriminologyRed}"
                                                 Click="UploadFile_Click"
-                                                Content="INDUCT MATERIAL" />
+                                                Content="UPLOAD MATERIAL" />
 
                                         <StackPanel
                                                 x:Name="pnlProgress"
@@ -80,7 +80,20 @@
                                         x:Name="lstLog"
                                         Height="200"
                                         FontFamily="Consolas"
-                                        FontSize="11" />
+                                        FontSize="11"
+                                        ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                        <ListBox.ItemContainerStyle>
+                                                <Style TargetType="ListBoxItem">
+                                                        <Setter Property="Template">
+                                                                <Setter.Value>
+                                                                        <ControlTemplate TargetType="ListBoxItem">
+                                                                                <TextBlock Text="{Binding}" TextWrapping="Wrap" />
+                                                                        </ControlTemplate>
+                                                                </Setter.Value>
+                                                        </Setter>
+                                                </Style>
+                                        </ListBox.ItemContainerStyle>
+                                </ListBox>
                         </GroupBox>
                 </StackPanel>
 

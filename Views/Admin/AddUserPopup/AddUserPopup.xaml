@@ -1,0 +1,76 @@
+<UserControl
+    x:Class="Views.Admin.AddUserPopup"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    Width="400"
+    Padding="32"
+    Background="{DynamicResource MaterialDesignPaper}">
+
+    <StackPanel>
+        <materialDesign:PackIcon
+            Width="48"
+            Height="48"
+            HorizontalAlignment="Center"
+            Foreground="#B71C1C"
+            Kind="AccountPlus" />
+
+        <TextBlock
+            Margin="0,16,0,24"
+            HorizontalAlignment="Center"
+            FontWeight="Black"
+            Style="{StaticResource MaterialDesignHeadline5TextBlock}"
+            Text="PERSONNEL ENLISTMENT" />
+
+        <TextBox
+            x:Name="txtRegUsername"
+            Margin="0,0,0,16"
+            materialDesign:HintAssist.Hint="Username"
+            Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
+
+        <TextBox
+            x:Name="txtRegEmail"
+            Margin="0,0,0,16"
+            materialDesign:HintAssist.Hint="Email Address"
+            Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
+
+        <PasswordBox
+            x:Name="txtRegPassword"
+            Margin="0,0,0,16"
+            materialDesign:HintAssist.Hint="Access Key (Password)"
+            Style="{StaticResource MaterialDesignFloatingHintPasswordBox}" />
+
+        <ComboBox
+            x:Name="cmbRole"
+            Margin="0,0,0,32"
+            materialDesign:HintAssist.Hint="Assigned Role"
+            Style="{StaticResource MaterialDesignFloatingHintComboBox}">
+            <ComboBoxItem Content="Reviewee" IsSelected="True" />
+            <ComboBoxItem Content="ReviewDirector" />
+            <ComboBoxItem Content="Admin" />
+        </ComboBox>
+
+        <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+            <Button
+                Margin="0,0,8,0"
+                Click="Cancel_Click"
+                Content="CANCEL"
+                Style="{StaticResource MaterialDesignFlatButton}" />
+            <Button
+                x:Name="btnEnlist"
+                Background="#B71C1C"
+                BorderBrush="#B71C1C"
+                Click="Enlist_Click"
+                Content="COMPLETE ENLISTMENT"
+                FontWeight="Bold" />
+        </StackPanel>
+
+        <TextBlock
+            x:Name="lblStatus"
+            Margin="0,12,0,0"
+            FontSize="11"
+            Foreground="#B71C1C"
+            TextAlignment="Center"
+            TextWrapping="Wrap" />
+    </StackPanel>
+</UserControl>

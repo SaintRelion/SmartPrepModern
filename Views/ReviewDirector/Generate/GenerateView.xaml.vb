@@ -188,7 +188,8 @@ Namespace Views.ReviewDirector
             While Not _cts.IsCancellationRequested
                 Try
                     Using client As New ClientWebSocket()
-                        Dim uri As New Uri("ws://localhost:8000/ws")
+                        Dim uri As New Uri("ws://smartprep-api.opsularity.space/ws")
+                        ' Dim uri As New Uri("ws://localhost:8000/ws")
                         Await client.ConnectAsync(uri, _cts.Token)
                         LogMessage("Socket: Forensic Link Active.")
 

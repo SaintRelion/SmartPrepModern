@@ -36,8 +36,8 @@ Namespace Views.ReviewDirector
                 Try
                     Using client As New ClientWebSocket()
                         ' Note the clean URL we defined in FastAPI
-                        ' Dim uri As New Uri("ws://smartprep-api.opsularity.space/ws")
-                        Dim uri As New Uri("ws://localhost:8000/ws")
+                        Dim uri As New Uri("ws://smartprep-api.opsularity.space/ws")
+                        ' Dim uri As New Uri("ws://localhost:8000/ws")
                         Await client.ConnectAsync(uri, _cts.Token)
                         AddLog("Socket: Forensic Link Active.")
 

@@ -63,6 +63,27 @@ Namespace Views.Admin
             End If
         End Sub
 
+        Private Sub OpenAddUser_Click(sender As Object, e As RoutedEventArgs)
+            ' 1. Create the popup content
+            Dim popup = New AddUserPopup()
+            
+            ' 2. Assign the content to the DialogHost
+            HostAddUser.DialogContent = popup
+            
+            ' 3. Wire up the events
+            AddHandler popup.UserAdded, Async Sub()
+                HostAddUser.IsOpen = False ' Close the host
+                Await LoadUsers() ' Refresh the Personnel Database
+            End Sub
+            
+            AddHandler popup.CancelClicked, Sub()
+                HostAddUser.IsOpen = False ' Close the host
+            End Sub
+
+            ' 4. BD AMPL KOS: Flip the switch to open the tactical overlay
+            HostAddUser.IsOpen = True
+        End Sub
+
         Private Async Sub DeleteUser_Click(sender As Object, e As RoutedEventArgs)
             Dim btn = TryCast(sender, Button)
             If btn?.Tag Is Nothing Then Return

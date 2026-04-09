@@ -9,102 +9,128 @@
         <SolidColorBrush x:Key="CriminologyRed" Color="#B71C1C" />
     </UserControl.Resources>
 
-    <Border Padding="24">
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
+    <materialDesign:DialogHost x:Name="HostAddUser" Identifier="AddUserHost">
+        <Border Padding="24">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
 
-            <StackPanel Margin="0,0,0,24" Orientation="Horizontal">
-                <materialDesign:PackIcon
-                    Width="32"
-                    Height="32"
-                    VerticalAlignment="Center"
-                    Foreground="{StaticResource CriminologyRed}"
-                    Kind="ShieldAccount" />
-                <TextBlock
-                    Margin="12,0,0,0"
-                    VerticalAlignment="Center"
-                    FontWeight="Black"
-                    Style="{StaticResource MaterialDesignHeadline5TextBlock}"
-                    Text="PERSONNEL DATABASE" />
+                <Grid Margin="0,0,0,24">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon
+                            Width="32"
+                            Height="32"
+                            VerticalAlignment="Center"
+                            Foreground="{StaticResource CriminologyRed}"
+                            Kind="ShieldAccount" />
+                        <TextBlock
+                            Margin="12,0,0,0"
+                            VerticalAlignment="Center"
+                            FontWeight="Black"
+                            Style="{StaticResource MaterialDesignHeadline5TextBlock}"
+                            Text="PERSONNEL DATABASE" />
 
-                <Border
-                    Margin="16,0,0,0"
-                    Padding="8,2"
-                    VerticalAlignment="Center"
-                    Background="#EEE"
-                    CornerRadius="12">
-                    <TextBlock
-                        FontSize="10"
+                        <Border
+                            Margin="16,0,0,0"
+                            Padding="8,2"
+                            VerticalAlignment="Center"
+                            Background="#EEE"
+                            CornerRadius="12">
+                            <TextBlock
+                                FontSize="10"
+                                FontWeight="Bold"
+                                Foreground="#666"
+                                Text="ADMIN ACCESS" />
+                        </Border>
+                    </StackPanel>
+
+                    <Button
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Click="OpenAddUser_Click"
+                        Content="ADD PERSONNEL"
+                        FontSize="12"
                         FontWeight="Bold"
-                        Foreground="#666"
-                        Text="ADMIN ACCESS" />
-                </Border>
-            </StackPanel>
+                        Style="{StaticResource MaterialDesignRaisedButton}">
+                        <Button.ContentTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <materialDesign:PackIcon VerticalAlignment="Center" Kind="AccountPlus" />
+                                    <TextBlock Margin="8,0,0,0" Text="ENLIST PERSONNEL" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </Button.ContentTemplate>
+                    </Button>
+                </Grid>
 
-            <materialDesign:Card Grid.Row="1" materialDesign:ElevationAssist.Elevation="Dp3">
-                <DataGrid
-                    x:Name="dgUsers"
-                    materialDesign:DataGridAssist.CellPadding="13 8 8 8"
-                    materialDesign:DataGridAssist.ColumnHeaderPadding="8"
-                    AutoGenerateColumns="False"
-                    CanUserAddRows="False"
-                    IsReadOnly="True"
-                    SelectionUnit="FullRow">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn
-                            Width="60"
-                            Binding="{Binding id}"
-                            Header="ID" />
-                        <DataGridTextColumn
-                            Width="*"
-                            Binding="{Binding username}"
-                            Header="Username" />
-                        <DataGridTextColumn
-                            Width="1.5*"
-                            Binding="{Binding email}"
-                            Header="Email" />
+                <materialDesign:Card Grid.Row="1" materialDesign:ElevationAssist.Elevation="Dp3">
+                    <DataGrid
+                        x:Name="dgUsers"
+                        materialDesign:DataGridAssist.CellPadding="13 8 8 8"
+                        materialDesign:DataGridAssist.ColumnHeaderPadding="8"
+                        AutoGenerateColumns="False"
+                        CanUserAddRows="False"
+                        IsReadOnly="True"
+                        SelectionUnit="FullRow">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn
+                                Width="60"
+                                Binding="{Binding id}"
+                                Header="ID" />
+                            <DataGridTextColumn
+                                Width="*"
+                                Binding="{Binding username}"
+                                Header="Username" />
+                            <DataGridTextColumn
+                                Width="1.5*"
+                                Binding="{Binding email}"
+                                Header="Email" />
+                            <DataGridTextColumn
+                                Width="120"
+                                Binding="{Binding role}"
+                                Header="Clearance" />
 
-                        <DataGridTemplateColumn Width="120" Header="Terminal Status">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <TextBlock
-                                        FontSize="11"
-                                        FontWeight="Black"
-                                        Foreground="{Binding StatusColor}"
-                                        Text="{Binding status}" />
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Width="120" Header="Terminal Status">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock
+                                            FontSize="11"
+                                            FontWeight="Black"
+                                            Foreground="{Binding StatusColor}"
+                                            Text="{Binding status}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
 
-                        <DataGridTemplateColumn Width="180" Header="Tactical Actions">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
-                                        <Button
-                                            Click="ToggleStatus_Click"
-                                            Content="{Binding ToggleText}"
-                                            Foreground="{Binding ToggleColor}"
-                                            IsEnabled="{Binding IsNotMe}"
-                                            Style="{StaticResource MaterialDesignFlatButton}"
-                                            Tag="{Binding}" />
+                            <DataGridTemplateColumn Width="180" Header="Tactical Actions">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Button
+                                                Click="ToggleStatus_Click"
+                                                Content="{Binding ToggleText}"
+                                                Foreground="{Binding ToggleColor}"
+                                                IsEnabled="{Binding IsNotMe}"
+                                                Style="{StaticResource MaterialDesignFlatButton}"
+                                                Tag="{Binding}" />
 
-                                        <Button
-                                            Click="DeleteUser_Click"
-                                            Content="PURGE"
-                                            Foreground="{StaticResource CriminologyRed}"
-                                            IsEnabled="{Binding IsNotMe}"
-                                            Style="{StaticResource MaterialDesignFlatButton}"
-                                            Tag="{Binding id}" />
-                                    </StackPanel>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                    </DataGrid.Columns>
-                </DataGrid>
-            </materialDesign:Card>
-        </Grid>
-    </Border>
+                                            <Button
+                                                Click="DeleteUser_Click"
+                                                Content="PURGE"
+                                                Foreground="{StaticResource CriminologyRed}"
+                                                IsEnabled="{Binding IsNotMe}"
+                                                Style="{StaticResource MaterialDesignFlatButton}"
+                                                Tag="{Binding id}" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </materialDesign:Card>
+            </Grid>
+        </Border>
+    </materialDesign:DialogHost>
 </UserControl>

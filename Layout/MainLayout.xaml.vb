@@ -53,14 +53,14 @@ Namespace Layout
                     ' Dashboard: Real-time Reviewee Activity
                     AddSidebarButton("DASHBOARD", "ViewDashboard", AddressOf ExamAnalytics_Click)
                     ' SWOT: Strength/Weakness Analysis (Dossiers)
-                    AddSidebarButton("SWOT ANALYTICS", "ChartAreaspline", AddressOf SWOTAnalytics_Click)
+                    ' AddSidebarButton("SWOT ANALYTICS", "ChartAreaspline", AddressOf SWOTAnalytics_Click)
                     
                     AddSidebarButton("MANAGE USERS", "AccountGroup", AddressOf ManageUsers_Click)
                 Case "ReviewDirector"
                     ' Dashboard: Real-time Reviewee Activity
                     AddSidebarButton("DASHBOARD", "ViewDashboard", AddressOf ExamAnalytics_Click)
                     ' SWOT: Strength/Weakness Analysis (Dossiers)
-                    AddSidebarButton("SWOT ANALYTICS", "ChartAreaspline", AddressOf SWOTAnalytics_Click)
+                    ' AddSidebarButton("SWOT ANALYTICS", "ChartAreaspline", AddressOf SWOTAnalytics_Click)
 
                     AddSidebarButton("MATERIALS", "Library", AddressOf Material_Click)
                     AddSidebarButton("GENERATE EXAM", "AutoFix", AddressOf Generate_Click)

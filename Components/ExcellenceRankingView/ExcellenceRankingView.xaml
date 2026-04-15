@@ -1,0 +1,125 @@
+<UserControl
+    x:Class="Components.ExcellenceRankingView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </UserControl.Resources>
+
+    <Grid Background="#F9F9F9">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <Border Padding="16" Background="White">
+                <StackPanel>
+                    <Grid Margin="0,0,0,24">
+                        <StackPanel>
+                            <TextBlock
+                                FontSize="18"
+                                FontWeight="Black"
+                                Foreground="#1A1A1A"
+                                Text="GLOBAL EXCELLENCE" />
+                            <TextBlock
+                                FontSize="11"
+                                FontWeight="Bold"
+                                Opacity="0.5"
+                                Text="TOP 5 SUBJECT LEADERS" />
+                        </StackPanel>
+
+                        <Button
+                            Height="30"
+                            HorizontalAlignment="Right"
+                            Click="btnInternalClose_Click"
+                            Content="BACK TO EXAMS"
+                            FontSize="10"
+                            Style="{StaticResource MaterialDesignOutlinedButton}" />
+                    </Grid>
+
+                    <ItemsControl x:Name="lstExcelCharts">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <materialDesign:Card
+                                    Margin="0,0,0,16"
+                                    Padding="20"
+                                    Background="White"
+                                    UniformCornerRadius="8">
+                                    <StackPanel>
+
+                                        <Grid Margin="0,0,0,12">
+                                            <TextBlock
+                                                FontSize="16"
+                                                FontWeight="Black"
+                                                Foreground="#1A1A1A"
+                                                Text="{Binding material_name}"
+                                                TextTrimming="CharacterEllipsis" />
+                                        </Grid>
+
+                                        <Separator Margin="0,0,0,10" Opacity="0.1" />
+
+                                        <ItemsControl ItemsSource="{Binding TopPerformers}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border
+                                                        Padding="0,6"
+                                                        BorderBrush="#F8F8F8"
+                                                        BorderThickness="0,0,0,1">
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="35" />
+                                                                <ColumnDefinition Width="*" />
+                                                                <ColumnDefinition Width="75" />
+                                                            </Grid.ColumnDefinitions>
+
+                                                            <TextBlock
+                                                                VerticalAlignment="Center"
+                                                                FontWeight="Black"
+                                                                Opacity="0.3"
+                                                                Text="{Binding rank_display}" />
+
+                                                            <StackPanel
+                                                                Grid.Column="1"
+                                                                VerticalAlignment="Center"
+                                                                Orientation="Horizontal">
+                                                                <materialDesign:PackIcon
+                                                                    Width="14"
+                                                                    Margin="0,0,8,0"
+                                                                    Foreground="Gold"
+                                                                    Kind="Crown"
+                                                                    Visibility="{Binding is_first, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                                                <TextBlock
+                                                                    FontSize="13"
+                                                                    FontWeight="SemiBold"
+                                                                    Text="{Binding student_name}" />
+                                                            </StackPanel>
+
+                                                            <StackPanel
+                                                                Grid.Column="2"
+                                                                HorizontalAlignment="Right"
+                                                                VerticalAlignment="Center">
+                                                                <TextBlock
+                                                                    HorizontalAlignment="Right"
+                                                                    FontWeight="Black"
+                                                                    Foreground="#2196F3"
+                                                                    Text="{Binding percentage, StringFormat={}{0:F1}%}" />
+                                                                <TextBlock
+                                                                    HorizontalAlignment="Right"
+                                                                    FontSize="8"
+                                                                    Opacity="0.5"
+                                                                    Text="{Binding total_items, StringFormat={}{0} items}" />
+                                                            </StackPanel>
+                                                        </Grid>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+
+                                    </StackPanel>
+                                </materialDesign:Card>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

@@ -48,68 +48,11 @@ Namespace Views.Reviewee
                 Dim resp = Await AnalyticsRepo.get_exam_statsAsync(req)
                 
                 If resp IsNot Nothing AndAlso resp.Success Then
-                    UpdateForensicUI(resp.Data)
+                    Await ctrlAnalytics.FetchExamIntel(examId, _currentUserId)
                     ShowResultDossier(resp.Data) ' Trigger the Messagebox
                 End If
             End If
         End Function
-
-        Private Sub UpdateForensicUI(data As ExamAnalyticsResponse)
-            txtUserAvg.Text = $"{data.overall_competency:F1}%"
-            _activeLogs = data.question_logs ' Cache the micro-logs
-
-            Dim totalEarned As Integer = 0
-            Dim totalPossible As Integer = 0
-
-            If _activeLogs IsNot Nothing Then
-                Dim enumerable = _activeLogs.AsEnumerable()
-                totalEarned = enumerable.Count(Function(q) q.is_correct) ' Uses LINQ Method
-                totalPossible = enumerable.Count
-            End If
-
-            ' 3. UPDATE THE TOP HEADER UI
-            txtUserAvg.Text = $"{data.overall_competency:F1}%"
-            txtOverallScore.Text = totalEarned.ToString()
-            txtOverallTotal.Text = totalPossible.ToString()
-
-            Dim fullList = data.material_breakdown
-            lstMaterialBreakdown.ItemsSource = Nothing
-            lstMaterialBreakdown.ItemsSource = fullList
-
-            lstWeakBreakdown.ItemsSource = Nothing
-            lstWeakBreakdown.ItemsSource = fullList.Where(Function(x) x.percentage < 75).ToList()
-        End Sub
-
-        Private Sub MaterialCard_Click(sender As Object, e As MouseButtonEventArgs)
-            Dim border = TryCast(sender, Border)
-            Dim metric = TryCast(border?.DataContext, PerformanceMetric)
-
-            If metric IsNot Nothing AndAlso _activeLogs IsNot Nothing Then
-                ' 1. Filter logs locally
-                Dim filtered = _activeLogs.Where(Function(q) q.material_id = metric.id).ToList()
-
-                ' 2. UI Check: If no questions match, we need to know!
-                If filtered.Count = 0 Then
-                    MessageBox.Show($"No question logs found for {metric.label}.", "Data Gap Detected")
-                    Return
-                End If
-
-                ' 3. Update Overlay UI
-                txtPopupHeader.Text = $"FORENSIC: {metric.label.ToUpper()}"
-                lstForensicQuestions.ItemsSource = filtered
-
-                ' 4. Bloom the Overlay
-                pnlForensicOverlay.Visibility = Visibility.Visible
-                
-                ' 5. Protocol: Ensure nothing else is capturing mouse
-                e.Handled = True 
-            End If
-        End Sub
-
-        Private Sub CloseForensic_Click(sender As Object, e As RoutedEventArgs)
-            pnlForensicOverlay.Visibility = Visibility.Collapsed
-            lstForensicQuestions.ItemsSource = Nothing
-        End Sub
 
         Private Sub ShowResultDossier(data As ExamAnalyticsResponse)
             Dim msg As String = ""
@@ -164,65 +107,24 @@ Namespace Views.Reviewee
             
             Dim selectedExam = TryCast(currentLB.SelectedItem, ExamListOut)
 
-            ' Reset other group highlights
+            ' 1. Visual Cleanup: Reset other group highlights
+            ClearOtherSelections(currentLB)
+
+            ' 2. CRITICAL FIX: Use UniversalStatsView to fetch Personal Stats
+            ' We pass both the Exam ID and the Current Logged-in User ID
+            Await ctrlAnalytics.FetchExamIntel(selectedExam.id, _currentUserId)
+        End Sub
+
+        Private Sub ClearOtherSelections(activeLB As ListBox)
             For i As Integer = 0 To lstExams.Items.Count - 1
                 Dim container = lstExams.ItemContainerGenerator.ContainerFromIndex(i)
                 If container IsNot Nothing Then
                     Dim childLB = FindVisualChild(Of ListBox)(container)
-                    If childLB IsNot Nothing AndAlso childLB IsNot currentLB Then childLB.SelectedIndex = -1
+                    If childLB IsNot Nothing AndAlso childLB IsNot activeLB Then 
+                        childLB.SelectedIndex = -1
+                    End If
                 End If
             Next
-
-            Dim req As New StatsRequest With {
-                .examination_id = selectedExam.id,
-                .user_id = _currentUserId
-            }
-            
-            Dim resp = Await AnalyticsRepo.get_exam_statsAsync(req)
-            
-            If resp IsNot Nothing AndAlso resp.Success AndAlso resp.Data IsNot Nothing Then
-                _activeLogs = resp.Data.question_logs 
-
-                If _activeLogs Is Nothing OrElse _activeLogs.Count = 0 Then
-                    ' NO ATTEMPTS FOUND
-                    pnlNoData.Visibility = Visibility.Visible
-                    scrMainAnalytics.Visibility = Visibility.Collapsed
-                    
-                    ' Reset Header to neutral
-                    txtUserAvg.Text = "---"
-                    txtOverallScore.Text = "0"
-                    txtOverallTotal.Text = "0"
-                    Return ' Exit early, nothing to bind
-                End If
-
-                ' DATA DETECTED
-                pnlNoData.Visibility = Visibility.Collapsed
-                scrMainAnalytics.Visibility = Visibility.Visible
-                
-                ' 2. COMPUTE OVERALL SCORE ONCE (From the entire session logs)
-                ' Using .Count property for total and .Count() extension for conditional
-                Dim totalEarned As Integer = 0
-                Dim totalPossible As Integer = 0
-
-                If _activeLogs IsNot Nothing Then
-                    Dim enumerable = _activeLogs.AsEnumerable()
-                    totalEarned = enumerable.Count(Function(q) q.is_correct) ' Uses LINQ Method
-                    totalPossible = enumerable.Count
-                End If
-
-                ' 3. UPDATE THE TOP HEADER UI
-                txtUserAvg.Text = $"{resp.Data.overall_competency:F1}%"
-                txtOverallScore.Text = totalEarned.ToString()
-                txtOverallTotal.Text = totalPossible.ToString()
-                
-                ' 4. BIND THE SUBJECT LISTS
-                Dim fullList = resp.Data.material_breakdown
-                lstMaterialBreakdown.ItemsSource = Nothing
-                lstMaterialBreakdown.ItemsSource = fullList
-                
-                lstWeakBreakdown.ItemsSource = Nothing
-                lstWeakBreakdown.ItemsSource = fullList.Where(Function(x) x.percentage < 75).ToList()
-            End If
         End Sub
 
         Private Function FindVisualChild(Of T As DependencyObject)(parent As DependencyObject) As T

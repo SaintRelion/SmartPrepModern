@@ -255,7 +255,7 @@
                                                         FontWeight="Bold"
                                                         Header="EXAM FOCUS" />
 
-                                                <DataGridTextColumn
+                                                <!-- <DataGridTextColumn
                                                         Width="130"
                                                         Binding="{Binding material_config, Converter={StaticResource ConfigConverter}}"
                                                         FontSize="10"
@@ -267,9 +267,9 @@
                                                                         <Setter Property="VerticalAlignment" Value="Center" />
                                                                 </Style>
                                                         </DataGridTextColumn.ElementStyle>
-                                                </DataGridTextColumn>
+                                                </DataGridTextColumn>-->
 
-                                                <DataGridTextColumn Width="70" Header="PROG.">
+                                                <DataGridTextColumn Width="100" Header="PROG.">
                                                         <DataGridTextColumn.Binding>
                                                                 <MultiBinding StringFormat="{}{0}/{1}">
                                                                         <Binding Path="generated_count" />
@@ -306,8 +306,8 @@
                                                 </DataGridTemplateColumn>
 
                                                 <DataGridTextColumn
-                                                        Width="90"
-                                                        Binding="{Binding created_at, StringFormat=\{0:MM/dd HH:mm\}}"
+                                                        Width="130"
+                                                        Binding="{Binding created_at, StringFormat={}{0:MMMM dd, yyyy - hh tt}}"
                                                         Header="DATE" />
                                         </DataGrid.Columns>
                                 </DataGrid>

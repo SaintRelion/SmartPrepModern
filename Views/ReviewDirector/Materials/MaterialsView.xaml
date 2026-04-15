@@ -104,8 +104,8 @@
                                         <RowDefinition Height="*" />
                                 </Grid.RowDefinitions>
 
-                                <Grid Background="{StaticResource CriminologyRed}">
-                                        <StackPanel Orientation="Horizontal">
+                                <Grid Height="45" Background="{StaticResource CriminologyRed}">
+                                        <StackPanel Margin="15,0,0,0" Orientation="Horizontal">
                                                 <materialDesign:PackIcon
                                                         VerticalAlignment="Center"
                                                         Foreground="White"
@@ -120,12 +120,13 @@
 
                                         <Button
                                                 x:Name="btnSync"
+                                                Margin="0,0,5,0"
                                                 HorizontalAlignment="Right"
                                                 VerticalAlignment="Center"
                                                 Click="Sync_Click"
                                                 Foreground="White"
                                                 Style="{StaticResource MaterialDesignFlatButton}"
-                                                ToolTip="Re-process pending inductions">
+                                                ToolTip="Re-process pending materials">
                                                 <StackPanel Orientation="Horizontal">
                                                         <materialDesign:PackIcon VerticalAlignment="Center" Kind="Sync" />
                                                         <TextBlock
@@ -152,34 +153,56 @@
                                                         FontWeight="Bold"
                                                         Header="TITLE" />
 
-                                                <DataGridTemplateColumn Width="150" Header="STATUS">
+                                                <DataGridTemplateColumn Width="220" Header="PROCESSING STATUS">
                                                         <DataGridTemplateColumn.CellTemplate>
                                                                 <DataTemplate>
-                                                                        <StackPanel x:Name="StatusContainer" Orientation="Horizontal">
-                                                                                <materialDesign:PackIcon
-                                                                                        x:Name="StatusIcon"
-                                                                                        VerticalAlignment="Center"
-                                                                                        Kind="ClockOutline"
-                                                                                        Opacity="0.5" />
-                                                                                <TextBlock
-                                                                                        x:Name="StatusText"
-                                                                                        Margin="8,0,0,0"
-                                                                                        VerticalAlignment="Center"
-                                                                                        Text="Pending" />
-                                                                        </StackPanel>
+                                                                        <Grid Margin="4" VerticalAlignment="Center">
+                                                                                <StackPanel x:Name="StatusContainer" Orientation="Horizontal">
+                                                                                        <materialDesign:PackIcon
+                                                                                                x:Name="StatusIcon"
+                                                                                                VerticalAlignment="Center"
+                                                                                                Kind="ClockOutline"
+                                                                                                Opacity="0.5" />
+                                                                                        <TextBlock
+                                                                                                x:Name="StatusText"
+                                                                                                Margin="8,0,0,0"
+                                                                                                VerticalAlignment="Center"
+                                                                                                Text="Pending Materials" />
+                                                                                </StackPanel>
+
+                                                                                <StackPanel x:Name="ProgressContainer" Visibility="Collapsed">
+                                                                                        <TextBlock
+                                                                                                FontSize="10"
+                                                                                                FontWeight="Black"
+                                                                                                Foreground="Orange">
+                                                                                                <Run Text="ANALYZING CONTENT: " />
+                                                                                                <Run Text="{Binding processing_progress}" />
+                                                                                                <Run Text="%" />
+                                                                                        </TextBlock>
+                                                                                        <ProgressBar
+                                                                                                Height="6"
+                                                                                                Margin="0,4,0,0"
+                                                                                                Background="#33FFA500"
+                                                                                                Foreground="Orange"
+                                                                                                IsIndeterminate="False"
+                                                                                                Maximum="100"
+                                                                                                Minimum="0"
+                                                                                                Value="{Binding processing_progress}" />
+                                                                                </StackPanel>
+                                                                        </Grid>
 
                                                                         <DataTemplate.Triggers>
                                                                                 <DataTrigger Binding="{Binding processed_by_ai}" Value="1">
-                                                                                        <Setter TargetName="StatusIcon" Property="Kind" Value="Brain" />
-                                                                                        <Setter TargetName="StatusIcon" Property="Foreground" Value="Orange" />
-                                                                                        <Setter TargetName="StatusIcon" Property="Opacity" Value="1" />
-                                                                                        <Setter TargetName="StatusText" Property="Text" Value="Analyzing..." />
+                                                                                        <Setter TargetName="StatusContainer" Property="Visibility" Value="Collapsed" />
+                                                                                        <Setter TargetName="ProgressContainer" Property="Visibility" Value="Visible" />
                                                                                 </DataTrigger>
+
                                                                                 <DataTrigger Binding="{Binding processed_by_ai}" Value="2">
                                                                                         <Setter TargetName="StatusIcon" Property="Kind" Value="CheckCircle" />
                                                                                         <Setter TargetName="StatusIcon" Property="Foreground" Value="Green" />
                                                                                         <Setter TargetName="StatusIcon" Property="Opacity" Value="1" />
-                                                                                        <Setter TargetName="StatusText" Property="Text" Value="Ready" />
+                                                                                        <Setter TargetName="StatusText" Property="Text" Value="Material Ready" />
+                                                                                        <Setter TargetName="StatusText" Property="Foreground" Value="Green" />
                                                                                 </DataTrigger>
                                                                         </DataTemplate.Triggers>
                                                                 </DataTemplate>
@@ -188,8 +211,8 @@
 
                                                 <DataGridTextColumn
                                                         Width="200"
-                                                        Binding="{Binding created_at}"
-                                                        Header="DATE INDUCTED" />
+                                                        Binding="{Binding created_at, StringFormat=\{0:MM/dd HH:mm\}}"
+                                                        Header="DATE SUBMITTED" />
 
                                         </DataGrid.Columns>
                                 </DataGrid>

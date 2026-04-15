@@ -21,7 +21,8 @@ Namespace Views.ReviewDirector
             lstLog.ItemsSource = _logs
             LoadMaterials()
 
-            Task.Run(AddressOf SetupWebSocket)
+            ' Task.Run(AddressOf SetupWebSocket)
+            Task.Run(AddressOf StartBackgroundRefresh)
         End Sub
 
         Private Sub AddLog(msg As String)
@@ -31,29 +32,53 @@ Namespace Views.ReviewDirector
             End Sub)
         End Sub
 
+        Private _isRefreshing As Boolean = False
+
+        Private Sub StopBackgroundRefresh()
+            _isRefreshing = False
+        End Sub
+
+        Private Async Sub StartBackgroundRefresh()
+            ' Prevent multiple loops from running
+            If _isRefreshing Then Return
+            _isRefreshing = True
+
+            While _isRefreshing
+                Try
+                    Await Task.Delay(10000)
+
+                    Await Dispatcher.InvokeAsync(Async Function()
+                        Await LoadMaterials()
+                    End Function)
+
+                Catch ex As Exception
+                    Debug.WriteLine("Polling Error: " & ex.Message)
+                    ' If the app is closing or error happens, stop the loop
+                    _isRefreshing = False
+                End Try
+            End While
+        End Sub
+
         Private Async Sub SetupWebSocket()
             While Not _cts.IsCancellationRequested
                 Try
                     Using client As New ClientWebSocket()
                         ' Note the clean URL we defined in FastAPI
-                        Dim uri As New Uri("ws://smartprep-api.opsularity.space/ws")
+                        Dim uri As New Uri("wss://api.smartprepcrim.online/ws")
                         ' Dim uri As New Uri("ws://localhost:8000/ws")
                         Await client.ConnectAsync(uri, _cts.Token)
                         AddLog("Socket: Forensic Link Active.")
 
-                        Dim buffer(1024) As Byte
+                        Dim buffer(4096) As Byte
                         While client.State = WebSocketState.Open
                             Dim result = Await client.ReceiveAsync(New ArraySegment(Of Byte)(buffer), _cts.Token)
-                            
-                            If result.MessageType = WebSocketMessageType.Close Then Exit While
+                            Dim raw = Encoding.UTF8.GetString(buffer, 0, result.Count)
 
-                            Dim message = Encoding.UTF8.GetString(buffer, 0, result.Count)
-                            
-                            ' Handle the Refresh Signal
-                            If message = "REFRESH_MATERIALS" Then
-                                Me.Dispatcher.Invoke(Async Sub() 
-                                    Await LoadMaterials()
-                                    AddLog("Real-time: Database Synchronized.")
+                            ' Use .Contains because of the padding and delimiter
+                            If raw.Contains("REFRESH_PROGRESS") Then
+                                AddLog("SOCKET: Update Signal Received.")
+                                Application.Current.Dispatcher.Invoke(Async Sub()
+                                    Await LoadMaterials() 
                                 End Sub)
                             End If
                         End While

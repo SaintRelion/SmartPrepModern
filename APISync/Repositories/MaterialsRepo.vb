@@ -18,8 +18,8 @@ Namespace APISync.Repositories
         End Function
 
         ''' <summary> Calls: POST materials/sync_pending_materials </summary>
-        Public Shared Async Function sync_pending_materialsAsync() As Task(Of ApiResponse(Of object))
-            Return Await ApiService.PostAsync(Of object)("materials/sync_pending_materials", Nothing)
+        Public Shared Async Function sync_pending_materialsAsync() As Task(Of ApiResponse(Of SyncPendingResponse))
+            Return Await ApiService.PostAsync(Of SyncPendingResponse)("materials/sync_pending_materials", Nothing)
         End Function
 
         ''' <summary> Calls: POST materials/upload_material </summary>

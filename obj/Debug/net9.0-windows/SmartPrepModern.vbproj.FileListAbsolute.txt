@@ -53,3 +53,7 @@ D:\ClientProjects\SmartPrepProject\SmartPrepModern\obj\Debug\net9.0-windows\Smar
 D:\ClientProjects\SmartPrepProject\SmartPrepModern\obj\Debug\net9.0-windows\GeneratedInternalTypeHelper.g.vb
 D:\ClientProjects\SmartPrepProject\SmartPrepModern\obj\Debug\net9.0-windows\Views\Admin\AddUserPopup\AddUserPopup.baml
 D:\ClientProjects\SmartPrepProject\SmartPrepModern\obj\Debug\net9.0-windows\Views\Admin\AddUserPopup\AddUserPopup.g.vb
+D:\ClientProjects\SmartPrepProject\SmartPrepModern\obj\Debug\net9.0-windows\Components\UniversalStats\UniversalStatsView.baml
+D:\ClientProjects\SmartPrepProject\SmartPrepModern\obj\Debug\net9.0-windows\Components\UniversalStats\UniversalStatsView.g.vb
+D:\ClientProjects\SmartPrepProject\SmartPrepModern\obj\Debug\net9.0-windows\Components\ExcellenceRankingView\ExcellenceRankingView.baml
+D:\ClientProjects\SmartPrepProject\SmartPrepModern\obj\Debug\net9.0-windows\Components\ExcellenceRankingView\ExcellenceRankingView.g.vb

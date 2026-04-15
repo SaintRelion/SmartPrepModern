@@ -1,106 +1,58 @@
 Imports SmartPrepModern.APISync.Models
 Imports SmartPrepModern.APISync.Repositories
+Imports SmartPrepModern.Components.Models
 
 Namespace Views.Analytics
     Public Class SWOTAnalyticsView
         Inherits UserControl
 
+        ' Track the last exam ID so refresh works
+        Private _lastExamId As Integer = 1 
+
         Public Sub New()
             InitializeComponent()
-            AddHandler Me.Loaded, AddressOf OnLoaded
         End Sub
 
-        Private Async Sub OnLoaded(sender As Object, e As RoutedEventArgs)
-            Await LoadDossiers()
+        ''' <summary>
+        ''' The engine that converts raw API data into SWOT profiles with Progress Bars.
+        ''' </summary>
+        Public Sub RefreshSWOT(terminalData As UniversalStatsModel)
+            If terminalData?.SubjectMetrics Is Nothing Then Return
+
+            Dim dossiers As New List(Of LocalRevieweeSWOT)()
+
+            ' FIX: Use 'rMetric' instead of 'reviewee' to avoid Namespace conflict (BC30112)
+            For Each rMetric As PerformanceMetric In terminalData.SubjectMetrics
+                dossiers.Add(New LocalRevieweeSWOT With {
+                    .UserID = rMetric.id,
+                    .Username = rMetric.label,
+                    .OverallAvg = rMetric.percentage,
+                    .SubjectProgress = rMetric.material_breakdown ' Recursive nested subjects
+                })
+            Next
+
+            ' Bind to the UI
+            lstDossiers.ItemsSource = dossiers.OrderByDescending(Function(d) d.OverallAvg).ToList()
         End Sub
 
+        ''' <summary>
+        ''' FULL CODE: Logic to re-sync data when the Refresh button is clicked.
+        ''' </summary>
         Private Async Sub Refresh_Click(sender As Object, e As RoutedEventArgs)
-            Await LoadDossiers()
-        End Sub
-
-        Private Async Function LoadDossiers() As Task
-            ' 1. Tactical Limit Parsing
-            Dim selectedLimit As Integer = 10
-            Dim limitItem = TryCast(cmbLimit.SelectedItem, ComboBoxItem)
-            
-            If limitItem IsNot Nothing Then
-                If limitItem.Content.ToString() = "All" Then
-                    selectedLimit = -1
-                Else
-                    Integer.TryParse(limitItem.Content.ToString(), selectedLimit)
-                End If
-            End If
-
-            ' 2. Prepare Request (Removing material_ids as discussed)
-            Dim req As New StatsRequest With { 
-                .limit = selectedLimit
-            }
-            
-            ' Strike the API
-            Dim response = Await AnalyticsRepo.get_personnel_statsAsync(req)
-
-            If response.Success AndAlso response.Data IsNot Nothing Then
-                Dim data = response.Data
+            ' Strike the API for the current exam context
+            Try
+                Dim resp = Await AnalyticsRepo.get_exam_statsAsync(New StatsRequest With {.examination_id = _lastExamId})
                 
-                ' Update Global KPIs
-                txtGlobalAvg.Text = $"{data.avg_proficiency:F1}%"
-                txtCritWeak.Text = data.critical_weakness.ToUpper()
-
-                ' 3. Map raw Dossiers to UI ViewModels
-                Dim dossierList = data.dossiers.Select(Function(d) New DossierViewModel(d)).ToList()
-
-                ' 4. Apply Sort Intelligence Logic
-                Select Case cmbSortMode.SelectedIndex
-                    Case 0 ' Highest Proficiency
-                        dossierList = dossierList.OrderByDescending(Function(x) x.overall_competency).ToList()
-                    Case 1 ' Lowest Proficiency
-                        dossierList = dossierList.OrderBy(Function(x) x.overall_competency).ToList()
-                    Case 2 ' Critical Failures First
-                        ' We sort by the lowest percentage found in their WeaknessList
-                        dossierList = dossierList.OrderBy(Function(x) 
-                            Return If(x.WeaknessList.Any(), x.WeaknessList.First().percentage, 100.0)
-                        End Function).ToList()
-                End Select
-
-                ' Bind to the UI
-                lstDossiers.ItemsSource = dossierList
-            End If
-        End Function
-
-        Public Class DossierViewModel
-            Public Property id As Integer
-            Public Property username As String
-            Public Property overall_competency As Double
-            Public Property StrengthList As List(Of PerformanceMetric)
-            Public Property WeaknessList As List(Of PerformanceMetric)
-
-            Public ReadOnly Property HasStrengths As Boolean
-                Get
-                    Return StrengthList IsNot Nothing AndAlso StrengthList.Count > 0
-                End Get
-            End Property
-
-            Public ReadOnly Property HasWeaknesses As Boolean
-                Get
-                    Return WeaknessList IsNot Nothing AndAlso WeaknessList.Count > 0
-                End Get
-            End Property
-
-            Public ReadOnly Property CompetencyBrush As Brush
-                Get
-                    Return If(overall_competency >= 80, Brushes.Green, New SolidColorBrush(Color.FromRgb(183, 28, 28)))
-                End Get
-            End Property
-
-            Public Sub New(stat As PersonnelStat)
-                Me.id = stat.user_id
-                Me.username = stat.username
-                Me.overall_competency = stat.overall_competency
-                ' Strengths: Accuracy >= 75%
-                Me.StrengthList = stat.material_breakdown.Where(Function(m) m.percentage >= 75).OrderByDescending(Function(m) m.percentage).Take(3).ToList()
-                ' Weaknesses: Accuracy < 75%
-                Me.WeaknessList = stat.material_breakdown.Where(Function(m) m.percentage < 75).OrderBy(Function(m) m.percentage).Take(3).ToList()
-            End Sub
-        End Class
+                If resp?.Success AndAlso resp.Data IsNot Nothing Then
+                    ' Create a temporary model to pass to the mapper
+                    Dim tempModel As New UniversalStatsModel With {
+                        .SubjectMetrics = resp.Data.material_breakdown
+                    }
+                    RefreshSWOT(tempModel)
+                End If
+            Catch ex As Exception
+                MessageBox.Show("Failed to refresh SWOT dossiers: " & ex.Message)
+            End Try
+        End Sub
     End Class
 End Namespace

@@ -57,12 +57,17 @@ End Class
 - document_path: `String`
 - title_content: `String`
 - processed_by_ai: `Integer`
+- processing_progress: `Integer`
 - created_at: `String`
 ### GetSectionsRequest
 - material_id: `Integer`
 ### SectionItem
 - id: `Integer`
 - section_name: `String`
+### SyncPendingResponse
+- status: `String`
+- queued_count: `Integer`
+- message: `String`
 ### MaterialUploadRequest
 - file: `Byte()`
 - file_name: `String`
@@ -158,17 +163,17 @@ End Class
 - correct_answer: `String`
 - is_correct: `Boolean`
 - material_id: `Integer`
-### PersonnelAnalyticsResponse
-- avg_proficiency: `Double`
-- total_active: `Integer`
-- critical_weakness: `String`
-- dossiers: `List(Of PersonnelStat)`
-### PersonnelStat
-- user_id: `Integer`
-- username: `String`
-- overall_competency: `Double`
-- material_breakdown: `List(Of PerformanceMetric)`
-- section_breakdown: `List(Of PerformanceMetric)`
+### GlobalExcellenceResponse
+- success: `Boolean`
+- subject_leaderboards: `List(Of SubjectLeaderboard)`
+### SubjectLeaderboard
+- material_name: `String`
+- top_performers: `List(Of LeaderEntry)`
+### LeaderEntry
+- rank: `Integer`
+- student_name: `String`
+- percentage: `Double`
+- total_items: `Integer`
 
 ## 📡 REPOSITORIES
 ### AuthRepo
@@ -183,7 +188,7 @@ End Class
 ### MaterialsRepo
 - `get_materialsAsync`(req: `GetMaterialsRequest`) -> `List(Of MaterialListItem)`
 - `get_sectionsAsync`(req: `GetSectionsRequest`) -> `List(Of SectionItem)`
-- `sync_pending_materialsAsync`() -> `object`
+- `sync_pending_materialsAsync`() -> `SyncPendingResponse`
 - `upload_materialAsync`(req: `MaterialUploadRequest`) -> `MaterialUploadResponse`
 ### AIRepo
 - `generate_examAsync`(req: `ExamGenerationRequest`) -> `ExamGenerationResponse`
@@ -195,4 +200,4 @@ End Class
 - `sync_pending_examinationsAsync`() -> `object`
 ### AnalyticsRepo
 - `get_exam_statsAsync`(req: `StatsRequest`) -> `ExamAnalyticsResponse`
-- `get_personnel_statsAsync`(req: `StatsRequest`) -> `PersonnelAnalyticsResponse`
+- `get_global_excellenceAsync`() -> `GlobalExcellenceResponse`

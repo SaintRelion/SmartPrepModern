@@ -12,9 +12,9 @@ Namespace APISync.Repositories
             Return Await ApiService.PostAsync(Of ExamAnalyticsResponse)("analytics/get_exam_stats", req)
         End Function
 
-        ''' <summary> Calls: POST analytics/get_personnel_stats </summary>
-        Public Shared Async Function get_personnel_statsAsync(req As StatsRequest) As Task(Of ApiResponse(Of PersonnelAnalyticsResponse))
-            Return Await ApiService.PostAsync(Of PersonnelAnalyticsResponse)("analytics/get_personnel_stats", req)
+        ''' <summary> Calls: GET analytics/get_global_excellence </summary>
+        Public Shared Async Function get_global_excellenceAsync() As Task(Of ApiResponse(Of GlobalExcellenceResponse))
+            Return Await ApiService.GetAsync(Of GlobalExcellenceResponse)("analytics/get_global_excellence")
         End Function
     End Class
 

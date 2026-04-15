@@ -188,7 +188,7 @@ Namespace Views.ReviewDirector
             While Not _cts.IsCancellationRequested
                 Try
                     Using client As New ClientWebSocket()
-                        Dim uri As New Uri("ws://smartprep-api.opsularity.space/ws")
+                        Dim uri As New Uri("wss://api.smartprepcrim.online/ws")
                         ' Dim uri As New Uri("ws://localhost:8000/ws")
                         Await client.ConnectAsync(uri, _cts.Token)
                         LogMessage("Socket: Forensic Link Active.")
@@ -200,9 +200,10 @@ Namespace Views.ReviewDirector
                             If result.MessageType = WebSocketMessageType.Close Then Exit While
 
                             Dim message = Encoding.UTF8.GetString(buffer, 0, result.Count)
-                            
+
+                            LogMessage(message)
                             ' Handle the Refresh Signal
-                            If message = "REFRESH_MATERIALS" Then
+                            If message = "REFRESH_PROGESS" Then
                                 Me.Dispatcher.Invoke(Async Sub() 
                                     Await LoadExams()
                                     LogMessage("Real-time: Database Synchronized.")

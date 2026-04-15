@@ -5,6 +5,7 @@ Namespace APISync.Models
         Public Property document_path As String
         Public Property title_content As String
         Public Property processed_by_ai As Integer
+        Public Property processing_progress As Integer
         Public Property created_at As String
     End Class
 

@@ -1,0 +1,160 @@
+<UserControl
+    x:Class="Components.ExtractedItemsViewer"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    Background="{DynamicResource MaterialDesignPaper}">
+
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="CriminologyRed" Color="#B71C1C" />
+
+        <materialDesign:BooleanToVisibilityConverter
+            x:Key="InvertedBoolToVis"
+            FalseValue="Visible"
+            TrueValue="Collapsed" />
+        <materialDesign:BooleanToVisibilityConverter
+            x:Key="BoolToVis"
+            FalseValue="Collapsed"
+            TrueValue="Visible" />
+    </UserControl.Resources>
+
+    <Border
+        Width="850"
+        Height="700"
+        CornerRadius="8">
+        <Grid Margin="24">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0">
+                <Grid>
+                    <TextBlock
+                        x:Name="txtViewerHeader"
+                        FontSize="22"
+                        FontWeight="Black"
+                        Foreground="{StaticResource CriminologyRed}"
+                        Text="ITEM AUDIT" />
+                    <TextBlock
+                        x:Name="txtItemCount"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom"
+                        FontSize="14"
+                        FontWeight="Bold"
+                        Opacity="0.6"
+                        Text="Items: 0" />
+                </Grid>
+                <Separator Margin="0,8,0,16" />
+            </StackPanel>
+
+            <materialDesign:Card
+                x:Name="cardWarning"
+                Grid.Row="1"
+                Margin="0,0,0,16"
+                Padding="16"
+                Background="#FFF9FBE7"
+                Visibility="Collapsed">
+                <StackPanel>
+                    <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+                        <materialDesign:PackIcon
+                            VerticalAlignment="Center"
+                            Foreground="#FF827717"
+                            Kind="AlertCircleOutline" />
+                        <TextBlock
+                            Margin="8,0,0,0"
+                            FontWeight="Black"
+                            Foreground="#FF827717"
+                            Text="FORMATTING GUIDE" />
+                    </StackPanel>
+
+                    <TextBlock
+                        Margin="0,0,0,8"
+                        FontSize="12"
+                        FontWeight="Bold"
+                        Opacity="0.8"
+                        Text="If items are missing, ensure your document follows this exact multi-line structure:" />
+
+                    <Border
+                        Padding="12"
+                        Background="#33827717"
+                        CornerRadius="4">
+                        <TextBlock
+                            FontFamily="Consolas"
+                            FontSize="11"
+                            LineHeight="18">
+                            1. The question text goes here...<LineBreak />
+                            A. Choice One<LineBreak />
+                            B. Choice Two<LineBreak />
+                            Answer: A<LineBreak />
+                            <LineBreak />
+                            2. Next question follows immediately...</TextBlock>
+                    </Border>
+                </StackPanel>
+            </materialDesign:Card>
+
+            <Grid Grid.Row="2">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <ItemsControl x:Name="icItems">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border
+                                    Margin="0,0,0,16"
+                                    Padding="0,0,0,12"
+                                    BorderBrush="{DynamicResource MaterialDesignDivider}"
+                                    BorderThickness="0,0,0,1">
+                                    <StackPanel>
+                                        <TextBlock
+                                            Margin="0,0,0,10"
+                                            FontSize="15"
+                                            FontWeight="Bold"
+                                            TextWrapping="Wrap">
+                                            <Run Text="{Binding question_text}" />
+                                        </TextBlock>
+
+                                        <ItemsControl Margin="24,0,0,10" ItemsSource="{Binding choices}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Margin="0,2" Orientation="Horizontal">
+                                                        <TextBlock
+                                                            Width="30"
+                                                            FontWeight="Black"
+                                                            Foreground="Gray"
+                                                            Text="{Binding Key, StringFormat='({0}) '}" />
+                                                        <TextBlock Text="{Binding Value}" TextWrapping="Wrap" />
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+
+                                        <Border
+                                            Padding="12,4"
+                                            HorizontalAlignment="Left"
+                                            Background="#FFDCEDC8"
+                                            CornerRadius="4">
+                                            <TextBlock
+                                                FontSize="12"
+                                                FontWeight="Black"
+                                                Foreground="#FF33691E"
+                                                Text="{Binding correct_answer, StringFormat='ANSWER: {0}'}" />
+                                        </Border>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+
+            <Button
+                Grid.Row="3"
+                Margin="0,16,0,0"
+                HorizontalAlignment="Right"
+                Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
+                Content="CLOSE PREVIEW"
+                Style="{StaticResource MaterialDesignFlatButton}" />
+        </Grid>
+    </Border>
+</UserControl>

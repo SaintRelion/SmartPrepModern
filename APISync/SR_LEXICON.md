@@ -50,78 +50,101 @@ End Class
 - user_id: `Integer`
 - username: `String`
 - email: `String`
-### GetMaterialsRequest
-- processed_by_ai: `Integer`
-### MaterialListItem
+### CategoryCreateRequest
+- name: `String`
+### SlotCreateRequest
+- category_id: `Integer`
+- slot_name: `String`
+### DeleteSlotRequest
+- slot_id: `Integer`
+### CategoryItem
 - id: `Integer`
-- document_path: `String`
-- title_content: `String`
-- processed_by_ai: `Integer`
-- processing_progress: `Integer`
+- name: `String`
+### GetBySlotIdRequest
+- slot_id: `Integer`
+### QuestionnaireItem
+- id: `Integer`
+- questionnaire_id: `Integer`
+- question_text: `String`
+- choices: `Dictionary(Of String, String)`
+- correct_answer: `String`
+### GetByCategoryIdRequest
+- category_id: `Integer`
+### SourceReferenceItem
+- id: `Integer`
+- category_id: `Integer`
+- slot_name: `String`
+- material_path: `String`
+- questionnaire_path: `String`
+- is_material_uploaded: `Boolean`
+- is_questionnaire_extracted: `Boolean`
+- item_count: `Integer`
 - created_at: `String`
-### GetSectionsRequest
-- material_id: `Integer`
-### SectionItem
-- id: `Integer`
-- section_name: `String`
-### SyncPendingResponse
-- status: `String`
-- queued_count: `Integer`
-- message: `String`
-### MaterialUploadRequest
+### SlotUpdateRequest
+- slot_id: `Integer`
+- new_slot_name: `String`
+### UnifiedUploadRequest
 - file: `Byte()`
+- slot_id: `Integer`
 - file_name: `String`
-### MaterialUploadResponse
-- status: `String`
+- file_type: `String`
+### ExamDeleteRequest
+- exam_id: `Integer`
+### ExamDeleteResponse
+- success: `Boolean`
 - message: `String`
-- material_id: `Integer`
 ### ExamGenerationRequest
-- difficulty: `String`
-- focus: `String`
+- exam_name: `String`
 - total_items: `Integer`
-- materials: `Dictionary(Of String, Integer)`
+- is_randomized: `Boolean`
+- questionnaires: `Dictionary(Of String, Integer)`
 ### ExamGenerationResponse
 - status: `String`
 - message: `String`
 - examination_id: `Integer`
-### AdminExamStatusOut
-- id: `Integer`
-- focus: `String`
-- difficulty: `String`
-- total_items: `Integer`
-- material_config: `Dictionary(Of String, Integer)`
-- processed_by_ai: `Integer`
-- created_at: `DateTime`
-- generated_count: `Integer`
-- questions: `List(Of QuestionOut)`
-### QuestionOut
-- id: `Integer`
-- question_text: `String`
-- choices: `Dictionary(Of String, String)`
-- correct_answer: `String`
 ### ExamGetRequest
 - user_id: `Integer`
 - exam_id: `Integer`
 ### ExamOut
 - id: `Integer`
-- focus: `String`
-- difficulty: `String`
+- exam_name: `String`
 - total_items: `Integer`
 - questions: `List(Of QuestionOut)`
 - user_attempts: `Integer`
+### QuestionOut
+- id: `Integer`
+- question_text: `String`
+- option_a: `String`
+- option_b: `String`
+- option_c: `String`
+- option_d: `String`
+- answer: `String`
+### RevieweeStatusIn
+- examination_id: `Integer`
+### RevieweeStatusOut
+- id: `Integer`
+- username: `String`
+- email: `String`
+- has_taken: `Boolean`
 ### ExamListRequest
 - user_id: `Integer`
-- focus: `String`
-- difficulty: `String`
+- exam_name: `String`
 ### DailyExamListGroup
 - exam_date: `String`
 - exams: `List(Of ExamListOut)`
 ### ExamListOut
 - id: `Integer`
-- focus: `String`
-- difficulty: `String`
+- exam_name: `String`
+- category_name: `String`
 - created_at: `String`
-- reviewee_count: `Integer`
+- metric_count: `Integer`
+### ExamRenameRequest
+- exam_id: `Integer`
+- new_name: `String`
+### ExamRenameResponse
+- success: `Boolean`
+- message: `String`
+- updated_name: `String`
 ### SubmitAnswerRequest
 - answers: `List(Of AnswerIn)`
 ### AnswerIn
@@ -138,17 +161,48 @@ End Class
 - score: `Integer`
 - total: `Integer`
 - percentage: `Double`
+### ForensicAttemptRequest
+- examination_id: `Integer`
+- attempt_index: `Integer`
+- user_id: `Integer`
+### ForensicAttemptResponse
+- success: `Boolean`
+- comparative_items: `List(Of ForensicLogItem)`
+- message: `String`
+### ForensicLogItem
+- category_id: `Integer`
+- category_name: `String`
+- question_text: `String`
+- correct_answer: `String`
+- student_answer: `String`
+- is_correct: `Boolean`
+- previous_student_answer: `String`
+- previous_is_correct: `Boolean`
+- option_a_analysis: `String`
+- option_b_analysis: `String`
+- option_c_analysis: `String`
+- option_d_analysis: `String`
 ### StatsRequest
 - user_id: `Integer`
 - examination_id: `Integer`
 - focus: `String`
-- difficulty: `String`
 - material_ids: `List(Of Integer)`
 - limit: `Integer`
+### ComparativeTrendResponse
+- exam_id: `Integer`
+- user_id: `Integer`
+- trend_label: `String`
+- current_status: `String`
+- delta: `Double`
+- history: `List(Of BatchPerformance)`
+### BatchPerformance
+- attempt_number: `Integer`
+- average_accuracy: `Double`
+- examinee_count: `Integer`
+- date_recorded: `String`
 ### ExamAnalyticsResponse
 - overall_competency: `Double`
-- material_breakdown: `List(Of PerformanceMetric)`
-- difficulty_breakdown: `List(Of PerformanceMetric)`
+- topic_breakdown: `List(Of PerformanceMetric)`
 - question_logs: `List(Of QuestionForensic)`
 ### PerformanceMetric
 - id: `Integer`
@@ -156,24 +210,37 @@ End Class
 - score: `Integer`
 - total: `Integer`
 - percentage: `Double`
-- material_breakdown: `List(Of PerformanceMetric)`
+- topic_breakdown: `List(Of PerformanceMetric)`
 ### QuestionForensic
+- category_id: `Integer`
 - question_text: `String`
 - student_answer: `String`
 - correct_answer: `String`
 - is_correct: `Boolean`
-- material_id: `Integer`
+- option_a_analysis: `String`
+- option_b_analysis: `String`
+- option_c_analysis: `String`
+- option_d_analysis: `String`
 ### GlobalExcellenceResponse
 - success: `Boolean`
 - subject_leaderboards: `List(Of SubjectLeaderboard)`
 ### SubjectLeaderboard
-- material_name: `String`
+- topic_name: `String`
 - top_performers: `List(Of LeaderEntry)`
 ### LeaderEntry
 - rank: `Integer`
 - student_name: `String`
 - percentage: `Double`
 - total_items: `Integer`
+### GrowthTrendResponse
+- trend_label: `String`
+- unique_slots: `List(Of String)`
+- history: `List(Of SlotHistoryPoint)`
+### SlotHistoryPoint
+- date_recorded: `String`
+- slot_name: `String`
+- accuracy: `Double`
+- examinee_count: `Integer`
 
 ## 📡 REPOSITORIES
 ### AuthRepo
@@ -185,19 +252,26 @@ End Class
 - `request_resetAsync`(req: `PasswordResetRequest`) -> `GenericResponse`
 - `toggle_statusAsync`(req: `ToggleUserStatusRequest`) -> `DeleteResponse`
 - `update_userAsync`(req: `UpdateUserRequest`) -> `GenericResponse`
-### MaterialsRepo
-- `get_materialsAsync`(req: `GetMaterialsRequest`) -> `List(Of MaterialListItem)`
-- `get_sectionsAsync`(req: `GetSectionsRequest`) -> `List(Of SectionItem)`
-- `sync_pending_materialsAsync`() -> `SyncPendingResponse`
-- `upload_materialAsync`(req: `MaterialUploadRequest`) -> `MaterialUploadResponse`
-### AIRepo
+### SlotsRepo
+- `create_categoryAsync`(req: `CategoryCreateRequest`) -> `object`
+- `create_slotAsync`(req: `SlotCreateRequest`) -> `GenericResponse`
+- `delete_slotAsync`(req: `DeleteSlotRequest`) -> `GenericResponse`
+- `get_categoriesAsync`() -> `List(Of CategoryItem)`
+- `get_items_by_slotAsync`(req: `GetBySlotIdRequest`) -> `List(Of QuestionnaireItem)`
+- `get_slots_by_categoryAsync`(req: `GetByCategoryIdRequest`) -> `List(Of SourceReferenceItem)`
+- `update_slot_nameAsync`(req: `SlotUpdateRequest`) -> `GenericResponse`
+- `upload_source_fileAsync`(req: `UnifiedUploadRequest`) -> `GenericResponse`
+### ExamRepo
+- `delete_examAsync`(req: `ExamDeleteRequest`) -> `ExamDeleteResponse`
 - `generate_examAsync`(req: `ExamGenerationRequest`) -> `ExamGenerationResponse`
-### ReviewRepo
-- `admin_list_examsAsync`() -> `List(Of AdminExamStatusOut)`
 - `get_examAsync`(req: `ExamGetRequest`) -> `ExamOut`
+- `get_exam_revieweesAsync`(req: `RevieweeStatusIn`) -> `List(Of RevieweeStatusOut)`
 - `list_examsAsync`(req: `ExamListRequest`) -> `List(Of DailyExamListGroup)`
+- `rename_examAsync`(req: `ExamRenameRequest`) -> `ExamRenameResponse`
 - `submit_answersAsync`(req: `SubmitAnswerRequest`) -> `SubmissionSummary`
-- `sync_pending_examinationsAsync`() -> `object`
 ### AnalyticsRepo
-- `get_exam_statsAsync`(req: `StatsRequest`) -> `ExamAnalyticsResponse`
-- `get_global_excellenceAsync`() -> `GlobalExcellenceResponse`
+- `get_attempt_forensicsAsync`(req: `ForensicAttemptRequest`) -> `ForensicAttemptResponse`
+- `get_comparative_trendAsync`(req: `StatsRequest`) -> `ComparativeTrendResponse`
+- `get_exam_analyticsAsync`(req: `StatsRequest`) -> `ExamAnalyticsResponse`
+- `get_leaderboardAsync`() -> `GlobalExcellenceResponse`
+- `get_slot_growth_trendAsync`(req: `StatsRequest`) -> `GrowthTrendResponse`

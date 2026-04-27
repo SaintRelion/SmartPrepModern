@@ -2,8 +2,7 @@ Namespace APISync.Models
 
     Public Class ExamOut
         Public Property id As Integer
-        Public Property focus As String
-        Public Property difficulty As String
+        Public Property exam_name As String
         Public Property total_items As Integer
         Public Property questions As List(Of QuestionOut)
         Public Property user_attempts As Integer

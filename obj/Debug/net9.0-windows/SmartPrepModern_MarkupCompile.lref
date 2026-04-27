@@ -1,7 +1,13 @@
 ﻿D:\ClientProjects\SmartPrepProject\SmartPrepModern\obj\Debug\net9.0-windows\GeneratedInternalTypeHelper.g.vb
 FD:\ClientProjects\SmartPrepProject\SmartPrepModern\Application.xaml;;
+FD:\ClientProjects\SmartPrepProject\SmartPrepModern\Components\CategoryGroup\CategoryGroupView.xaml;;
+FD:\ClientProjects\SmartPrepProject\SmartPrepModern\Components\QuestionForensicView\QuestionForensicView.xaml;;
+FD:\ClientProjects\SmartPrepProject\SmartPrepModern\Components\TopicDiscoveryView\TopicDiscoveryView.xaml;;
+FD:\ClientProjects\SmartPrepProject\SmartPrepModern\Components\UniversalStats\UniversalStatsView.xaml;;
 FD:\ClientProjects\SmartPrepProject\SmartPrepModern\MainWindow.xaml;;
+FD:\ClientProjects\SmartPrepProject\SmartPrepModern\Views\Analytics\ComparisonAnalytics\ComparisonAnalyticsView.xaml;;
 FD:\ClientProjects\SmartPrepProject\SmartPrepModern\Views\Analytics\ExamAnalytics\ExamAnalyticsView.xaml;;
 FD:\ClientProjects\SmartPrepProject\SmartPrepModern\Views\ReviewDirector\Generate\GenerateView.xaml;;
-FD:\ClientProjects\SmartPrepProject\SmartPrepModern\Views\Reviewee\Dashboard\DashboardView.xaml;;
+FD:\ClientProjects\SmartPrepProject\SmartPrepModern\Views\ReviewDirector\ManageExam\ManageExam.xaml;;
+FD:\ClientProjects\SmartPrepProject\SmartPrepModern\Views\Reviewee\ExamList\ExamSessionView.xaml;;
 

@@ -1,0 +1,98 @@
+<UserControl
+    x:Class="Components.TopicDiscoveryView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="clr-namespace:SmartPrepModern.APISync.Models"
+    d:DesignHeight="600"
+    d:DesignWidth="400"
+    mc:Ignorable="d">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="0,0,0,20">
+            <TextBlock
+                FontSize="24"
+                FontWeight="Black"
+                Text="TOPIC DISCOVERY" />
+            <TextBlock
+                FontSize="12"
+                Opacity="0.5"
+                Text="Filter categories to find available questionnaires" />
+        </StackPanel>
+
+        <ListBox
+            x:Name="lstCategories"
+            Grid.Row="1"
+            Margin="0,0,0,15"
+            SelectionChanged="lstCategories_SelectionChanged"
+            Style="{StaticResource MaterialDesignFilterChipPrimaryListBox}">
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+            <ListBox.ItemTemplate>
+                <DataTemplate DataType="{x:Type models:CategoryItem}">
+                    <TextBlock Text="{Binding name}" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+            <ItemsControl x:Name="lstSlots">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type models:SourceReferenceItem}">
+                        <materialDesign:Card
+                            Margin="0,0,0,10"
+                            Padding="15"
+                            UniformCornerRadius="10">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel VerticalAlignment="Center">
+                                    <TextBlock
+                                        FontSize="16"
+                                        FontWeight="Black"
+                                        Text="{Binding slot_name}" />
+                                    <StackPanel Opacity="0.6" Orientation="Horizontal">
+                                        <materialDesign:PackIcon
+                                            Width="14"
+                                            Height="14"
+                                            VerticalAlignment="Center"
+                                            Kind="DatabaseCheck" />
+                                        <TextBlock
+                                            Margin="5,0,0,0"
+                                            VerticalAlignment="Center"
+                                            FontSize="11"
+                                            Text="{Binding item_count, StringFormat='{}{0} Questions Available'}" />
+                                    </StackPanel>
+                                </StackPanel>
+
+                                <Button
+                                    Grid.Column="1"
+                                    Click="AddTopic_Click"
+                                    Style="{StaticResource MaterialDesignIconButton}"
+                                    ToolTip="Add to Configuration">
+                                    <materialDesign:PackIcon
+                                        Width="24"
+                                        Height="24"
+                                        Kind="PlusCircleOutline" />
+                                </Button>
+                            </Grid>
+                        </materialDesign:Card>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

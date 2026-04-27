@@ -1,0 +1,520 @@
+<UserControl
+    x:Class="Components.QuestionForensicsView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:SmartPrepModern.Components"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <local:StringStartsWithConverter x:Key="StartsWithConverter" />
+    </UserControl.Resources>
+
+    <Border Background="White" CornerRadius="12">
+        <Grid Margin="24">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0" Margin="0,0,0,20">
+                <StackPanel>
+                    <TextBlock
+                        x:Name="txtForensicTitle"
+                        FontSize="20"
+                        FontWeight="Black"
+                        Text="QUESTION FORENSICS" />
+                    <TextBlock
+                        x:Name="txtSubtitle"
+                        FontSize="12"
+                        Opacity="0.5"
+                        Text="Detailed Item Analysis" />
+                </StackPanel>
+                <Button
+                    HorizontalAlignment="Right"
+                    Click="Close_Click"
+                    Style="{StaticResource MaterialDesignFlatButton}">
+                    <materialDesign:PackIcon Kind="Close" />
+                </Button>
+            </Grid>
+
+            <StackPanel
+                Grid.Row="1"
+                Margin="0,0,0,15"
+                Orientation="Horizontal">
+                <TextBlock
+                    Margin="0,0,10,0"
+                    VerticalAlignment="Center"
+                    FontSize="10"
+                    FontWeight="Black"
+                    Opacity="0.4"
+                    Text="FILTER BY:" />
+                <ComboBox
+                    x:Name="cmbFilter"
+                    Width="180"
+                    SelectionChanged="Filter_SelectionChanged"
+                    Style="{StaticResource MaterialDesignOutlinedComboBox}">
+                    <ComboBoxItem Content="ALL ITEMS" IsSelected="True" />
+                    <ComboBoxItem Content="CORRECT ONLY" />
+                    <ComboBoxItem Content="INCORRECT ONLY" />
+                </ComboBox>
+            </StackPanel>
+
+            <ListBox
+                x:Name="lstForensicQuestions"
+                Grid.Row="2"
+                HorizontalContentAlignment="Stretch"
+                Background="Transparent"
+                BorderThickness="0"
+                ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                <ListBox.GroupStyle>
+                    <GroupStyle>
+                        <GroupStyle.HeaderTemplate>
+                            <DataTemplate>
+                                <Border
+                                    Margin="0,10,0,5"
+                                    Padding="12,8"
+                                    Background="#F0F2F5"
+                                    CornerRadius="6">
+                                    <StackPanel Orientation="Horizontal">
+                                        <materialDesign:PackIcon
+                                            Width="14"
+                                            VerticalAlignment="Center"
+                                            Kind="LabelVariant"
+                                            Opacity="0.6" />
+                                        <TextBlock
+                                            Margin="10,0,0,0"
+                                            VerticalAlignment="Center"
+                                            FontSize="11"
+                                            FontWeight="Black"
+                                            Opacity="0.6"
+                                            Text="{Binding Name}" />
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </GroupStyle.HeaderTemplate>
+                    </GroupStyle>
+                </ListBox.GroupStyle>
+
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Border
+                            x:Name="ItemBorder"
+                            Margin="0,0,0,18"
+                            Padding="24"
+                            BorderThickness="3"
+                            CornerRadius="12">
+                            <StackPanel>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="45" /> 
+                                        <ColumnDefinition Width="*" />  
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock
+                                        Grid.Column="0"
+                                        Margin="0,2,0,0"
+                                        VerticalAlignment="Top"
+                                        FontSize="18"
+                                        FontWeight="Black"
+                                        Opacity="0.2"
+                                        Text="{Binding Id, StringFormat='{}{0}.'}" />
+
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock
+                                            Margin="0,0,0,20"
+                                            FontSize="16"
+                                            FontWeight="SemiBold"
+                                            LineHeight="22"
+                                            Text="{Binding QuestionText}"
+                                            TextWrapping="Wrap" />
+
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <StackPanel Grid.Column="0" Margin="0,0,12,0">
+                                                <TextBlock
+                                                    Margin="0,0,0,8"
+                                                    FontSize="10"
+                                                    FontWeight="Black"
+                                                    Opacity="0.5"
+                                                    Text="YOUR SELECTION" />
+                                                <Border
+                                                    x:Name="StudentAnswerBorder"
+                                                    Padding="14"
+                                                    CornerRadius="8">
+                                                    <TextBlock
+                                                        FontSize="14"
+                                                        FontWeight="Bold"
+                                                        Text="{Binding StudentAnswer}"
+                                                        TextWrapping="Wrap" />
+                                                </Border>
+
+                                                <Border
+                                                    Margin="0,12,0,0"
+                                                    Padding="10"
+                                                    Background="#0A000000"
+                                                    CornerRadius="6"
+                                                    Visibility="{Binding IsComparative, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                    <StackPanel>
+                                                        <TextBlock
+                                                            Margin="0,0,0,5"
+                                                            FontSize="9"
+                                                            FontWeight="Black"
+                                                            Opacity="0.4"
+                                                            Text="PREVIOUS ATTEMPT" />
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <materialDesign:PackIcon
+                                                                x:Name="PrevIcon"
+                                                                Width="16"
+                                                                Height="16"
+                                                                VerticalAlignment="Center"
+                                                                Kind="History" />
+                                                            <TextBlock
+                                                                Margin="8,0,0,0"
+                                                                VerticalAlignment="Center"
+                                                                FontSize="11"
+                                                                FontStyle="Italic"
+                                                                Opacity="0.6"
+                                                                Text="{Binding PreviousAnswer}"
+                                                                TextWrapping="Wrap" />
+                                                        </StackPanel>
+                                                    </StackPanel>
+                                                </Border>
+                                            </StackPanel>
+
+                                            <StackPanel Grid.Column="1" Margin="12,0,0,0">
+                                                <TextBlock
+                                                    Margin="0,0,0,8"
+                                                    FontSize="10"
+                                                    FontWeight="Black"
+                                                    Opacity="0.5"
+                                                    Text="CORRECT ANSWER" />
+                                                <Border
+                                                    Padding="14"
+                                                    Background="#204CAF50"
+                                                    BorderBrush="#2E7D32"
+                                                    BorderThickness="2"
+                                                    CornerRadius="8">
+                                                    <TextBlock
+                                                        FontSize="14"
+                                                        FontWeight="Bold"
+                                                        Foreground="#1B5E20"
+                                                        Text="{Binding CorrectAnswer}"
+                                                        TextWrapping="Wrap" />
+                                                </Border>
+                                            </StackPanel>
+                                        </Grid>
+
+                                    </StackPanel>
+                                </Grid>
+
+                                <Border
+                                    Margin="0,20,0,0"
+                                    Background="#F8F9FA"
+                                    BorderBrush="#DDD"
+                                    BorderThickness="1"
+                                    ClipToBounds="True"
+                                    CornerRadius="8">
+                                    <Expander Background="Transparent">
+                                        <Expander.Header>
+                                            <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                                                <materialDesign:PackIcon
+                                                    Width="18"
+                                                    Height="18"
+                                                    Kind="LayersSearchOutline"
+                                                    Opacity="0.6" />
+                                                <TextBlock
+                                                    Margin="12,0,0,0"
+                                                    FontSize="10"
+                                                    FontWeight="Black"
+                                                    Opacity="0.6"
+                                                    Text="EXPLORE OTHER DISTRACTOR ANALYSIS" />
+                                            </StackPanel>
+                                        </Expander.Header>
+                                        <StackPanel>
+                                            <Border
+                                                x:Name="optA"
+                                                Margin="0,0,0,10"
+                                                Padding="16"
+                                                Background="White"
+                                                BorderBrush="#E0E0E0"
+                                                BorderThickness="3,0,0,0"
+                                                CornerRadius="6">
+                                                <StackPanel>
+                                                    <TextBlock
+                                                        Margin="0,0,0,4"
+                                                        FontSize="9"
+                                                        FontWeight="Black"
+                                                        Opacity="0.4"
+                                                        Text="OPTION A" />
+                                                    <TextBlock
+                                                        FontSize="12"
+                                                        Opacity="0.8"
+                                                        Text="{Binding OptionA_Analysis}"
+                                                        TextWrapping="Wrap" />
+                                                </StackPanel>
+                                            </Border>
+                                            <Border
+                                                x:Name="optB"
+                                                Margin="0,0,0,10"
+                                                Padding="12"
+                                                Background="White"
+                                                BorderBrush="#E0E0E0"
+                                                BorderThickness="3,0,0,0"
+                                                CornerRadius="6">
+                                                <StackPanel>
+                                                    <TextBlock
+                                                        Margin="0,0,0,4"
+                                                        FontSize="9"
+                                                        FontWeight="Black"
+                                                        Opacity="0.4"
+                                                        Text="OPTION B" />
+                                                    <TextBlock
+                                                        FontSize="12"
+                                                        Opacity="0.8"
+                                                        Text="{Binding OptionB_Analysis}"
+                                                        TextWrapping="Wrap" />
+                                                </StackPanel>
+                                            </Border>
+                                            <Border
+                                                x:Name="optC"
+                                                Margin="0,0,0,10"
+                                                Padding="12"
+                                                Background="White"
+                                                BorderBrush="#E0E0E0"
+                                                BorderThickness="3,0,0,0"
+                                                CornerRadius="6">
+                                                <StackPanel>
+                                                    <TextBlock
+                                                        Margin="0,0,0,4"
+                                                        FontSize="9"
+                                                        FontWeight="Black"
+                                                        Opacity="0.4"
+                                                        Text="OPTION C" />
+                                                    <TextBlock
+                                                        FontSize="12"
+                                                        Opacity="0.8"
+                                                        Text="{Binding OptionC_Analysis}"
+                                                        TextWrapping="Wrap" />
+                                                </StackPanel>
+                                            </Border>
+                                            <Border
+                                                x:Name="optD"
+                                                Padding="12"
+                                                Background="White"
+                                                BorderBrush="#E0E0E0"
+                                                BorderThickness="3,0,0,0"
+                                                CornerRadius="6">
+                                                <StackPanel>
+                                                    <TextBlock
+                                                        Margin="0,0,0,4"
+                                                        FontSize="9"
+                                                        FontWeight="Black"
+                                                        Opacity="0.4"
+                                                        Text="OPTION D" />
+                                                    <TextBlock
+                                                        FontSize="12"
+                                                        Opacity="0.8"
+                                                        Text="{Binding OptionD_Analysis}"
+                                                        TextWrapping="Wrap" />
+                                                </StackPanel>
+                                            </Border>
+                                        </StackPanel>
+                                    </Expander>
+                                </Border>
+
+                                <Grid Margin="0,20,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Border
+                                        x:Name="StudentErrorCard"
+                                        Grid.Column="0"
+                                        Margin="0,0,12,0"
+                                        Padding="16"
+                                        BorderThickness="3,0,0,0"
+                                        CornerRadius="8">
+                                        <StackPanel>
+                                            <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+                                                <materialDesign:PackIcon
+                                                    x:Name="StudentCardIcon"
+                                                    Width="18"
+                                                    Height="18"
+                                                    Kind="AlertCircleOutline" />
+                                                <TextBlock
+                                                    Margin="10,0,0,0"
+                                                    VerticalAlignment="Center"
+                                                    FontSize="10"
+                                                    FontWeight="Black"
+                                                    Text="YOUR CHOICE ANALYSIS" />
+                                            </StackPanel>
+                                            <TextBlock
+                                                x:Name="txtStudentAnaA"
+                                                FontSize="12"
+                                                Opacity="0.9"
+                                                Text="{Binding OptionA_Analysis}"
+                                                TextWrapping="Wrap"
+                                                Visibility="Collapsed" />
+                                            <TextBlock
+                                                x:Name="txtStudentAnaB"
+                                                FontSize="12"
+                                                Opacity="0.9"
+                                                Text="{Binding OptionB_Analysis}"
+                                                TextWrapping="Wrap"
+                                                Visibility="Collapsed" />
+                                            <TextBlock
+                                                x:Name="txtStudentAnaC"
+                                                FontSize="12"
+                                                Opacity="0.9"
+                                                Text="{Binding OptionC_Analysis}"
+                                                TextWrapping="Wrap"
+                                                Visibility="Collapsed" />
+                                            <TextBlock
+                                                x:Name="txtStudentAnaD"
+                                                FontSize="12"
+                                                Opacity="0.9"
+                                                Text="{Binding OptionD_Analysis}"
+                                                TextWrapping="Wrap"
+                                                Visibility="Collapsed" />
+                                        </StackPanel>
+                                    </Border>
+
+                                    <Border
+                                        Grid.Column="1"
+                                        Margin="12,0,0,0"
+                                        Padding="16"
+                                        Background="#0F4CAF50"
+                                        BorderBrush="#2E7D32"
+                                        BorderThickness="3,0,0,0"
+                                        CornerRadius="8">
+                                        <StackPanel>
+                                            <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+                                                <materialDesign:PackIcon
+                                                    Width="18"
+                                                    Height="18"
+                                                    Foreground="#2E7D32"
+                                                    Kind="Certificate" />
+                                                <TextBlock
+                                                    Margin="10,0,0,0"
+                                                    VerticalAlignment="Center"
+                                                    FontSize="10"
+                                                    FontWeight="Black"
+                                                    Foreground="#2E7D32"
+                                                    Text="CORRECT LOGIC" />
+                                            </StackPanel>
+                                            <TextBlock
+                                                x:Name="txtCorrectAnaA"
+                                                FontSize="12"
+                                                Opacity="0.9"
+                                                Text="{Binding OptionA_Analysis}"
+                                                TextWrapping="Wrap"
+                                                Visibility="Collapsed" />
+                                            <TextBlock
+                                                x:Name="txtCorrectAnaB"
+                                                FontSize="12"
+                                                Opacity="0.9"
+                                                Text="{Binding OptionB_Analysis}"
+                                                TextWrapping="Wrap"
+                                                Visibility="Collapsed" />
+                                            <TextBlock
+                                                x:Name="txtCorrectAnaC"
+                                                FontSize="12"
+                                                Opacity="0.9"
+                                                Text="{Binding OptionC_Analysis}"
+                                                TextWrapping="Wrap"
+                                                Visibility="Collapsed" />
+                                            <TextBlock
+                                                x:Name="txtCorrectAnaD"
+                                                FontSize="12"
+                                                Opacity="0.9"
+                                                Text="{Binding OptionD_Analysis}"
+                                                TextWrapping="Wrap"
+                                                Visibility="Collapsed" />
+                                        </StackPanel>
+                                    </Border>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <DataTemplate.Triggers>
+                            <DataTrigger Binding="{Binding IsCorrect}" Value="True">
+                                <Setter TargetName="ItemBorder" Property="Background" Value="#F1F8E9" />
+                                <Setter TargetName="ItemBorder" Property="BorderBrush" Value="#2E7D32" />
+                                <Setter TargetName="StudentAnswerBorder" Property="Background" Value="#304CAF50" />
+                                <Setter TargetName="StudentErrorCard" Property="Background" Value="#0F4CAF50" />
+                                <Setter TargetName="StudentErrorCard" Property="BorderBrush" Value="#2E7D32" />
+                                <Setter TargetName="StudentCardIcon" Property="Foreground" Value="#2E7D32" />
+                                <Setter TargetName="StudentCardIcon" Property="Kind" Value="CheckCircleOutline" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsCorrect}" Value="False">
+                                <Setter TargetName="ItemBorder" Property="Background" Value="#FFFBFA" />
+                                <Setter TargetName="ItemBorder" Property="BorderBrush" Value="#D32F2F" />
+                                <Setter TargetName="StudentAnswerBorder" Property="Background" Value="#30F44336" />
+                                <Setter TargetName="StudentErrorCard" Property="Background" Value="#0FF44336" />
+                                <Setter TargetName="StudentErrorCard" Property="BorderBrush" Value="#D32F2F" />
+                                <Setter TargetName="StudentCardIcon" Property="Foreground" Value="#B71C1C" />
+                            </DataTrigger>
+
+                            <DataTrigger Binding="{Binding StudentAnswer, Converter={StaticResource StartsWithConverter}, ConverterParameter='(A)'}" Value="True">
+                                <Setter TargetName="optA" Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding CorrectAnswer, Converter={StaticResource StartsWithConverter}, ConverterParameter='(A)'}" Value="True">
+                                <Setter TargetName="optA" Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding StudentAnswer, Converter={StaticResource StartsWithConverter}, ConverterParameter='(B)'}" Value="True">
+                                <Setter TargetName="optB" Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding CorrectAnswer, Converter={StaticResource StartsWithConverter}, ConverterParameter='(B)'}" Value="True">
+                                <Setter TargetName="optB" Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding StudentAnswer, Converter={StaticResource StartsWithConverter}, ConverterParameter='(C)'}" Value="True">
+                                <Setter TargetName="optC" Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding CorrectAnswer, Converter={StaticResource StartsWithConverter}, ConverterParameter='(C)'}" Value="True">
+                                <Setter TargetName="optC" Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding StudentAnswer, Converter={StaticResource StartsWithConverter}, ConverterParameter='(D)'}" Value="True">
+                                <Setter TargetName="optD" Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding CorrectAnswer, Converter={StaticResource StartsWithConverter}, ConverterParameter='(D)'}" Value="True">
+                                <Setter TargetName="optD" Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+
+                            <DataTrigger Binding="{Binding CorrectAnswer, Converter={StaticResource StartsWithConverter}, ConverterParameter='(A)'}" Value="True">
+                                <Setter TargetName="txtCorrectAnaA" Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding CorrectAnswer, Converter={StaticResource StartsWithConverter}, ConverterParameter='(B)'}" Value="True">
+                                <Setter TargetName="txtCorrectAnaB" Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding CorrectAnswer, Converter={StaticResource StartsWithConverter}, ConverterParameter='(C)'}" Value="True">
+                                <Setter TargetName="txtCorrectAnaC" Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding CorrectAnswer, Converter={StaticResource StartsWithConverter}, ConverterParameter='(D)'}" Value="True">
+                                <Setter TargetName="txtCorrectAnaD" Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding StudentAnswer, Converter={StaticResource StartsWithConverter}, ConverterParameter='(A)'}" Value="True">
+                                <Setter TargetName="txtStudentAnaA" Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding StudentAnswer, Converter={StaticResource StartsWithConverter}, ConverterParameter='(B)'}" Value="True">
+                                <Setter TargetName="txtStudentAnaB" Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding StudentAnswer, Converter={StaticResource StartsWithConverter}, ConverterParameter='(C)'}" Value="True">
+                                <Setter TargetName="txtStudentAnaC" Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding StudentAnswer, Converter={StaticResource StartsWithConverter}, ConverterParameter='(D)'}" Value="True">
+                                <Setter TargetName="txtStudentAnaD" Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </DataTemplate.Triggers>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Grid>
+    </Border>
+</UserControl>

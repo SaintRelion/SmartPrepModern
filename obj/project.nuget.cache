@@ -1,9 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "NEAZigD2iys=",
+  "dgSpecHash": "oeArVx4sa+s=",
   "success": true,
   "projectFilePath": "D:\\ClientProjects\\SmartPrepProject\\SmartPrepModern\\SmartPrepModern.vbproj",
   "expectedPackageFiles": [
+    "C:\\Users\\Codeculus\\.nuget\\packages\\livecharts\\0.9.7\\livecharts.0.9.7.nupkg.sha512",
+    "C:\\Users\\Codeculus\\.nuget\\packages\\livecharts.wpf\\0.9.7\\livecharts.wpf.0.9.7.nupkg.sha512",
     "C:\\Users\\Codeculus\\.nuget\\packages\\materialdesigncolors\\5.3.0\\materialdesigncolors.5.3.0.nupkg.sha512",
     "C:\\Users\\Codeculus\\.nuget\\packages\\materialdesignthemes\\5.3.0\\materialdesignthemes.5.3.0.nupkg.sha512",
     "C:\\Users\\Codeculus\\.nuget\\packages\\microsoft.xaml.behaviors.wpf\\1.1.77\\microsoft.xaml.behaviors.wpf.1.1.77.nupkg.sha512",
@@ -12,5 +14,30 @@
     "C:\\Users\\Codeculus\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\9.0.14\\microsoft.aspnetcore.app.ref.9.0.14.nupkg.sha512",
     "C:\\Users\\Codeculus\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\9.0.14\\microsoft.netcore.app.host.win-x64.9.0.14.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "message": "Package 'LiveCharts 0.9.7' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net9.0-windows7.0'. This package may not be fully compatible with your project.",
+      "projectPath": "D:\\ClientProjects\\SmartPrepProject\\SmartPrepModern\\SmartPrepModern.vbproj",
+      "warningLevel": 1,
+      "filePath": "D:\\ClientProjects\\SmartPrepProject\\SmartPrepModern\\SmartPrepModern.vbproj",
+      "libraryId": "LiveCharts",
+      "targetGraphs": [
+        "net9.0-windows"
+      ]
+    },
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "message": "Package 'LiveCharts.Wpf 0.9.7' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net9.0-windows7.0'. This package may not be fully compatible with your project.",
+      "projectPath": "D:\\ClientProjects\\SmartPrepProject\\SmartPrepModern\\SmartPrepModern.vbproj",
+      "warningLevel": 1,
+      "filePath": "D:\\ClientProjects\\SmartPrepProject\\SmartPrepModern\\SmartPrepModern.vbproj",
+      "libraryId": "LiveCharts.Wpf",
+      "targetGraphs": [
+        "net9.0-windows"
+      ]
+    }
+  ]
 }

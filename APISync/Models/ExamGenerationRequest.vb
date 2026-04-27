@@ -1,10 +1,10 @@
 Namespace APISync.Models
 
     Public Class ExamGenerationRequest
-        Public Property difficulty As String
-        Public Property focus As String
+        Public Property exam_name As String
         Public Property total_items As Integer
-        Public Property materials As Dictionary(Of String, Integer)
+        Public Property is_randomized As Boolean
+        Public Property questionnaires As Dictionary(Of String, Integer)
     End Class
 
 End Namespace

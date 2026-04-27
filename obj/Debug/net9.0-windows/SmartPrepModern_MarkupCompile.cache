@@ -10,11 +10,11 @@ none
 false
 ;NET;NET9_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NET9_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
 D:\ClientProjects\SmartPrepProject\SmartPrepModern\Application.xaml
-161693376264
+26637497021
 22712056460
-68-1823408109
-20334898726
-Components\ExcellenceRankingView\ExcellenceRankingView.xaml;Components\UniversalStats\UniversalStatsView.xaml;Layout\MainLayout.xaml;MainWindow.xaml;Views\Account\AccountView.xaml;Views\Admin\AddUserPopup\AddUserPopup.xaml;Views\Admin\ManageUsers\ManageUsersView.xaml;Views\Analytics\ExamAnalytics\ExamAnalyticsView.xaml;Views\Analytics\SWOTAnalytics\SWOTAnalyticsView.xaml;Views\Auth\Login\LoginView.xaml;Views\Auth\Register\RegisterView.xaml;Views\Auth\ResetPassword\ResetPasswordView.xaml;Views\ReviewDirector\Generate\GenerateView.xaml;Views\ReviewDirector\Materials\MaterialsView.xaml;Views\Reviewee\Dashboard\DashboardView.xaml;Views\Reviewee\ExamList\ExamSessionView.xaml;
+93377384806
+205887442316
+Components\ActiveExamView\ActiveExamView.xaml;Components\CategoryGroup\CategoryGroupView.xaml;Components\ExamConfig\ExamConfig.xaml;Components\ExamSelectorView\ExamSelectorView.xaml;Components\ExtractedItems\ExtractedItemsView.xaml;Components\GrowthTrendView\GrowthTrendView.xaml;Components\QuestionForensicView\QuestionForensicView.xaml;Components\QuestionPreviewDialog\QuestionPreviewDialog.xaml;Components\RevieweeSelectorView\RevieweeSelectorView.xaml;Components\TopicDiscoveryView\TopicDiscoveryView.xaml;Components\UniversalStats\UniversalStatsView.xaml;Layout\MainLayout.xaml;MainWindow.xaml;Views\Account\AccountView.xaml;Views\Admin\AddUserPopup\AddUserPopup.xaml;Views\Admin\ManageUsers\ManageUsersView.xaml;Views\Analytics\ComparisonAnalytics\ComparisonAnalyticsView.xaml;Views\Analytics\ExamAnalytics\ExamAnalyticsView.xaml;Views\Analytics\Leaderboard\LeaderboardView.xaml;Views\Auth\Login\LoginView.xaml;Views\Auth\Register\RegisterView.xaml;Views\Auth\ResetPassword\ResetPasswordView.xaml;Views\ReviewDirector\Generate\GenerateView.xaml;Views\ReviewDirector\ManageExam\ManageExam.xaml;Views\ReviewDirector\Slots\SlotsView.xaml;Views\Reviewee\ExamList\ExamSessionView.xaml;
 
 True
 

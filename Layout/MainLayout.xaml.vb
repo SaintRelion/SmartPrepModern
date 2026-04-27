@@ -7,12 +7,10 @@ Namespace Layout
     Public Class MainLayout
         Inherits UserControl ' Necessary for VB inheritance
 
-        Private UserRole As String
         Private _criminologyRed As New SolidColorBrush(Color.FromRgb(183, 28, 28))
 
-        Public Sub New(role As String)
+        Public Sub New()
             InitializeComponent()
-            UserRole = role
             LoadSidebar()
         End Sub
 
@@ -48,34 +46,60 @@ Namespace Layout
         Private Sub LoadSidebar()
             SidebarButtons.Children.Clear()
 
-            Select Case UserRole
+            ' ── ANALYTICS Section ──────────────────────────────────────
+            AddSectionLabel("ANALYTICS")
+            AddSidebarButton("EXAM ANALYTICS", "ViewDashboard", AddressOf ExamAnalytics_Click)
+            AddSidebarButton("COMPARATIVE", "ChartAreaspline", AddressOf ComparisonAnalytics_Click)
+            AddSidebarButton("LEADERBOARD", "TrophyVariant", AddressOf Leaderboard_Click)
+
+            ' ── ROLE-BASED Section ─────────────────────────────────────
+            Select Case UserSession.Role
                 Case "Admin"
-                    ' Dashboard: Real-time Reviewee Activity
-                    AddSidebarButton("DASHBOARD", "ViewDashboard", AddressOf ExamAnalytics_Click)
-                    ' SWOT: Strength/Weakness Analysis (Dossiers)
-                    ' AddSidebarButton("SWOT ANALYTICS", "ChartAreaspline", AddressOf SWOTAnalytics_Click)
-                    
+                    AddSectionSeparator()
+                    AddSectionLabel("MANAGEMENT")
                     AddSidebarButton("MANAGE USERS", "AccountGroup", AddressOf ManageUsers_Click)
                 Case "ReviewDirector"
-                    ' Dashboard: Real-time Reviewee Activity
-                    AddSidebarButton("DASHBOARD", "ViewDashboard", AddressOf ExamAnalytics_Click)
-                    ' SWOT: Strength/Weakness Analysis (Dossiers)
-                    ' AddSidebarButton("SWOT ANALYTICS", "ChartAreaspline", AddressOf SWOTAnalytics_Click)
-
-                    AddSidebarButton("MATERIALS", "Library", AddressOf Material_Click)
+                    AddSectionSeparator()
+                    AddSectionLabel("CONTENT")
+                    AddSidebarButton("UPLOAD SLOTS", "Library", AddressOf UploadSlots_Click)
                     AddSidebarButton("GENERATE EXAM", "AutoFix", AddressOf Generate_Click)
+                    AddSidebarButton("MANAGE EXAMS", "ClipboardEdit", AddressOf ManageExams_Click)
                 Case "Reviewee"
-                    AddSidebarButton("DASHBOARD", "ViewDashboard", AddressOf RevieweeDashboard_Click)
+                    AddSectionSeparator()
+                    AddSectionLabel("EXAMS")
                     AddSidebarButton("EXAM LIST", "ClipboardList", AddressOf ExamSession_Click)
             End Select
 
+            ' ── ACCOUNT Section ────────────────────────────────────────
+            AddSectionSeparator()
+            AddSectionLabel("ACCOUNT")
             AddSidebarButton("ACCOUNT", "AccountCircle", AddressOf Account_Click)
 
-            ' Load first view
-            If SidebarButtons.Children.Count > 0 Then
-                Dim firstBtn = TryCast(SidebarButtons.Children(0), Button)
-                If firstBtn IsNot Nothing Then LoadView(firstBtn, DirectCast(firstBtn.Tag, RoutedEventHandler))
-            End If
+            ' Load first nav button view
+            Dim firstBtn = SidebarButtons.Children.OfType(Of Button)().FirstOrDefault()
+            If firstBtn IsNot Nothing Then LoadView(firstBtn, DirectCast(firstBtn.Tag, RoutedEventHandler))
+        End Sub
+
+        Private Sub AddSectionLabel(text As String)
+            Dim label As New TextBlock With {
+                .Text = text,
+                .FontSize = 10,
+                .FontWeight = FontWeights.Bold,
+                .Foreground = New SolidColorBrush(Color.FromRgb(120, 120, 120)),
+                .Margin = New Thickness(15, 10, 0, 4),
+                .Visibility = If(SidebarColumn.Width.Value > 60, Visibility.Visible, Visibility.Collapsed)
+            }
+            label.SetValue(FrameworkElement.TagProperty, "SectionLabel")
+            SidebarButtons.Children.Add(label)
+        End Sub
+
+        Private Sub AddSectionSeparator()
+            Dim sep As New Separator With {
+                .Margin = New Thickness(15, 6, 15, 2),
+                .Background = New SolidColorBrush(Color.FromRgb(51, 51, 51))
+            }
+            sep.SetValue(FrameworkElement.TagProperty, "SectionSeparator")
+            SidebarButtons.Children.Add(sep)
         End Sub
 
         Private Sub AddSidebarButton(text As String, iconKind As String, handler As RoutedEventHandler)
@@ -146,9 +170,17 @@ Namespace Layout
         End Sub
 
         Private Sub ToggleSidebarText(vis As Visibility)
+            ' Toggle button labels
             For Each btn As Button In SidebarButtons.Children.OfType(Of Button)()
                 Dim sp = TryCast(btn.Content, StackPanel)
                 If sp IsNot Nothing Then sp.Children(1).Visibility = vis
+            Next
+            ' Toggle section labels (TextBlock with tag "SectionLabel")
+            For Each child As UIElement In SidebarButtons.Children
+                Dim tb = TryCast(child, TextBlock)
+                If tb IsNot Nothing AndAlso tb.Tag?.ToString() = "SectionLabel" Then
+                    tb.Visibility = vis
+                End If
             Next
         End Sub
 
@@ -161,13 +193,16 @@ Namespace Layout
             End If
         End Sub
 
-        ' ANALYTICS (Only Admin and Review Director)
         Private Sub ExamAnalytics_Click(sender As Object, e As RoutedEventArgs)
             MainContent.Content = New SmartPrepModern.Views.Analytics.ExamAnalyticsView()
         End Sub
 
-        Private Sub SWOTAnalytics_Click(sender As Object, e As RoutedEventArgs)
-            MainContent.Content = New SmartPrepModern.Views.Analytics.SWOTAnalyticsView()
+        Private Sub ComparisonAnalytics_Click(sender As Object, e As RoutedEventArgs)
+            MainContent.Content = New SmartPrepModern.Views.Analytics.ComparisonAnalyticsView()
+        End Sub
+
+        Private Sub Leaderboard_Click(sender As Object, e As RoutedEventArgs)
+            MainContent.Content = New SmartPrepModern.Views.Analytics.LeaderboardView()
         End Sub
 
         ' ADMIN
@@ -176,19 +211,19 @@ Namespace Layout
         End Sub
 
         ' REVIEW DIRECTOR
-        Private Sub Material_Click(sender As Object, e As RoutedEventArgs)
-            MainContent.Content = New SmartPrepModern.Views.ReviewDirector.MaterialsView()
+        Private Sub UploadSlots_Click(sender As Object, e As RoutedEventArgs)
+            MainContent.Content = New SmartPrepModern.Views.ReviewDirector.SlotsView()
         End Sub
 
         Private Sub Generate_Click(sender As Object, e As RoutedEventArgs)
             MainContent.Content = New SmartPrepModern.Views.ReviewDirector.GenerateView()
         End Sub
 
-        ' REVIEWEE
-        Private Sub RevieweeDashboard_Click(sender As Object, e As RoutedEventArgs)
-            MainContent.Content = New SmartPrepModern.Views.Reviewee.DashboardView()
+        Private Sub ManageExams_Click(sender As Object, e As RoutedEventArgs) 
+            MainContent.Content = New SmartPrepModern.Views.ReviewDirector.ManageExamView()
         End Sub
 
+        ' REVIEWEE
         Private Sub ExamSession_Click(sender As Object, e As RoutedEventArgs)
             MainContent.Content = New SmartPrepModern.Views.Reviewee.ExamSessionView()
         End Sub

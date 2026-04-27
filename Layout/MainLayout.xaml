@@ -97,39 +97,18 @@
                         FontWeight="Bold"
                         Foreground="#777"
                         Text="ADMINISTRATIVE CONSOLE" />
-
-                    <StackPanel
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Center"
-                        Orientation="Horizontal">
-
-                        <materialDesign:PackIcon
-                            Width="24"
-                            Height="24"
-                            VerticalAlignment="Center"
-                            Foreground="{StaticResource CriminologyRed}"
-                            Kind="ShieldCheck" />
-
-                        <Border
-                            Margin="12,0,0,0"
-                            Padding="8,3"
-                            VerticalAlignment="Center"
-                            Background="#444"
-                            CornerRadius="2">
-                            <TextBlock
-                                FontSize="10"
-                                FontWeight="Black"
-                                Foreground="White"
-                                Text="OFFLINE" />
-                        </Border>
-                    </StackPanel>
                 </Grid>
             </materialDesign:ColorZone>
 
-            <ContentControl
-                x:Name="MainContent"
+            <materialDesign:DialogHost
+                x:Name="MainDialogHost"
                 Grid.Row="1"
-                Margin="20" />
+                Identifier="MainDialogHost">
+                <ContentControl
+                    x:Name="MainContent"
+                    Grid.Row="1"
+                    Margin="20" />
+            </materialDesign:DialogHost>
         </Grid>
     </Grid>
 </UserControl>

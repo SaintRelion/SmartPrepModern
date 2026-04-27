@@ -57,7 +57,7 @@ Class MainWindow
         MainContentGrid.Children.Clear()
         
         ' Pass the role to your MainLayout for sidebar logic
-        Dim layout As New SmartPrepModern.Layout.MainLayout(UserSession.Role)
+        Dim layout As New SmartPrepModern.Layout.MainLayout()
         MainContentGrid.Children.Add(layout)
     End Sub
 End Class

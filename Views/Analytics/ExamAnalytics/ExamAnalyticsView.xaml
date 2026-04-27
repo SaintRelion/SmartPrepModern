@@ -8,142 +8,35 @@
     <Grid Background="#F5F5F5">
         <Grid.ColumnDefinitions>
             <ColumnDefinition x:Name="colRepoWidth" Width="350" />
+            <ColumnDefinition x:Name="colRevieweeWidth" Width="0" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Border
-            x:Name="colRepository"
-            BorderBrush="#DDD"
-            BorderThickness="0,0,1,0">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
+        <components:ExamSelectorView
+            x:Name="ctrlExamSelector"
+            Grid.Column="0"
+            ExamSelected="HandleExamSelection" />
 
-                <Border Padding="16" Background="White">
-                    <StackPanel>
-                        <Grid>
-                            <TextBlock
-                                VerticalAlignment="Center"
-                                FontSize="14"
-                                FontWeight="Black"
-                                Text="EXAMINATION REPOSITORY" />
-                            <Button
-                                x:Name="btnToggleRanking"
-                                HorizontalAlignment="Right"
-                                Click="btnToggleRanking_Click"
-                                Content="RANKING"
-                                Style="{StaticResource MaterialDesignFlatButton}" />
-                        </Grid>
-                        <ComboBox
-                            x:Name="cmbSearchDiff"
-                            Margin="0,5"
-                            SelectedIndex="0"
-                            SelectionChanged="FilterExams_Api">
-                            <ComboBoxItem Content="All Difficulties" />
-                            <ComboBoxItem Content="Easy" />
-                            <ComboBoxItem Content="Moderate" />
-                            <ComboBoxItem Content="Hard" />
-                        </ComboBox>
-                        <ComboBox
-                            x:Name="cmbFocusType"
-                            Margin="0,5"
-                            SelectedIndex="0"
-                            SelectionChanged="FilterExams_Local">
-                            <ComboBoxItem Content="All Focus Types" />
-                            <ComboBoxItem Content="Diagnostic" />
-                            <ComboBoxItem Content="Formative" />
-                            <ComboBoxItem Content="Summative" />
-                        </ComboBox>
-                    </StackPanel>
-                </Border>
+        <components:RevieweeSelectorView
+            x:Name="ctrlRevieweeSelector"
+            Grid.Column="1"
+            RevieweeSelected="HandleRevieweeSelection"
+            Visibility="Collapsed" />
 
-                <ListBox
-                    x:Name="lstExams"
-                    Grid.Row="1"
-                    Background="Transparent"
-                    BorderThickness="0">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Margin="0,0,0,15">
-                                <TextBlock
-                                    Margin="15,5"
-                                    FontSize="10"
-                                    FontWeight="Black"
-                                    Foreground="Gray"
-                                    Text="{Binding exam_date}" />
-                                <ListBox
-                                    Background="Transparent"
-                                    BorderThickness="0"
-                                    ItemsSource="{Binding exams}"
-                                    SelectionChanged="ExamSelection_Changed">
-                                    <ListBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <Border
-                                                Margin="10,2"
-                                                Padding="12"
-                                                Background="White"
-                                                BorderBrush="#EEE"
-                                                BorderThickness="1"
-                                                CornerRadius="4">
-                                                <Grid>
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="*" />
-                                                        <ColumnDefinition Width="Auto" />
-                                                    </Grid.ColumnDefinitions>
-                                                    <StackPanel Grid.Column="0">
-                                                        <TextBlock
-                                                            FontSize="13"
-                                                            FontWeight="Bold"
-                                                            Text="{Binding focus}"
-                                                            TextWrapping="Wrap" />
-                                                        <TextBlock
-                                                            FontSize="11"
-                                                            Opacity="0.6"
-                                                            Text="{Binding difficulty}" />
-                                                    </StackPanel>
-                                                    <Border
-                                                        Grid.Column="1"
-                                                        Padding="8,4"
-                                                        HorizontalAlignment="Right"
-                                                        VerticalAlignment="Center"
-                                                        Background="#F5F5F5"
-                                                        CornerRadius="10">
-                                                        <StackPanel Orientation="Horizontal">
-                                                            <materialDesign:PackIcon
-                                                                Width="12"
-                                                                Height="12"
-                                                                Margin="0,0,4,0"
-                                                                VerticalAlignment="Center"
-                                                                Kind="AccountGroup" />
-                                                            <TextBlock
-                                                                VerticalAlignment="Center"
-                                                                FontSize="11"
-                                                                FontWeight="Bold"
-                                                                Text="{Binding reviewee_count}" />
-                                                        </StackPanel>
-                                                    </Border>
-                                                </Grid>
-                                            </Border>
-                                        </DataTemplate>
-                                    </ListBox.ItemTemplate>
-                                </ListBox>
-                            </StackPanel>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-
-
-            </Grid>
+        <Border Grid.Column="2">
+            <components:UniversalStatsView x:Name="ctrlStatsTerminal" />
         </Border>
 
-        <Grid Grid.Column="1">
-            <components:UniversalStatsView x:Name="ctrlStatsTerminal" />
-            <components:ExcellenceRankingView
-                x:Name="ctrlRanking"
-                RequestCloseRanking="HandleCloseRanking"
-                Visibility="Collapsed" />
-        </Grid>
+        <Border
+            x:Name="pnlForensicContainer"
+            Grid.ColumnSpan="3"
+            Panel.ZIndex="5000"
+            Background="#AA000000"
+            Visibility="Collapsed">
+            <components:QuestionForensicsView
+                x:Name="ctrlForensics"
+                Margin="40"
+                RequestClose="HandleForensicClose" />
+        </Border>
     </Grid>
 </UserControl>

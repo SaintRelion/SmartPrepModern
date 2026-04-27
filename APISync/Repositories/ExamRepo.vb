@@ -7,7 +7,7 @@ Namespace APISync.Repositories
 
     Public Class ExamRepo
 
-        ''' <summary> Calls: DELETE exam/delete_exam </summary>
+        ''' <summary> Calls: POST exam/delete_exam </summary>
         Public Shared Async Function delete_examAsync(req As ExamDeleteRequest) As Task(Of ApiResponse(Of ExamDeleteResponse))
             Return Await ApiService.PostAsync(Of ExamDeleteResponse)("exam/delete_exam", req)
         End Function
@@ -32,7 +32,7 @@ Namespace APISync.Repositories
             Return Await ApiService.GetAsync(Of List(Of DailyExamListGroup))("exam/list_exams", req)
         End Function
 
-        ''' <summary> Calls: PATCH exam/rename_exam </summary>
+        ''' <summary> Calls: POST exam/rename_exam </summary>
         Public Shared Async Function rename_examAsync(req As ExamRenameRequest) As Task(Of ApiResponse(Of ExamRenameResponse))
             Return Await ApiService.PostAsync(Of ExamRenameResponse)("exam/rename_exam", req)
         End Function

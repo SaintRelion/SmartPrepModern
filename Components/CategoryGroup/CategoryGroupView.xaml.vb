@@ -44,8 +44,22 @@ Namespace Components
             Dim item = DirectCast(btn.DataContext, SourceReferenceItem)
             Dim fileType = btn.Tag.ToString() ' "material" or "questionnaire"
 
+            ' 1. Logic for Questionnaire warning
+            If fileType = "questionnaire" Then
+                Dim msg = "WARNING: Re-uploading a questionnaire is only recommended if it hasn't been used for exams yet. " &
+                        "This action will DELETE all existing questions and AI analysis for this topic." & vbCrLf & vbCrLf &
+                        "Type 'PROCEED' to continue:"
+                
+                Dim confirmation = InputBox(msg, "Confirm Questionnaire Override")
+                
+                If confirmation Is Nothing OrElse confirmation.Trim().ToUpper() <> "PROCEED" Then
+                    Return ' Exit if they didn't type PROCEED exactly
+                End If
+            End If
+
+            ' 2. Filter restricted to PDF only (removed .docx)
             Dim ofd As New OpenFileDialog With {
-                .Filter = "Document Files (*.pdf;*.docx)|*.pdf;*.docx|All Files (*.*)|*.*",
+                .Filter = "PDF Files (*.pdf)|*.pdf",
                 .Title = $"Select {fileType.ToUpper()} for {item.slot_name}"
             }
 
@@ -61,7 +75,7 @@ Namespace Components
                         .slot_id = item.id,
                         .file_name = fileName,
                         .file_type = fileType
-                        }
+                    }
 
                     Dim res = Await SlotsRepo.upload_source_fileAsync(req)
                     If res.Success Then

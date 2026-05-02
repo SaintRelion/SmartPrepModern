@@ -9,6 +9,7 @@ Namespace APISync.Models
         Public Property is_material_uploaded As Boolean
         Public Property is_questionnaire_extracted As Boolean
         Public Property item_count As Integer
+        Public Property active_exam_count As Integer
         Public Property created_at As String
     End Class
 

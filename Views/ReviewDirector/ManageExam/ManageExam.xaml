@@ -6,110 +6,243 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     Background="#F5F7FA">
 
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="350" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
+    <Grid x:Name="ManageExamRoot">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="350" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
 
-        <components:ExamSelectorView x:Name="examSelector" Grid.Column="0" />
+            <components:ExamSelectorView x:Name="examSelector" Grid.Column="0" />
 
+            <Border
+                Grid.Column="1"
+                Margin="20"
+                Padding="30"
+                Background="Transparent">
+                <StackPanel x:Name="pnlDetails" Visibility="Collapsed">
+
+                    <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                        <TextBlock
+                            x:Name="txtExamTitle"
+                            VerticalAlignment="Center"
+                            FontSize="24"
+                            FontWeight="Black" />
+                        <Button
+                            Width="30"
+                            Height="30"
+                            Margin="10,0,0,0"
+                            Padding="4"
+                            Click="btnRename_Click"
+                            Style="{StaticResource MaterialDesignFlatButton}">
+                            <materialDesign:PackIcon
+                                Width="18"
+                                Height="18"
+                                Kind="Pencil"
+                                Opacity="0.5" />
+                        </Button>
+                    </StackPanel>
+
+                    <ItemsControl x:Name="icTopicPills" Margin="0,5,0,20">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <!--  WrapPanel allows pills to flow to the next line and push content down  -->
+                                <WrapPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border
+                                    Margin="0,0,6,6"
+                                    Padding="10,4"
+                                    Background="#F0F2F5"
+                                    CornerRadius="12">
+                                    <StackPanel Orientation="Horizontal">
+                                        <materialDesign:PackIcon
+                                            Width="12"
+                                            Height="12"
+                                            VerticalAlignment="Center"
+                                            Kind="TagOutline"
+                                            Opacity="0.5" />
+                                        <TextBlock
+                                            Margin="5,0,0,0"
+                                            VerticalAlignment="Center"
+                                            FontSize="11"
+                                            FontWeight="SemiBold"
+                                            Opacity="0.7"
+                                            Text="{Binding}" />
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <Grid Margin="0,20">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <materialDesign:Card
+                            Grid.Column="0"
+                            Margin="0,0,10,0"
+                            Padding="20">
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock
+                                    HorizontalAlignment="Center"
+                                    FontSize="10"
+                                    FontWeight="Black"
+                                    Opacity="0.5"
+                                    Text="TOTAL ITEMS" />
+                                <TextBlock
+                                    x:Name="txtItemCount"
+                                    HorizontalAlignment="Center"
+                                    FontSize="32"
+                                    FontWeight="Black"
+                                    Text="0" />
+                            </StackPanel>
+                        </materialDesign:Card>
+
+                        <materialDesign:Card
+                            Grid.Column="1"
+                            Margin="10,0,0,0"
+                            Padding="20">
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock
+                                    HorizontalAlignment="Center"
+                                    FontSize="10"
+                                    FontWeight="Black"
+                                    Opacity="0.5"
+                                    Text="ACTIVE RECORD" />
+                                <TextBlock
+                                    x:Name="txtStudentCount"
+                                    HorizontalAlignment="Center"
+                                    FontSize="32"
+                                    FontWeight="Black"
+                                    Text="0" />
+                            </StackPanel>
+                        </materialDesign:Card>
+                    </Grid>
+
+                    <StackPanel Margin="0,40,0,0" Orientation="Horizontal">
+                        <Button
+                            Width="200"
+                            Height="45"
+                            Click="btnPreview_Click"
+                            Content="PREVIEW QUESTIONS"
+                            Style="{StaticResource MaterialDesignRaisedDarkButton}" />
+                        <Button
+                            Margin="20,0,0,0"
+                            BorderBrush="Red"
+                            Click="btnDelete_Click"
+                            Content="DELETE EXAM"
+                            Foreground="Red"
+                            Style="{StaticResource MaterialDesignOutlinedButton}" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+
+        </Grid>
+        <!--  THE NUCLEAR OVERLAY (Layer 1)  -->
         <Border
-            Grid.Column="1"
-            Margin="20"
-            Padding="30"
-            Background="Transparent">
-            <StackPanel x:Name="pnlDetails" Visibility="Collapsed">
+            x:Name="pnlNuclearDelete"
+            Background="#CC000000"
+            CornerRadius="15"
+            Visibility="Collapsed">
+            <materialDesign:Card
+                Width="450"
+                Padding="30"
+                VerticalAlignment="Center"
+                UniformCornerRadius="15">
+                <StackPanel>
+                    <materialDesign:PackIcon
+                        Width="70"
+                        Height="70"
+                        HorizontalAlignment="Center"
+                        Foreground="#D32F2F"
+                        Kind="AlertOctagram" />
 
-                <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
                     <TextBlock
-                        x:Name="txtExamTitle"
-                        VerticalAlignment="Center"
-                        FontSize="24"
+                        Margin="0,15"
+                        HorizontalAlignment="Center"
+                        FontSize="22"
+                        FontWeight="Black"
+                        Foreground="#D32F2F"
+                        Text="CASCADING EXAM PURGE" />
+
+                    <TextBlock
+                        FontSize="14"
+                        LineHeight="20"
+                        TextAlignment="Center"
+                        TextWrapping="Wrap">
+                        You are about to permanently delete:<LineBreak />
+                        <Run
+                            FontSize="16"
+                            FontWeight="Black"
+                            Text="{Binding exam_name}" /><LineBreak /><LineBreak />
+                        <Run FontWeight="Bold" Foreground="#D32F2F">THIS ACTION WILL:</Run>
+                    </TextBlock>
+
+                    <Border
+                        Margin="0,15"
+                        Padding="15"
+                        Background="#FFF5F5"
+                        CornerRadius="8">
+                        <StackPanel>
+                            <TextBlock
+                                Margin="0,0,0,5"
+                                FontSize="12"
+                                FontWeight="SemiBold"
+                                Text="• ERASE all student scores, analytics and rankings for this exam." />
+                            <TextBlock
+                                Margin="0,0,0,5"
+                                FontSize="12"
+                                FontWeight="SemiBold"
+                                Text="• DELETE all attempt history for this exam." />
+                            <TextBlock
+                                FontSize="12"
+                                FontWeight="SemiBold"
+                                Text="• UNLINK all questionnaire topics from this record." />
+                        </StackPanel>
+                    </Border>
+
+                    <TextBlock
+                        Margin="0,0,0,5"
+                        HorizontalAlignment="Center"
+                        FontSize="11"
+                        FontWeight="Bold"
+                        Opacity="0.6"
+                        Text="Type 'PURGE' to confirm deletion:" />
+                    <TextBox
+                        x:Name="txtConfirmPurge"
+                        Margin="0,0,0,25"
+                        HorizontalContentAlignment="Center"
+                        FontSize="18"
                         FontWeight="Black" />
-                    <Button
-                        Width="30"
-                        Height="30"
-                        Margin="10,0,0,0"
-                        Padding="4"
-                        Click="btnRename_Click"
-                        Style="{StaticResource MaterialDesignFlatButton}">
-                        <materialDesign:PackIcon
-                            Width="18"
-                            Height="18"
-                            Kind="Pencil"
-                            Opacity="0.5" />
-                    </Button>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Button
+                            Grid.Column="0"
+                            Margin="0,0,5,0"
+                            Click="CancelDelete_Click"
+                            Content="CANCEL"
+                            Style="{StaticResource MaterialDesignFlatButton}" />
+                        <Button
+                            x:Name="btnExecuteDelete"
+                            Grid.Column="1"
+                            Background="#D32F2F"
+                            BorderBrush="#D32F2F"
+                            Click="ExecuteDelete_Click"
+                            Content="PURGE EXAM"
+                            Foreground="White" />
+                    </Grid>
                 </StackPanel>
-
-                <TextBlock
-                    x:Name="txtExamMeta"
-                    Margin="0,5,0,20"
-                    Opacity="0.5" />
-
-                <Grid Margin="0,20">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-
-                    <materialDesign:Card
-                        Grid.Column="0"
-                        Margin="0,0,10,0"
-                        Padding="20">
-                        <StackPanel HorizontalAlignment="Center">
-                            <TextBlock
-                                HorizontalAlignment="Center"
-                                FontSize="10"
-                                FontWeight="Black"
-                                Opacity="0.5"
-                                Text="TOTAL ITEMS" />
-                            <TextBlock
-                                x:Name="txtItemCount"
-                                HorizontalAlignment="Center"
-                                FontSize="32"
-                                FontWeight="Black"
-                                Text="0" />
-                        </StackPanel>
-                    </materialDesign:Card>
-
-                    <materialDesign:Card
-                        Grid.Column="1"
-                        Margin="10,0,0,0"
-                        Padding="20">
-                        <StackPanel HorizontalAlignment="Center">
-                            <TextBlock
-                                HorizontalAlignment="Center"
-                                FontSize="10"
-                                FontWeight="Black"
-                                Opacity="0.5"
-                                Text="ACTIVE RECORD" />
-                            <TextBlock
-                                x:Name="txtStudentCount"
-                                HorizontalAlignment="Center"
-                                FontSize="32"
-                                FontWeight="Black"
-                                Text="0" />
-                        </StackPanel>
-                    </materialDesign:Card>
-                </Grid>
-
-                <StackPanel Margin="0,40,0,0" Orientation="Horizontal">
-                    <Button
-                        Width="200"
-                        Height="45"
-                        Click="btnPreview_Click"
-                        Content="PREVIEW QUESTIONS"
-                        Style="{StaticResource MaterialDesignRaisedDarkButton}" />
-                    <Button
-                        Margin="20,0,0,0"
-                        BorderBrush="Red"
-                        Click="btnDelete_Click"
-                        Content="DELETE EXAM"
-                        Foreground="Red"
-                        Style="{StaticResource MaterialDesignOutlinedButton}" />
-                </StackPanel>
-            </StackPanel>
+            </materialDesign:Card>
         </Border>
     </Grid>
 </UserControl>

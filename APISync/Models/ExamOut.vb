@@ -6,6 +6,7 @@ Namespace APISync.Models
         Public Property total_items As Integer
         Public Property questions As List(Of QuestionOut)
         Public Property user_attempts As Integer
+        Public Property topics As List(Of String)
     End Class
 
 End Namespace

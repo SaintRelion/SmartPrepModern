@@ -14,6 +14,12 @@ Namespace Views.Analytics
 
             AddHandler ctrlStatsTerminal.PointForensicsRequested, AddressOf HandleForensicRequest
             AddHandler Me.Loaded, Async Sub() Await ctrlExamSelector.RefreshList()
+
+            If SmartPrepModern.GlobalContext.UserSession.Role = "Reviewee" Then
+                ctrlExamSelector.SetHeader("YOUR EXAMINATIONS")
+            Else
+                ctrlExamSelector.SetHeader("EXAMINATION REPOSITORY")
+            End If
         End Sub
 
         ' Coordination Logic

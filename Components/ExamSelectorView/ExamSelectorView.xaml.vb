@@ -14,6 +14,10 @@ Namespace Components
             End Get
         End Property
 
+        Public Sub SetHeader(title As String)
+            txtHeaderText.Text = title.ToUpper()
+        End Sub
+
         Public Async Function RefreshList() As Task
             pnlLoading.Visibility = Visibility.Visible
             Try

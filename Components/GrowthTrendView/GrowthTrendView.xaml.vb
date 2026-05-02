@@ -35,7 +35,13 @@ Namespace Components
                 Dim dateLabels = historyList.GroupBy(Function(h) h.date_recorded).
                     Select(Function(g) 
                         Dim count = g.Max(Function(x) x.examinee_count)
-                        Return If(count > 0, $"{g.Key} ({count} Reviewee/s)", g.Key)
+                        Dim role = SmartPrepModern.GlobalContext.UserSession.Role
+        
+                        If role = "Reviewee" Then
+                            Return $"{g.Key} (YOU)"
+                        Else
+                            Return If(count > 0, $"{g.Key} ({count} Reviewee/s)", g.Key)
+                        End If
                     End Function).ToList()
 
                 Dim rawDates = historyList.Select(Function(h) h.date_recorded).Distinct().ToList()
@@ -80,9 +86,12 @@ Namespace Components
                 For Each row In data.history
                     values.Add(Math.Round(row.average_accuracy, 2))
 
-                    ' X-Axis Label: "Date (Count Reviewee)"
                     Dim labelText = row.date_recorded
-                    If row.examinee_count > 0 Then
+                    Dim role = SmartPrepModern.GlobalContext.UserSession.Role
+
+                    If role = "Reviewee" Then
+                        labelText &= " (YOU)"
+                    ElseIf row.examinee_count > 0 Then
                         labelText &= $" ({row.examinee_count} Reviewee/s)"
                     End If
                     labels.Add(labelText)

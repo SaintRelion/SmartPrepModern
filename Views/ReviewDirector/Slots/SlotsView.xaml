@@ -117,6 +117,7 @@
                                                                         x:Name="lstCategoryFilter"
                                                                         Margin="15,0,0,0"
                                                                         SelectionChanged="lstCategoryFilter_SelectionChanged"
+                                                                        SelectionMode="Multiple"
                                                                         Style="{StaticResource MaterialDesignFilterChipPrimaryListBox}">
                                                                         <ListBox.ItemsPanel>
                                                                                 <ItemsPanelTemplate>

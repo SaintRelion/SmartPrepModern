@@ -42,6 +42,7 @@ Namespace Views.ReviewDirector
                             
                             AddHandler groupView.RequestLoading, AddressOf SetLoading
                             AddHandler groupView.AddTopicRequested, AddressOf HandleAddTopicRequested
+                            AddHandler groupView.CategoryDeleted, AddressOf HandleCategoryDeleted
                             
                             _allCategoryViews.Add(groupView)
                         Next
@@ -84,6 +85,10 @@ Namespace Views.ReviewDirector
             MainDialogHost.IsOpen = True
         End Sub
 
+        Private Sub HandleCategoryDeleted(sender As Object, categoryId As Integer)
+            LoadRepository()
+        End Sub
+
         Private Async Sub ConfirmAddCategory_Click(sender As Object, e As RoutedEventArgs)
             Dim catName = txtNewCategoryName.Text.Trim()
             If String.IsNullOrEmpty(catName) Then Return
@@ -122,13 +127,28 @@ Namespace Views.ReviewDirector
         End Sub
 
         Private Sub RefreshDisplayedCategories()
-            If lstCategoryFilter.SelectedItem Is Nothing Then Return
-            Dim selected = lstCategoryFilter.SelectedItem.ToString()
-            
+            If lstCategoryFilter.SelectedItems.Count = 0 Then 
+                icCategoryGroups.Items.Clear()
+                Return
+            End If
+
+            Dim selectedFilters As New List(Of String)()
+            For Each item In lstCategoryFilter.SelectedItems
+                selectedFilters.Add(item.ToString().ToUpper())
+            Next
+
             Me.Dispatcher.Invoke(Sub()
                 icCategoryGroups.Items.Clear()
+
+                If selectedFilters.Contains("ALL") Then
+                    For Each view In _allCategoryViews
+                        icCategoryGroups.Items.Add(view)
+                    Next
+                    Return
+                End If
+
                 For Each view In _allCategoryViews
-                    If selected = "ALL" OrElse view.CategoryName.ToUpper() = selected Then
+                    If selectedFilters.Contains(view.CategoryName.ToUpper()) Then
                         icCategoryGroups.Items.Add(view)
                     End If
                 Next

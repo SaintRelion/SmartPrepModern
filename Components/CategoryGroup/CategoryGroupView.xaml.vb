@@ -9,6 +9,7 @@ Namespace Components
         Inherits UserControl
 
         Public Event AddTopicRequested(sender As Object, categoryId As Integer)
+        Public Event CategoryDeleted(sender As Object, categoryId As Integer)
         Public Event RequestLoading(isLoading As Boolean)
 
         Public Property CategoryId As Integer
@@ -151,6 +152,39 @@ Namespace Components
             Finally
                 RaiseEvent RequestLoading(False)
             End Try
+        End Sub
+
+        Private Async Sub DeleteCategory_Click(sender As Object, e As RoutedEventArgs)
+            If _slots.Count > 0 Then
+                MessageBox.Show("This category cannot be deleted because it contains active topics. " & 
+                                "Please delete all individual topics (slots) inside first.", 
+                                "Action Blocked", MessageBoxButton.OK, MessageBoxImage.Stop)
+                Return
+            End If
+
+            ' 2. Prompt for confirmation
+            Dim confirm = MessageBox.Show($"Are you sure you want to delete the category '{Me.CategoryName}'?", 
+                                        "Confirm Category Deletion", MessageBoxButton.YesNo, MessageBoxImage.Warning)
+
+            If confirm = MessageBoxResult.Yes Then
+                RaiseEvent RequestLoading(True)
+                Try
+                    ' Call the API
+                    Dim req As New GetByCategoryIdRequest With {.category_id = Me.CategoryId}
+                    Dim res = Await SlotsRepo.delete_categoryAsync(req) 
+
+                    If res.Success Then
+                        ' Notify the parent container (likely the main View) to remove this component from the UI
+                        RaiseEvent CategoryDeleted(Me, Me.CategoryId)
+                    Else
+                        MessageBox.Show(res.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                    End If
+                Catch ex As Exception
+                    MessageBox.Show($"Request failed: {ex.Message}")
+                Finally
+                    RaiseEvent RequestLoading(False)
+                End Try
+            End If
         End Sub
     End Class
 End Namespace

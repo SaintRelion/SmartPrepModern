@@ -57,44 +57,57 @@
                                 Padding="20"
                                 Background="White"
                                 CornerRadius="8">
-                                <StackPanel>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="40" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <!--  Sequential Numbering via DisplayId[cite: 23]  -->
                                     <TextBlock
-                                        Margin="0,0,0,15"
-                                        FontSize="16"
-                                        FontWeight="Medium"
-                                        Text="{Binding question_text}"
-                                        TextWrapping="Wrap" />
+                                        FontSize="18"
+                                        FontWeight="Black"
+                                        Opacity="0.3"
+                                        Text="{Binding DisplayId, StringFormat='{}{0}.'}" />
 
-                                    <StackPanel>
-                                        <RadioButton
-                                            Margin="0,5"
-                                            Checked="Option_Checked"
-                                            Content="{Binding option_a}"
-                                            GroupName="{Binding id}"
-                                            Tag="A" />
+                                    <StackPanel Grid.Column="1">
+                                        <!--  Path updated to QuestionData[cite: 23]  -->
+                                        <TextBlock
+                                            Margin="0,0,0,15"
+                                            FontSize="16"
+                                            FontWeight="Medium"
+                                            Text="{Binding QuestionData.question_text}"
+                                            TextWrapping="Wrap" />
 
-                                        <RadioButton
-                                            Margin="0,5"
-                                            Checked="Option_Checked"
-                                            Content="{Binding option_b}"
-                                            GroupName="{Binding id}"
-                                            Tag="B" />
-
-                                        <RadioButton
-                                            Margin="0,5"
-                                            Checked="Option_Checked"
-                                            Content="{Binding option_c}"
-                                            GroupName="{Binding id}"
-                                            Tag="C" />
-
-                                        <RadioButton
-                                            Margin="0,5"
-                                            Checked="Option_Checked"
-                                            Content="{Binding option_d}"
-                                            GroupName="{Binding id}"
-                                            Tag="D" />
+                                        <StackPanel>
+                                            <!--  GroupName and DataContext for events must use real ID[cite: 23]  -->
+                                            <RadioButton
+                                                Margin="0,5"
+                                                Checked="Option_Checked"
+                                                Content="{Binding QuestionData.option_a}"
+                                                GroupName="{Binding QuestionData.id}"
+                                                Tag="A" />
+                                            <RadioButton
+                                                Margin="0,5"
+                                                Checked="Option_Checked"
+                                                Content="{Binding QuestionData.option_b}"
+                                                GroupName="{Binding QuestionData.id}"
+                                                Tag="B" />
+                                            <RadioButton
+                                                Margin="0,5"
+                                                Checked="Option_Checked"
+                                                Content="{Binding QuestionData.option_c}"
+                                                GroupName="{Binding QuestionData.id}"
+                                                Tag="C" />
+                                            <RadioButton
+                                                Margin="0,5"
+                                                Checked="Option_Checked"
+                                                Content="{Binding QuestionData.option_d}"
+                                                GroupName="{Binding QuestionData.id}"
+                                                Tag="D" />
+                                        </StackPanel>
                                     </StackPanel>
-                                </StackPanel>
+                                </Grid>
                             </Border>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

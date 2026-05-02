@@ -30,31 +30,35 @@ Namespace Components
             End Try
         End Sub
 
-        ''' <summary>
-        ''' Fetches unified slots and filters for those with questionnaires
-        ''' </summary>
         Private Async Sub lstCategories_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
-            Dim selected = DirectCast(lstCategories.SelectedItem, CategoryItem)
-            If selected Is Nothing Then Return
+            If lstCategories.SelectedItems.Count = 0 Then
+                lstSlots.Items.Clear()
+                Return
+            End If
+
+            lstSlots.Items.Clear()
 
             Try
-                Dim req As New GetByCategoryIdRequest With {.category_id = selected.id}
-                Dim resp = Await SlotsRepo.get_slots_by_categoryAsync(req)
-                
-                If resp IsNot Nothing AndAlso resp.Success AndAlso resp.Data IsNot Nothing Then
-                    Me.Dispatcher.Invoke(Sub()
-                        lstSlots.Items.Clear()
-                        
-                        ' Filter logic: Discovery only cares about usable questionnaires
-                        For Each slot In resp.Data
-                            If slot.is_questionnaire_extracted Then
-                                lstSlots.Items.Add(slot)
-                            End If
-                        Next
-                    End Sub)
-                End If
+                For Each selectedItem In lstCategories.SelectedItems
+                    Dim category = DirectCast(selectedItem, CategoryItem)
+                    
+                    Dim req As New GetByCategoryIdRequest With {.category_id = category.id}
+                    Dim resp = Await SlotsRepo.get_slots_by_categoryAsync(req)
+                    
+                    If resp IsNot Nothing AndAlso resp.Success AndAlso resp.Data IsNot Nothing Then
+                        Me.Dispatcher.Invoke(Sub()
+                            ' 4. Filter and add slots to the discovery list[cite: 21]
+                            For Each slot In resp.Data
+                                ' Discovery only cares about slots that have usable questionnaires[cite: 21]
+                                If slot.is_questionnaire_extracted Then
+                                    lstSlots.Items.Add(slot)
+                                End If
+                            Next
+                        End Sub)
+                    End If
+                Next
             Catch ex As Exception
-                MessageBox.Show("Discovery Sync Error: " & ex.Message)
+                MessageBox.Show("Discovery Multi-Sync Error: " & ex.Message)
             End Try
         End Sub
 

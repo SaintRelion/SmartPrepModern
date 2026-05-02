@@ -6,7 +6,7 @@ Namespace APISync.Models
         Public Property score As Integer
         Public Property total As Integer
         Public Property percentage As Double
-        Public Property topic_breakdown As List(Of PerformanceMetric)
+        Public Property slots As List(Of SlotMetric)
     End Class
 
 End Namespace

@@ -3,12 +3,17 @@ Imports SmartPrepModern.APISync.Repositories
 Imports SmartPrepModern.GlobalContext
 
 Namespace Components
+    Public Class QuestionDisplayViewModel
+        Public Property DisplayId As Integer
+        Public Property QuestionData As QuestionOut
+    End Class
+
     Public Class ActiveExamView
         Inherits UserControl
 
         Public Event RequestExit As EventHandler
         Private _activeExamId As Integer
-        Private _activeQuestions As List(Of QuestionOut)
+        Private _displayQuestions As List(Of QuestionDisplayViewModel)
         Private _userAnswers As New Dictionary(Of Integer, String)
 
         Public Async Sub LoadExam(examBrief As ExamListOut)
@@ -28,9 +33,20 @@ Namespace Components
             
             If resp?.Success AndAlso resp.Data IsNot Nothing Then
                 Dim fullExam = resp.Data 
+
+                Dim mappedList As New List(Of QuestionDisplayViewModel)()
+                Dim index As Integer = 1
+
+                For Each q In fullExam.questions
+                    mappedList.Add(New QuestionDisplayViewModel With {
+                        .DisplayId = index,
+                        .QuestionData = q ' Preserves original data including the real PK id
+                    })
+                    index += 1
+                Next
                 
-                _activeQuestions = fullExam.questions
-                icQuestions.ItemsSource = _activeQuestions
+                _displayQuestions = mappedList
+                icQuestions.ItemsSource = _displayQuestions
                 
                 Dim maxAllowed As Integer = 5
                 Dim remaining As Integer = maxAllowed - fullExam.user_attempts
@@ -54,11 +70,11 @@ Namespace Components
         Private Sub Option_Checked(sender As Object, e As RoutedEventArgs)
             Dim rb = TryCast(sender, RadioButton)
             ' Look for the QuestionOut object in the DataContext of the Border/StackPanel
-            Dim question = TryCast(rb?.DataContext, QuestionOut)
-            
-            If rb IsNot Nothing AndAlso question IsNot Nothing Then
-                ' SAVE THE TAG (A, B, C, D) - This stops the "Substring" guessing game
-                _userAnswers(question.id) = rb.Tag.ToString()
+            Dim wrapper = TryCast(rb?.DataContext, QuestionDisplayViewModel)
+    
+            If rb IsNot Nothing AndAlso wrapper IsNot Nothing Then
+                ' Use the real ID from the wrapped data[cite: 22]
+                _userAnswers(wrapper.QuestionData.id) = rb.Tag.ToString()
             End If
         End Sub
 
@@ -69,8 +85,8 @@ Namespace Components
             End If
 
             ' Warning for incomplete exams
-            If _userAnswers.Count < _activeQuestions.Count Then
-                Dim missing = _activeQuestions.Count - _userAnswers.Count
+            If _userAnswers.Count < _displayQuestions.Count Then
+                Dim missing = _displayQuestions.Count - _userAnswers.Count
                 MessageBox.Show($"You have {missing} unanswered questions.", 
                                             "INCOMPLETE EXAM")
                 Return
@@ -79,13 +95,14 @@ Namespace Components
             Dim requestBody As New SubmitAnswerRequest With {.answers = New List(Of AnswerIn)()}
 
             ' Loop through the questions provided by the API
-            For Each q In _activeQuestions
+            For Each wrapper In _displayQuestions
+                Dim q = wrapper.QuestionData
                 If _userAnswers.ContainsKey(q.id) Then
                     requestBody.answers.Add(New AnswerIn With {
                         .user_id = UserSession.UserID.ToString(),
                         .examination_id = _activeExamId,
                         .question_id = q.id,
-                        .answer_text = _userAnswers(q.id), ' Sends "A", "B", "C", or "D"
+                        .answer_text = _userAnswers(q.id),
                         .correct_answer = q.answer        
                     })
                 End If
@@ -138,21 +155,24 @@ Namespace Components
             If _devClickCount >= 5 Then
                 _devClickCount = 0 ' Reset counter
                 
-                If _activeQuestions Is Nothing OrElse _activeQuestions.Count = 0 Then Return
+                If _displayQuestions Is Nothing OrElse _displayQuestions.Count = 0 Then Return
 
                 Dim rng As New Random()
                 Dim possibleKeys As String() = {"A", "B", "C", "D"}
 
                 ' 1. Fill all questions with a random answer
-                For Each q In _activeQuestions
+                For Each wrapper In _displayQuestions
+                    ' Access the real ID from the inner QuestionData object
+                    Dim realId = wrapper.QuestionData.id
+                    
                     ' Pick a random index 0-3
                     Dim randomChoice = possibleKeys(rng.Next(0, 4))
                     
-                    ' Update the internal dictionary
-                    If _userAnswers.ContainsKey(q.id) Then
-                        _userAnswers(q.id) = randomChoice
+                    ' Update the internal dictionary using the REAL database ID
+                    If _userAnswers.ContainsKey(realId) Then
+                        _userAnswers(realId) = randomChoice
                     Else
-                        _userAnswers.Add(q.id, randomChoice)
+                        _userAnswers.Add(realId, randomChoice)
                     End If
                 Next
 
@@ -160,7 +180,6 @@ Namespace Components
                 txtActiveExamTitle.Text = "DEV MODE: AUTO-SUBMITTING..."
                 txtActiveExamTitle.Foreground = New SolidColorBrush(Colors.Orange)
 
-                ' 3. Trigger the actual submission logic you already have
                 Await Task.Delay(500) ' Small delay so you can see it triggered
                 btnSubmit_Click(Nothing, Nothing)
             End If

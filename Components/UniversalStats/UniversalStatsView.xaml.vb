@@ -34,7 +34,6 @@ Namespace Components
                 Dim req As New StatsRequest With {.examination_id = examId}
                 If userId.HasValue Then req.user_id = userId.Value
 
-                ' Actual API call
                 Dim resp = Await AnalyticsRepo.get_exam_analyticsAsync(req)
 
                 Me.Dispatcher.Invoke(Sub()

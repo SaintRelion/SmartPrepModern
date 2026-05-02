@@ -32,6 +32,7 @@
             Grid.Row="1"
             Margin="0,0,0,15"
             SelectionChanged="lstCategories_SelectionChanged"
+            SelectionMode="Multiple"
             Style="{StaticResource MaterialDesignFilterChipPrimaryListBox}">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>

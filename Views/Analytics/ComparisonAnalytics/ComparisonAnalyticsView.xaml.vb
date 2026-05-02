@@ -17,6 +17,13 @@ Namespace Views.Analytics
 
             AddHandler Me.Loaded, Async Sub() 
                 Await ctrlExams.RefreshList()
+
+                If SmartPrepModern.GlobalContext.UserSession.Role = "Reviewee" Then
+                    ctrlExams.SetHeader("YOUR EXAMINATIONS")
+                Else
+                    ctrlExams.SetHeader("EXAMINATION REPOSITORY")
+                End If
+
                 Await LoadGlobalSlotTrend()
             End Sub
         End Sub
@@ -94,20 +101,25 @@ Namespace Views.Analytics
             Try
                 Dim req As New StatsRequest With {
                     .examination_id = _currentExamId,
-                    .user_id = -1
+                    .user_id = If(userId.HasValue, userId.Value, -1)
                 }
-
-                ' Safely assign userId if it exists
-                If userId.HasValue Then
-                    req.user_id = userId.Value
-                End If
 
                 ' Fetch the trend data
                 Dim resp = Await AnalyticsRepo.get_comparative_trendAsync(req)
                 
                 If resp?.Success AndAlso resp.Data IsNot Nothing Then
-                    ctrlGrowthChart.SetContext(_currentExamId, req.user_id)
-                    ctrlGrowthChart.RenderTrend(resp.Data)
+                    If resp.Data.history IsNot Nothing AndAlso resp.Data.history.Count > 0 Then
+                        ctrlGrowthChart.SetContext(_currentExamId, req.user_id)
+                        ctrlGrowthChart.RenderTrend(resp.Data)
+                    Else
+                        ' Visual Feedback: Clear the chart and show empty state
+                        ctrlGrowthChart.ClearChart()
+                        
+                        Dim role = SmartPrepModern.GlobalContext.UserSession.Role
+                        Dim msg = If(role = "Reviewee", "You haven't taken this exam yet.", "This student has no attempts recorded for this exam.")
+                        
+                        MessageBox.Show(msg, "NO DATA FOUND", MessageBoxButton.OK, MessageBoxImage.Information)
+                    End If
                 End If
 
             Catch ex As Exception

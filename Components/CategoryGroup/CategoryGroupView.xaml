@@ -47,17 +47,31 @@
                             Text="CATEGORY NAME" />
                     </StackPanel>
 
-                    <Button
-                        HorizontalAlignment="Right"
-                        Click="AddTopic_Click"
-                        Style="{StaticResource MaterialDesignIconButton}"
-                        ToolTip="Add New Topic Slot">
-                        <materialDesign:PackIcon
-                            Width="24"
-                            Height="24"
-                            Foreground="{DynamicResource PrimaryHueMidBrush}"
-                            Kind="PlusCircle" />
-                    </Button>
+                    <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                        <!--  New Delete Category Button  -->
+                        <Button
+                            Margin="0,0,8,0"
+                            Click="DeleteCategory_Click"
+                            Style="{StaticResource MaterialDesignIconButton}"
+                            ToolTip="Delete Empty Category">
+                            <materialDesign:PackIcon
+                                Width="20"
+                                Height="20"
+                                Foreground="#E57373"
+                                Kind="DeleteSweep" />
+                        </Button>
+
+                        <Button
+                            Click="AddTopic_Click"
+                            Style="{StaticResource MaterialDesignIconButton}"
+                            ToolTip="Add New Topic Slot">
+                            <materialDesign:PackIcon
+                                Width="24"
+                                Height="24"
+                                Foreground="{DynamicResource PrimaryHueMidBrush}"
+                                Kind="PlusCircle" />
+                        </Button>
+                    </StackPanel>
                 </Grid>
             </Border>
 

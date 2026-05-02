@@ -17,6 +17,11 @@ Namespace APISync.Repositories
             Return Await ApiService.PostAsync(Of GenericResponse)("slots/create_slot", req)
         End Function
 
+        ''' <summary> Calls: POST slots/delete_category </summary>
+        Public Shared Async Function delete_categoryAsync(req As GetByCategoryIdRequest) As Task(Of ApiResponse(Of object))
+            Return Await ApiService.PostAsync(Of object)("slots/delete_category", req)
+        End Function
+
         ''' <summary> Calls: POST slots/delete_slot </summary>
         Public Shared Async Function delete_slotAsync(req As DeleteSlotRequest) As Task(Of ApiResponse(Of GenericResponse))
             Return Await ApiService.PostAsync(Of GenericResponse)("slots/delete_slot", req)

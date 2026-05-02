@@ -55,6 +55,8 @@ End Class
 ### SlotCreateRequest
 - category_id: `Integer`
 - slot_name: `String`
+### GetByCategoryIdRequest
+- category_id: `Integer`
 ### DeleteSlotRequest
 - slot_id: `Integer`
 ### CategoryItem
@@ -68,8 +70,6 @@ End Class
 - question_text: `String`
 - choices: `Dictionary(Of String, String)`
 - correct_answer: `String`
-### GetByCategoryIdRequest
-- category_id: `Integer`
 ### SourceReferenceItem
 - id: `Integer`
 - category_id: `Integer`
@@ -210,7 +210,12 @@ End Class
 - score: `Integer`
 - total: `Integer`
 - percentage: `Double`
-- topic_breakdown: `List(Of PerformanceMetric)`
+- slots: `List(Of SlotMetric)`
+### SlotMetric
+- slot_name: `String`
+- score: `Integer`
+- total: `Integer`
+- percentage: `Double`
 ### QuestionForensic
 - category_id: `Integer`
 - question_text: `String`
@@ -255,6 +260,7 @@ End Class
 ### SlotsRepo
 - `create_categoryAsync`(req: `CategoryCreateRequest`) -> `object`
 - `create_slotAsync`(req: `SlotCreateRequest`) -> `GenericResponse`
+- `delete_categoryAsync`(req: `GetByCategoryIdRequest`) -> `object`
 - `delete_slotAsync`(req: `DeleteSlotRequest`) -> `GenericResponse`
 - `get_categoriesAsync`() -> `List(Of CategoryItem)`
 - `get_items_by_slotAsync`(req: `GetBySlotIdRequest`) -> `List(Of QuestionnaireItem)`

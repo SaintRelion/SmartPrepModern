@@ -35,30 +35,41 @@ Namespace Components
             End Sub)
         End Sub
 
+        
         ' --- ACTIONS ---
         Private Sub AddTopic_Click(sender As Object, e As RoutedEventArgs)
-            RaiseEvent AddTopicRequested(Me, Me.CategoryId)
+        RaiseEvent AddTopicRequested(Me, Me.CategoryId)
         End Sub
-
+        
         Private Async Sub UploadFile_Click(sender As Object, e As RoutedEventArgs)
             Dim btn = DirectCast(sender, Button)
             Dim item = DirectCast(btn.DataContext, SourceReferenceItem)
-            Dim fileType = btn.Tag.ToString() ' "material" or "questionnaire"
+            Dim fileType = btn.Tag.ToString() 
 
-            ' 1. Logic for Questionnaire warning
             If fileType = "questionnaire" Then
-                Dim msg = "WARNING: Re-uploading a questionnaire is only recommended if it hasn't been used for exams yet. " &
-                        "This action will DELETE all existing questions and AI analysis for this topic." & vbCrLf & vbCrLf &
-                        "Type 'PROCEED' to continue:"
-                
-                Dim confirmation = InputBox(msg, "Confirm Questionnaire Override")
-                
-                If confirmation Is Nothing OrElse confirmation.Trim().ToUpper() <> "PROCEED" Then
-                    Return ' Exit if they didn't type PROCEED exactly
+                ' 1. Check for Active Exam Dependencies
+                If item.active_exam_count > 0 Then
+                    Dim blockMsg = $"ACTION BLOCKED: This topic is used in {item.active_exam_count} active examination(s).{vbCrLf}{vbCrLf}" &
+                                "To update these questions, you must first delete the Examinations referencing " &
+                                "this topic in the 'Manage Exams' section."
+                    
+                    MessageBox.Show(blockMsg, "Dependency Conflict", MessageBoxButton.OK, MessageBoxImage.Stop)
+                    Return
+                End If
+
+                ' 2. Simple confirmation for unused topics
+                If item.item_count > 0 Then
+                    Dim confirm = MessageBox.Show($"Re-uploading will replace the existing {item.item_count} items. Proceed?", 
+                                                "Confirm Overwrite", MessageBoxButton.YesNo, MessageBoxImage.Warning)
+                    If confirm <> MessageBoxResult.Yes Then Return
                 End If
             End If
 
-            ' 2. Filter restricted to PDF only (removed .docx)
+            ' Trigger the standard file picker and upload logic
+            InitiateFileUpload(item, fileType)
+        End Sub
+
+        Private Async Sub InitiateFileUpload(item As SourceReferenceItem, fileType As String)
             Dim ofd As New OpenFileDialog With {
                 .Filter = "PDF Files (*.pdf)|*.pdf",
                 .Title = $"Select {fileType.ToUpper()} for {item.slot_name}"

@@ -142,6 +142,7 @@ Namespace Components
                         Dim wrapper As New QuestionForensicWrapper With {
                             .CategoryId = log.category_id,
                             .CategoryName = log.category_name,
+                            .SlotName = log.slot_name,
                             .QuestionText = log.question_text,
                             .CorrectAnswer = log.correct_answer,
                             .StudentAnswer = log.student_answer,

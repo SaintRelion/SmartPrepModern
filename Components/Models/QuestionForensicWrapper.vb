@@ -7,6 +7,7 @@ Namespace Components.Models
         ' Mapping directly to your QuestionForensic model properties
         Public Property CategoryId As Integer
         Public Property CategoryName As String
+        Public Property SlotName As String
         Public Property QuestionText As String
         Public Property StudentAnswer As String
         Public Property CorrectAnswer As String

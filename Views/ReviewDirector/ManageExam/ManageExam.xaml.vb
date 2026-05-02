@@ -22,7 +22,6 @@ Namespace Views.ReviewDirector
             _selectedExamId = exam.id
             pnlDetails.Visibility = Visibility.Visible
             txtExamTitle.Text = exam.exam_name
-            txtExamMeta.Text = $"{exam.category_name} • Created at {exam.created_at}"
             
             ' Map the metric_count from list_exams (calculated_metric in Python)
             txtStudentCount.Text = exam.metric_count.ToString()
@@ -34,6 +33,8 @@ Namespace Views.ReviewDirector
             If resp?.Success Then
                 txtItemCount.Text = resp.Data.total_items.ToString()
                 
+                icTopicPills.ItemsSource = resp.Data.topics
+
                 ' Map flattened properties back to QuestionnaireItem list
                 _currentQuestions = resp.Data.questions.Select(Function(q)
                     Dim item As New QuestionnaireItem With {
@@ -74,17 +75,34 @@ Namespace Views.ReviewDirector
             End If
         End Sub
 
-        Private Async Sub btnDelete_Click(sender As Object, e As RoutedEventArgs)
-            Dim result = MessageBox.Show("Delete this exam and associated attempts? This is permanent.", 
-                                       "Confirm Deletion", MessageBoxButton.YesNo, MessageBoxImage.Warning)
+        Private Sub btnDelete_Click(sender As Object, e As RoutedEventArgs)
+            ' Bind the current exam info to the warning card
+            pnlNuclearDelete.DataContext = New With { .exam_name = txtExamTitle.Text }
+            pnlNuclearDelete.Visibility = Visibility.Visible
+            txtConfirmPurge.Clear()
+        End Sub
 
-            If result = MessageBoxResult.Yes Then
-                Dim resp = Await ExamRepo.delete_examAsync(New ExamDeleteRequest With {.exam_id = _selectedExamId})
-                If resp?.Success Then
-                    pnlDetails.Visibility = Visibility.Collapsed
-                    Await examSelector.RefreshList()
-                End If
+        Private Async Sub ExecuteDelete_Click(sender As Object, e As RoutedEventArgs)
+            If txtConfirmPurge.Text.Trim().ToUpper() = "PURGE" Then
+                pnlNuclearDelete.Visibility = Visibility.Collapsed
+                
+                Try
+                    Dim resp = Await ExamRepo.delete_examAsync(New ExamDeleteRequest With {.exam_id = _selectedExamId})
+                    If resp?.Success Then
+                        pnlDetails.Visibility = Visibility.Collapsed
+                        Await examSelector.RefreshList()
+                    End If
+                Catch ex As Exception
+                    MessageBox.Show($"Deletion failed: {ex.Message}")
+                End Try
+            Else
+                MessageBox.Show("Safety Lock Active: You must type 'PURGE' exactly.", "Validation Error")
             End If
+        End Sub
+
+        ' Cancel the operation
+        Private Sub CancelDelete_Click(sender As Object, e As RoutedEventArgs)
+            pnlNuclearDelete.Visibility = Visibility.Collapsed
         End Sub
     End Class
 End Namespace

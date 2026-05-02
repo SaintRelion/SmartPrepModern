@@ -23,6 +23,10 @@ Namespace Components
             Next
                 
             _masterList = items
+            Me.Dispatcher.Invoke(Sub()
+                Dim uniqueSlots = _masterList.Select(Function(x) x.SlotName).Distinct().OrderBy(Function(s) s).ToList()
+                lstSlotPills.ItemsSource = uniqueSlots
+            End Sub)
 
             ' Set the subtitle based on whether history is present in the batch
             Dim hasComparison = _masterList.Any(Function(x) x.IsComparative)
@@ -36,24 +40,53 @@ Namespace Components
             ApplyFilter()
         End Sub
 
+        Private Sub Pill_Click(sender As Object, e As RoutedEventArgs)
+            e.Handled = True
+
+            Dim btn = TryCast(sender, Button)
+            Dim selectedSlot = TryCast(btn?.DataContext, String)
+            
+            If selectedSlot Is Nothing OrElse _masterList Is Nothing Then Return
+
+            ' 1. Find the first data item belonging to that slot[cite: 6]
+            Dim targetItem = lstForensicQuestions.Items.Cast(Of QuestionForensicWrapper)().
+                        FirstOrDefault(Function(x) x.SlotName = selectedSlot)
+
+            If targetItem IsNot Nothing Then
+                ' 2. Scroll main list to item[cite: 6]
+                lstForensicQuestions.ScrollIntoView(targetItem)
+                lstForensicQuestions.UpdateLayout()
+
+                ' 3. Target the GroupItem for the header[cite: 6]
+                Dim container = TryCast(lstForensicQuestions.ItemContainerGenerator.
+                                ContainerFromItem(targetItem), FrameworkElement)
+
+                If container IsNot Nothing Then
+                    Dim parent = VisualTreeHelper.GetParent(container)
+                    While parent IsNot Nothing AndAlso Not (TypeOf parent Is GroupItem)
+                        parent = VisualTreeHelper.GetParent(parent)
+                    End While
+
+                    If parent IsNot Nothing Then
+                        DirectCast(parent, GroupItem).BringIntoView()
+                    End If
+                End If
+            End If
+        End Sub
+
         Private Sub ApplyFilter()
             If _masterList Is Nothing Then Return
 
             Dim filteredList = _masterList.AsEnumerable()
             Select Case cmbFilter.SelectedIndex
-                Case 1 ' Correct Only
-                    filteredList = filteredList.Where(Function(x) x.IsCorrect = True)
-                Case 2 ' Incorrect Only
-                    filteredList = filteredList.Where(Function(x) x.IsCorrect = False)
-                Case Else ' All Items (Index 0)
-                    ' No filtering needed
+                Case 1 : filteredList = filteredList.Where(Function(x) x.IsCorrect = True)
+                Case 2 : filteredList = filteredList.Where(Function(x) x.IsCorrect = False)
             End Select
 
             Dim view As ICollectionView = CollectionViewSource.GetDefaultView(filteredList.ToList())
-
             If view IsNot Nothing Then
                 view.GroupDescriptions.Clear()
-                view.GroupDescriptions.Add(New PropertyGroupDescription("CategoryName"))
+                view.GroupDescriptions.Add(New PropertyGroupDescription("SlotName"))
             End If
 
             lstForensicQuestions.ItemsSource = view

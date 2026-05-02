@@ -79,6 +79,7 @@ End Class
 - is_material_uploaded: `Boolean`
 - is_questionnaire_extracted: `Boolean`
 - item_count: `Integer`
+- active_exam_count: `Integer`
 - created_at: `String`
 ### SlotUpdateRequest
 - slot_id: `Integer`
@@ -111,6 +112,7 @@ End Class
 - total_items: `Integer`
 - questions: `List(Of QuestionOut)`
 - user_attempts: `Integer`
+- topics: `List(Of String)`
 ### QuestionOut
 - id: `Integer`
 - question_text: `String`
@@ -172,6 +174,7 @@ End Class
 ### ForensicLogItem
 - category_id: `Integer`
 - category_name: `String`
+- slot_name: `String`
 - question_text: `String`
 - correct_answer: `String`
 - student_answer: `String`
@@ -203,29 +206,18 @@ End Class
 ### ExamAnalyticsResponse
 - overall_competency: `Double`
 - topic_breakdown: `List(Of PerformanceMetric)`
-- question_logs: `List(Of QuestionForensic)`
 ### PerformanceMetric
 - id: `Integer`
 - label: `String`
-- score: `Integer`
-- total: `Integer`
+- score: `Double`
+- total: `Double`
 - percentage: `Double`
 - slots: `List(Of SlotMetric)`
 ### SlotMetric
 - slot_name: `String`
-- score: `Integer`
-- total: `Integer`
+- score: `Double`
+- total: `Double`
 - percentage: `Double`
-### QuestionForensic
-- category_id: `Integer`
-- question_text: `String`
-- student_answer: `String`
-- correct_answer: `String`
-- is_correct: `Boolean`
-- option_a_analysis: `String`
-- option_b_analysis: `String`
-- option_c_analysis: `String`
-- option_d_analysis: `String`
 ### GlobalExcellenceResponse
 - success: `Boolean`
 - subject_leaderboards: `List(Of SubjectLeaderboard)`

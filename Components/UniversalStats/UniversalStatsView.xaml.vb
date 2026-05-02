@@ -37,7 +37,8 @@ Namespace Components
                 Dim resp = Await AnalyticsRepo.get_exam_analyticsAsync(req)
 
                 Me.Dispatcher.Invoke(Sub()
-                    If resp?.Success AndAlso resp.Data IsNot Nothing AndAlso resp.Data.topic_breakdown.Count > 0 Then
+                    If resp?.Success AndAlso resp.Data IsNot Nothing AndAlso resp.Data.topic_breakdown IsNot Nothing AndAlso 
+                        resp.Data.topic_breakdown.Any() Then
                         _examIntel = resp.Data
                         pnlEmptyState.Visibility = Visibility.Collapsed
                         
@@ -58,7 +59,7 @@ Namespace Components
             End Try
         End Function
 
-        Private Sub SubjectCard_Click(sender As Object, e As MouseButtonEventArgs)
+        Private Async Sub SubjectCard_Click(sender As Object, e As MouseButtonEventArgs)
             If _currentUserId <= 0 Then
                 MessageBox.Show("Please select a specific reviewee from the list to view detailed question forensics and individual logic analysis.", 
                                 "Select Reviewee", 
@@ -68,27 +69,57 @@ Namespace Components
             End If
 
             Dim metric = TryCast(DirectCast(sender, Border).DataContext, PerformanceMetric)
-            If metric Is Nothing OrElse _examIntel?.question_logs Is Nothing Then Return
+            If metric Is Nothing Then Return
 
-            Dim forensicList As New List(Of QuestionForensicWrapper)
-            Dim categoryLogs = _examIntel.question_logs.Where(Function(q) q.category_id = metric.id).ToList()
-            
-            For Each log In categoryLogs 
-                forensicList.Add(New QuestionForensicWrapper With {
-                    .CategoryId = log.category_id,
-                    .CategoryName = metric.label, 
-                    .QuestionText = log.question_text,
-                    .StudentAnswer = log.student_answer,
-                    .CorrectAnswer = log.correct_answer,
-                    .IsCorrect = log.is_correct,
-                    .OptionA_Analysis = log.option_a_analysis,
-                    .OptionB_Analysis = log.option_b_analysis,
-                    .OptionC_Analysis = log.option_c_analysis,
-                    .OptionD_Analysis = log.option_d_analysis
-                })
-            Next
-            
-            RaiseEvent PointForensicsRequested(Me, forensicList)
+            Me.Dispatcher.Invoke(Sub() pnlLoading.Visibility = Visibility.Visible)
+
+            Try
+                ' Passing -1 for attempt_index to trigger the "Latest Attempt" backend logic
+                Dim req As New ForensicAttemptRequest With {
+                    .examination_id = _currentExamId,
+                    .user_id = _currentUserId,
+                    .attempt_index = -1 
+                }
+
+                Dim resp = Await AnalyticsRepo.get_attempt_forensicsAsync(req)
+
+                If resp.Data?.Success AndAlso resp.Data.comparative_items IsNot Nothing Then
+                    Dim forensicList As New List(Of QuestionForensicWrapper)
+                    
+                    ' CRITICAL: Filter only for the questions belonging to the clicked category
+                    Dim filteredLogs = resp.Data.comparative_items.
+                                    Where(Function(log) log.category_id = metric.id).ToList()
+
+                    For Each log In filteredLogs
+                        Dim wrapper As New QuestionForensicWrapper With {
+                            .CategoryId = log.category_id,
+                            .CategoryName = log.category_name,
+                            .SlotName = log.slot_name,
+                            .QuestionText = log.question_text,
+                            .CorrectAnswer = log.correct_answer,
+                            .StudentAnswer = log.student_answer,
+                            .IsCorrect = log.is_correct,
+                            .OptionA_Analysis = log.option_a_analysis,
+                            .OptionB_Analysis = log.option_b_analysis,
+                            .OptionC_Analysis = log.option_c_analysis,
+                            .OptionD_Analysis = log.option_d_analysis
+                        }
+
+                        If Not String.IsNullOrWhiteSpace(log.previous_student_answer) Then
+                            wrapper.IsComparative = True
+                            wrapper.PreviousAnswer = log.previous_student_answer
+                            wrapper.WasCorrect = log.previous_is_correct
+                        End If
+                        forensicList.Add(wrapper)
+                    Next
+
+                    Me.Dispatcher.Invoke(Sub() RaiseEvent PointForensicsRequested(Me, forensicList))
+                End If
+            Catch ex As Exception
+                MessageBox.Show($"Forensic sync failed: {ex.Message}")
+            Finally
+                Me.Dispatcher.Invoke(Sub() pnlLoading.Visibility = Visibility.Collapsed)
+            End Try
         End Sub
     End Class
 End Namespace

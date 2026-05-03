@@ -11,10 +11,18 @@
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
+                <!--  Header  -->
+                <RowDefinition Height="Auto" />
+                <!--  Search Bar  -->
                 <RowDefinition Height="*" />
+                <!--  List  -->
             </Grid.RowDefinitions>
 
-            <Border Padding="16" Background="#F9F9F9">
+            <!--  Header  -->
+            <Border
+                Grid.Row="0"
+                Padding="16"
+                Background="#F9F9F9">
                 <StackPanel>
                     <TextBlock
                         FontSize="11"
@@ -30,9 +38,31 @@
                 </StackPanel>
             </Border>
 
+            <!--  Search Bar[cite: 6]  -->
+            <Border
+                Grid.Row="1"
+                Padding="12,0,12,12"
+                Background="#F9F9F9">
+                <Grid>
+                    <TextBox
+                        x:Name="txtSearch"
+                        Padding="10,8,30,8"
+                        materialDesign:HintAssist.Hint="Search by name..."
+                        FontSize="12"
+                        Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                        TextChanged="txtSearch_TextChanged" />
+                    <materialDesign:PackIcon
+                        Margin="0,0,10,0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Kind="Magnify"
+                        Opacity="0.5" />
+                </Grid>
+            </Border>
+
             <ListBox
                 x:Name="lstReviewees"
-                Grid.Row="1"
+                Grid.Row="2"
                 Background="Transparent"
                 BorderThickness="0"
                 SelectionChanged="lstReviewees_SelectionChanged">
@@ -44,14 +74,22 @@
                             BorderThickness="4,0,0,1">
                             <Border.Style>
                                 <Style TargetType="Border">
+                                    <!--  Default: Red for haven't taken  -->
                                     <Setter Property="BorderBrush" Value="#FF5252" />
+                                    <Setter Property="Background" Value="Transparent" />
                                     <Style.Triggers>
+                                        <!--  Green: Successfully taken[cite: 6]  -->
                                         <DataTrigger Binding="{Binding has_taken}" Value="True">
                                             <Setter Property="BorderBrush" Value="#4CAF50" />
+                                        </DataTrigger>
+                                        <!--  Highlight selection[cite: 6]  -->
+                                        <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
+                                            <Setter Property="Background" Value="#F1F2F6" />
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
                             </Border.Style>
+
                             <StackPanel Orientation="Horizontal">
                                 <materialDesign:PackIcon
                                     VerticalAlignment="Center"
@@ -70,8 +108,10 @@
                 </ListBox.ItemTemplate>
             </ListBox>
 
+            <!--  Loading Panel[cite: 6]  -->
             <Border
                 x:Name="pnlLoading"
+                Grid.RowSpan="3"
                 Background="White"
                 Opacity="0.7"
                 Visibility="Collapsed">

@@ -48,7 +48,6 @@
                     <ColumnDefinition Width="Auto" />
                     <!--  Jump Label  -->
                     <ColumnDefinition Width="*" />
-                    <!--  Pills (Takes remaining space)  -->
                 </Grid.ColumnDefinitions>
 
                 <TextBlock
@@ -77,46 +76,46 @@
                     FontSize="10"
                     FontWeight="Black"
                     Opacity="0.4"
-                    Text="JUMP TO:" />
+                    Text="TOPICS:" />
 
-                <ScrollViewer
+                <ComboBox
+                    x:Name="cmbTopicJump"
                     Grid.Column="3"
+                    Width="200"
                     Margin="10,0,0,0"
-                    HorizontalScrollBarVisibility="Auto"
-                    VerticalScrollBarVisibility="Disabled">
-                    <ListBox
-                        x:Name="lstSlotPills"
-                        Background="Transparent"
-                        BorderThickness="0"
-                        Focusable="False"
-                        ScrollViewer.CanContentScroll="False">
-                        <ListBox.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel Orientation="Horizontal" />
-                            </ItemsPanelTemplate>
-                        </ListBox.ItemsPanel>
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <!--  Use a Button to capture the click specifically  -->
-                                <Button
-                                    Margin="0,0,8,0"
-                                    Padding="0"
-                                    Click="Pill_Click"
-                                    Style="{StaticResource MaterialDesignFlatButton}">
-                                    <Border
-                                        Padding="12,6"
-                                        Background="#F0F2F5"
-                                        CornerRadius="15">
-                                        <TextBlock
-                                            FontSize="11"
-                                            FontWeight="Black"
-                                            Text="{Binding}" />
-                                    </Border>
-                                </Button>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                </ScrollViewer>
+                    HorizontalAlignment="Left"
+                    SelectionChanged="TopicJump_SelectionChanged"
+                    Style="{StaticResource MaterialDesignOutlinedComboBox}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock
+                                FontSize="11"
+                                FontWeight="Bold"
+                                Text="{Binding}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+
+                <StackPanel
+                    Grid.Column="4"
+                    Margin="0,0,10,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal">
+                    <materialDesign:PackIcon
+                        Width="14"
+                        Height="14"
+                        VerticalAlignment="Center"
+                        Kind="InformationOutline"
+                        Opacity="0.5" />
+                    <TextBlock
+                        x:Name="txtItemCount"
+                        Margin="8,0,0,0"
+                        FontSize="11"
+                        FontWeight="Black"
+                        Foreground="{DynamicResource PrimaryHueMidBrush}"
+                        Text="0 / 0 ITEMS" />
+                </StackPanel>
             </Grid>
 
             <ListBox

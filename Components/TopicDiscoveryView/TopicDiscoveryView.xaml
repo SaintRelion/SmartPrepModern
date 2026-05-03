@@ -27,24 +27,20 @@
                 Text="Filter categories to find available questionnaires" />
         </StackPanel>
 
-        <ListBox
-            x:Name="lstCategories"
+        <ComboBox
+            x:Name="cmbCategories"
             Grid.Row="1"
-            Margin="0,0,0,15"
-            SelectionChanged="lstCategories_SelectionChanged"
-            SelectionMode="Multiple"
-            Style="{StaticResource MaterialDesignFilterChipPrimaryListBox}">
-            <ListBox.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal" />
-                </ItemsPanelTemplate>
-            </ListBox.ItemsPanel>
-            <ListBox.ItemTemplate>
-                <DataTemplate DataType="{x:Type models:CategoryItem}">
+            Margin="0,0,0,20"
+            materialDesign:HintAssist.Hint="Filter by Category"
+            SelectionChanged="cmbCategories_SelectionChanged"
+            Style="{StaticResource MaterialDesignOutlinedComboBox}">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <!--  We will handle both raw strings and CategoryItem objects in code  -->
                     <TextBlock Text="{Binding name}" />
                 </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
 
         <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
             <ItemsControl x:Name="lstSlots">

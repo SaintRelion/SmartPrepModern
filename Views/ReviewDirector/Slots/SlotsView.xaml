@@ -113,18 +113,16 @@
                                                                         FontWeight="Black"
                                                                         Opacity="0.4"
                                                                         Text="CATEGORY FILTER:" />
-                                                                <ListBox
-                                                                        x:Name="lstCategoryFilter"
+
+                                                                <ComboBox
+                                                                        x:Name="cmbCategoryFilter"
+                                                                        Width="200"
                                                                         Margin="15,0,0,0"
-                                                                        SelectionChanged="lstCategoryFilter_SelectionChanged"
-                                                                        SelectionMode="Multiple"
-                                                                        Style="{StaticResource MaterialDesignFilterChipPrimaryListBox}">
-                                                                        <ListBox.ItemsPanel>
-                                                                                <ItemsPanelTemplate>
-                                                                                        <StackPanel Orientation="Horizontal" />
-                                                                                </ItemsPanelTemplate>
-                                                                        </ListBox.ItemsPanel>
-                                                                </ListBox>
+                                                                        materialDesign:HintAssist.Hint="Select Category"
+                                                                        SelectionChanged="cmbCategoryFilter_SelectionChanged"
+                                                                        Style="{StaticResource MaterialDesignOutlinedComboBox}">
+                                                                        <!--  Items will be populated dynamically in code-behind  -->
+                                                                </ComboBox>
                                                         </StackPanel>
                                                 </StackPanel>
 

@@ -30,12 +30,13 @@ Namespace Views.ReviewDirector
                 If response IsNot Nothing AndAlso response.Success AndAlso response.Data IsNot Nothing Then
                     Me.Dispatcher.Invoke(Sub()
                         _allCategoryViews.Clear()
-                        lstCategoryFilter.Items.Clear()
-                        lstCategoryFilter.Items.Add("ALL")
+                        cmbCategoryFilter.Items.Clear()
+                
+                        cmbCategoryFilter.Items.Add("ALL")
 
                         ' Create the View objects
                         For Each cat In response.Data
-                            lstCategoryFilter.Items.Add(cat.name.ToUpper())
+                            cmbCategoryFilter.Items.Add(cat.name.ToUpper())
 
                             Dim groupView As New CategoryGroupView()
                             groupView.SetCategory(cat.id, cat.name)
@@ -47,7 +48,7 @@ Namespace Views.ReviewDirector
                             _allCategoryViews.Add(groupView)
                         Next
 
-                        lstCategoryFilter.SelectedIndex = 0
+                        cmbCategoryFilter.SelectedIndex = 0
                         RefreshDisplayedCategories() 
                     End Sub)
 
@@ -122,34 +123,33 @@ Namespace Views.ReviewDirector
             End Try
         End Sub
 
-        Private Sub lstCategoryFilter_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
+        Private Sub cmbCategoryFilter_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
             RefreshDisplayedCategories()
         End Sub
 
         Private Sub RefreshDisplayedCategories()
-            If lstCategoryFilter.SelectedItems.Count = 0 Then 
+            If cmbCategoryFilter.SelectedItem Is Nothing Then 
                 icCategoryGroups.Items.Clear()
                 Return
             End If
 
-            Dim selectedFilters As New List(Of String)()
-            For Each item In lstCategoryFilter.SelectedItems
-                selectedFilters.Add(item.ToString().ToUpper())
-            Next
+            Dim selectedFilter As String = cmbCategoryFilter.SelectedItem.ToString().ToUpper()
 
             Me.Dispatcher.Invoke(Sub()
                 icCategoryGroups.Items.Clear()
 
-                If selectedFilters.Contains("ALL") Then
+                If selectedFilter = "ALL" Then
                     For Each view In _allCategoryViews
                         icCategoryGroups.Items.Add(view)
                     Next
                     Return
                 End If
 
+                ' Filter for the single selected category[cite: 8]
                 For Each view In _allCategoryViews
-                    If selectedFilters.Contains(view.CategoryName.ToUpper()) Then
+                    If view.CategoryName.ToUpper() = selectedFilter Then
                         icCategoryGroups.Items.Add(view)
+                        Exit For ' Optimization since names are unique[cite: 8]
                     End If
                 Next
             End Sub)

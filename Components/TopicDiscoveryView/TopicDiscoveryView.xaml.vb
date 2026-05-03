@@ -20,9 +20,13 @@ Namespace Components
                 Dim resp = Await SlotsRepo.get_categoriesAsync()
                 If resp IsNot Nothing AndAlso resp.Success Then
                     Me.Dispatcher.Invoke(Sub()
-                        lstCategories.ItemsSource = resp.Data
-                        ' Trigger first selection if items exist
-                        If lstCategories.Items.Count > 0 Then lstCategories.SelectedIndex = 0
+                        ' Create a list with a dummy "ALL" category for consistent filtering[cite: 11]
+                        Dim categoryList As New List(Of CategoryItem)
+                        categoryList.Add(New CategoryItem With {.id = -1, .name = "ALL CATEGORIES"})
+                        categoryList.AddRange(resp.Data)
+
+                        cmbCategories.ItemsSource = categoryList
+                        cmbCategories.SelectedIndex = 0
                     End Sub)
                 End If
             Catch ex As Exception
@@ -30,37 +34,40 @@ Namespace Components
             End Try
         End Sub
 
-        Private Async Sub lstCategories_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
-            If lstCategories.SelectedItems.Count = 0 Then
-                lstSlots.Items.Clear()
-                Return
-            End If
+        Private Async Sub cmbCategories_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
+            Dim selected = TryCast(cmbCategories.SelectedItem, CategoryItem)
+            If selected Is Nothing Then Return
 
             lstSlots.Items.Clear()
 
             Try
-                For Each selectedItem In lstCategories.SelectedItems
-                    Dim category = DirectCast(selectedItem, CategoryItem)
-                    
-                    Dim req As New GetByCategoryIdRequest With {.category_id = category.id}
-                    Dim resp = Await SlotsRepo.get_slots_by_categoryAsync(req)
-                    
-                    If resp IsNot Nothing AndAlso resp.Success AndAlso resp.Data IsNot Nothing Then
-                        Me.Dispatcher.Invoke(Sub()
-                            ' 4. Filter and add slots to the discovery list[cite: 21]
-                            For Each slot In resp.Data
-                                ' Discovery only cares about slots that have usable questionnaires[cite: 21]
-                                If slot.is_questionnaire_extracted Then
-                                    lstSlots.Items.Add(slot)
-                                End If
-                            Next
-                        End Sub)
-                    End If
-                Next
+                If selected.id = -1 Then
+                    For Each item In cmbCategories.Items.Cast(Of CategoryItem).Where(Function(c) c.id <> -1)
+                        Await FetchAndPopulateSlots(item.id)
+                    Next
+                Else
+                    Await FetchAndPopulateSlots(selected.id)
+                End If
             Catch ex As Exception
                 MessageBox.Show("Discovery Multi-Sync Error: " & ex.Message)
             End Try
         End Sub
+
+        Private Async Function FetchAndPopulateSlots(categoryId As Integer) As Task
+            Dim req As New GetByCategoryIdRequest With {.category_id = categoryId}
+            Dim resp = Await SlotsRepo.get_slots_by_categoryAsync(req)
+            
+            If resp IsNot Nothing AndAlso resp.Success AndAlso resp.Data IsNot Nothing Then
+                Me.Dispatcher.Invoke(Sub()
+                    For Each slot In resp.Data
+                        ' Ensure we only show items with usable questionnaires[cite: 11]
+                        If slot.is_questionnaire_extracted Then
+                            lstSlots.Items.Add(slot)
+                        End If
+                    Next
+                End Sub)
+            End If
+        End Function
 
         Private Sub AddTopic_Click(sender As Object, e As RoutedEventArgs)
             Dim slot = DirectCast(DirectCast(sender, Button).DataContext, SourceReferenceItem)

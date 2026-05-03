@@ -24,8 +24,14 @@ Namespace Components
                 
             _masterList = items
             Me.Dispatcher.Invoke(Sub()
+                ' Distinct list of topics[cite: 3]
                 Dim uniqueSlots = _masterList.Select(Function(x) x.SlotName).Distinct().OrderBy(Function(s) s).ToList()
-                lstSlotPills.ItemsSource = uniqueSlots
+                
+                Dim dropdownItems As New List(Of String) From {"ALL TOPICS"}
+                dropdownItems.AddRange(uniqueSlots)
+                
+                cmbTopicJump.ItemsSource = dropdownItems
+                cmbTopicJump.SelectedIndex = 0
             End Sub)
 
             ' Set the subtitle based on whether history is present in the batch
@@ -83,6 +89,11 @@ Namespace Components
                 Case 2 : filteredList = filteredList.Where(Function(x) x.IsCorrect = False)
             End Select
 
+            Dim selectedTopic = TryCast(cmbTopicJump.SelectedItem, String)
+            If selectedTopic IsNot Nothing AndAlso selectedTopic <> "ALL TOPICS" Then
+                filteredList = filteredList.Where(Function(x) x.SlotName = selectedTopic)
+            End If
+
             Dim view As ICollectionView = CollectionViewSource.GetDefaultView(filteredList.ToList())
             If view IsNot Nothing Then
                 view.GroupDescriptions.Clear()
@@ -90,10 +101,36 @@ Namespace Components
             End If
 
             lstForensicQuestions.ItemsSource = view
+            
+            UpdateItemCount()
+        End Sub
+
+        Private Sub UpdateItemCount()
+            If _masterList Is Nothing Then Return
+
+            Dim selectedTopic = TryCast(cmbTopicJump.SelectedItem, String)
+            Dim scopeItems As IEnumerable(Of QuestionForensicWrapper)
+
+            If selectedTopic Is Nothing OrElse selectedTopic = "ALL TOPICS" Then
+                scopeItems = _masterList ' Use everything
+            Else
+                scopeItems = _masterList.Where(Function(x) x.SlotName = selectedTopic) ' Use only this topic
+            End If
+
+            Dim totalInScope = scopeItems.Count()
+            Dim correctInScope = scopeItems.Count(Function(x) x.IsCorrect = True)
+            Dim wrongInScope = scopeItems.Count(Function(x) x.IsCorrect = False)
+
+            ' Format: "10 Correct 25 Wrong / 35"
+            txtItemCount.Text = $"{correctInScope} Correct {wrongInScope} Wrong / {totalInScope}"
         End Sub
 
         ' UI Event Handlers
         Private Sub Filter_SelectionChanged(sender As Object, e As RoutedEventArgs)
+            ApplyFilter()
+        End Sub
+
+        Private Sub TopicJump_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
             ApplyFilter()
         End Sub
 

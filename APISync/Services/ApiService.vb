@@ -7,7 +7,7 @@ Imports System.Threading
 Namespace APISync.Services
     Public Class ApiService
         Private Shared ReadOnly _httpClient As New HttpClient()
-        Public Shared Property BaseUrl As String = "http://localhost:8000/"
+        Public Shared Property BaseUrl As String = "https://api.smartprepcrim.online/"
 
         Shared Sub New()
             _httpClient.Timeout = TimeSpan.FromMinutes(5)

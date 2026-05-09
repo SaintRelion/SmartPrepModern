@@ -41,7 +41,7 @@ Namespace Components
         End Sub
 
         Public Sub ShowRevieweeStrip()
-            If _allReviewees IsNot Nothing AndAlso _allReviewees.Count > 1 Then
+            If _allReviewees IsNot Nothing AndAlso _allReviewees.Count > 0 Then
                 pnlRevieweeStrip.Visibility = Visibility.Visible
                 colRevieweeStrip.Width = New GridLength(200)
             End If
@@ -105,10 +105,6 @@ Namespace Components
                 Dim resp = Await AnalyticsRepo.get_comparative_trendAsync(req)
 
                 If resp?.Success AndAlso resp.Data?.history IsNot Nothing AndAlso resp.Data.history.Count > 0 Then
-
-                    ' Each BatchPerformance has attempt_map As Dictionary(Of Integer, Integer)
-                    ' keyed by user_id -- this is the Python truth, not a positional index.
-                    ' Find the entry whose date matches the clicked batch point and read from map.
                     If Not String.IsNullOrWhiteSpace(_batchPointDateLabel) Then
                         For Each entry In resp.Data.history
                             If StripDateLabel(entry.date_recorded) = _batchPointDateLabel Then

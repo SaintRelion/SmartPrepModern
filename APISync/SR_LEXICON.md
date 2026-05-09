@@ -186,6 +186,7 @@ End Class
 - examination_id: `Integer`
 - attempt_index: `Integer`
 - user_id: `Integer`
+- batch_user_ids: `List(Of Integer)`
 ### BasicAttemptResponse
 - success: `Boolean`
 - items: `List(Of BasicAttemptLogItem)`

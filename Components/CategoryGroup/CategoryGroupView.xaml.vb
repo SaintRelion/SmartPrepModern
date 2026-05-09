@@ -38,7 +38,7 @@ Namespace Components
         
         ' --- ACTIONS ---
         Private Sub AddTopic_Click(sender As Object, e As RoutedEventArgs)
-        RaiseEvent AddTopicRequested(Me, Me.CategoryId)
+            RaiseEvent AddTopicRequested(Me, Me.CategoryId)
         End Sub
         
         Private Async Sub UploadFile_Click(sender As Object, e As RoutedEventArgs)

@@ -21,6 +21,7 @@
                             Foreground="White"
                             Text="0%" />
                         <TextBlock
+                            x:Name="txtAccuracyLabel"
                             FontWeight="Bold"
                             Foreground="White"
                             Opacity="0.5"

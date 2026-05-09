@@ -8,8 +8,10 @@ Namespace Components
 
         Public Event RevieweeSelected(sender As Object, userId As Integer)
         
-        ' Keep a master list for local filtering
         Private _allReviewees As List(Of RevieweeStatusOut)
+        Public Function GetLoadedReviewees() As List(Of RevieweeStatusOut)
+            Return If(_allReviewees, New List(Of RevieweeStatusOut)())
+        End Function
 
         Public Sub SetContext(examName As String)
             txtContext.Text = $"Exam: {examName.ToUpper()}"

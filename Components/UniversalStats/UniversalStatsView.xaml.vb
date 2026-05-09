@@ -7,13 +7,20 @@ Namespace Components
     Public Class UniversalStatsView
         Inherits UserControl
 
-        Public Event PointForensicsRequested(sender As Object, logs As List(Of QuestionForensicWrapper))
+        Public Event BasicForensicsRequested(sender As Object, categoryId As Integer, categoryName As String)
+        Public Event DeepForensicsRequested(sender As Object, categoryId As Integer)
 
-        ' Updated to use your refactored Python Model
         Private _examIntel As ExamAnalyticsResponse 
         Private _currentExamId As Integer
         Private _currentUserId As Integer
         Private _lastTopicId As Integer 
+
+        Public ReadOnly Property LastClickedCategoryId As Integer
+            Get
+                Return _lastClickedCategoryId
+            End Get
+        End Property
+        Private _lastClickedCategoryId As Integer = -1
 
         Public Sub New()
             InitializeComponent()
@@ -44,6 +51,23 @@ Namespace Components
                         
                         txtOverallComp.Text = $"{_examIntel.overall_competency}%"
                         icTopicBreakdown.ItemsSource = _examIntel.topic_breakdown
+
+                        If _examIntel.ai_analysis IsNot Nothing Then
+                            txtAiSummary.Text = _examIntel.ai_analysis.summary
+                            lstAiRecommendations.ItemsSource = _examIntel.ai_analysis.recommendations
+                            txtAnalysisWarning.Visibility = Visibility.Collapsed
+                        Else
+                            txtAiSummary.Text = "AI analysis is pending or not yet generated for this dataset."
+                            lstAiRecommendations.ItemsSource = Nothing
+                            txtAnalysisWarning.Visibility = Visibility.Visible
+                        End If
+
+                        ' Only allow manual generation if viewing GLOBAL stats (Admin level)
+                        If _currentUserId <= 0 Then
+                            btnRefreshAI.Visibility = Visibility.Visible
+                        Else
+                            btnRefreshAI.Visibility = Visibility.Collapsed
+                        End If
                     Else
                         pnlEmptyState.Visibility = Visibility.Visible
                         icTopicBreakdown.ItemsSource = Nothing
@@ -59,66 +83,56 @@ Namespace Components
             End Try
         End Function
 
-        Private Async Sub SubjectCard_Click(sender As Object, e As MouseButtonEventArgs)
+        Private Sub SubjectCard_Click(sender As Object, e As MouseButtonEventArgs)
             If _currentUserId <= 0 Then
-                MessageBox.Show("Please select a specific reviewee from the list to view detailed question forensics and individual logic analysis.", 
-                                "Select Reviewee", 
-                                MessageBoxButton.OK, 
-                                MessageBoxImage.Information)
+                MessageBox.Show("Please select a specific reviewee to view their scorecard.", "Select Reviewee", MessageBoxButton.OK, MessageBoxImage.Information)
                 Return
             End If
+            If TypeOf e.OriginalSource Is Path OrElse TypeOf e.OriginalSource Is Button Then Return
 
             Dim metric = TryCast(DirectCast(sender, Border).DataContext, PerformanceMetric)
             If metric Is Nothing Then Return
 
-            Me.Dispatcher.Invoke(Sub() pnlLoading.Visibility = Visibility.Visible)
+            RaiseEvent BasicForensicsRequested(Me, metric.id, metric.label)
+        End Sub
 
+        Private Sub btnDeepAnalysis_Click(sender As Object, e As RoutedEventArgs)
+            e.Handled = True
+            If _currentUserId <= 0 Then
+                MessageBox.Show("Please select a specific reviewee to view AI forensics.", "Select Reviewee", MessageBoxButton.OK, MessageBoxImage.Information)
+                Return
+            End If
+
+            Dim metric = TryCast(DirectCast(sender, Button).DataContext, PerformanceMetric)
+            If metric Is Nothing Then Return
+
+            RaiseEvent DeepForensicsRequested(Me, metric.id)
+        End Sub
+
+        Private Async Sub btnRefreshAI_Click(sender As Object, e As RoutedEventArgs)
+            If _currentExamId <= 0 Then Return
+            
+            ' Lock UI
+            btnRefreshAI.IsEnabled = False
+            btnRefreshAI.Content = "GENERATING ANALYSIS... PLEASE WAIT"
+            pnlLoading.Visibility = Visibility.Visible
+            
             Try
-                ' Passing -1 for attempt_index to trigger the "Latest Attempt" backend logic
-                Dim req As New ForensicAttemptRequest With {
-                    .examination_id = _currentExamId,
-                    .user_id = _currentUserId,
-                    .attempt_index = -1 
-                }
-
-                Dim resp = Await AnalyticsRepo.get_attempt_forensicsAsync(req)
-
-                If resp.Data?.Success AndAlso resp.Data.comparative_items IsNot Nothing Then
-                    Dim forensicList As New List(Of QuestionForensicWrapper)
-                    
-                    ' CRITICAL: Filter only for the questions belonging to the clicked category
-                    Dim filteredLogs = resp.Data.comparative_items.
-                                    Where(Function(log) log.category_id = metric.id).ToList()
-
-                    For Each log In filteredLogs
-                        Dim wrapper As New QuestionForensicWrapper With {
-                            .CategoryId = log.category_id,
-                            .CategoryName = log.category_name,
-                            .SlotName = log.slot_name,
-                            .QuestionText = log.question_text,
-                            .CorrectAnswer = log.correct_answer,
-                            .StudentAnswer = log.student_answer,
-                            .IsCorrect = log.is_correct,
-                            .OptionA_Analysis = log.option_a_analysis,
-                            .OptionB_Analysis = log.option_b_analysis,
-                            .OptionC_Analysis = log.option_c_analysis,
-                            .OptionD_Analysis = log.option_d_analysis
-                        }
-
-                        If Not String.IsNullOrWhiteSpace(log.previous_student_answer) Then
-                            wrapper.IsComparative = True
-                            wrapper.PreviousAnswer = log.previous_student_answer
-                            wrapper.WasCorrect = log.previous_is_correct
-                        End If
-                        forensicList.Add(wrapper)
-                    Next
-
-                    Me.Dispatcher.Invoke(Sub() RaiseEvent PointForensicsRequested(Me, forensicList))
+                Dim payload As New GenerateAnalysisRequest With { .examination_id = _currentExamId }
+                Dim resp = Await AnalyticsRepo.generate_overall_analysisAsync(payload)
+                
+                If resp IsNot Nothing AndAlso resp.Success Then
+                    Await FetchExamIntel(_currentExamId)
+                Else
+                    MessageBox.Show("Failed to generate AI analysis. Waiting for data.")
                 End If
             Catch ex As Exception
-                MessageBox.Show($"Forensic sync failed: {ex.Message}")
+                MessageBox.Show($"Error generating AI analysis: {ex.Message}")
             Finally
-                Me.Dispatcher.Invoke(Sub() pnlLoading.Visibility = Visibility.Collapsed)
+                ' Restore UI
+                btnRefreshAI.IsEnabled = True
+                btnRefreshAI.Content = "GENERATE / RE-RUN BATCH ANALYSIS"
+                pnlLoading.Visibility = Visibility.Collapsed
             End Try
         End Sub
     End Class

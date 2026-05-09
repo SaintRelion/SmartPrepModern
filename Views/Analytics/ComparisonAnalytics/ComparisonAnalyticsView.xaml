@@ -67,10 +67,17 @@
             Background="#AA000000"
             Visibility="Collapsed">
 
-            <components:QuestionForensicsView
-                x:Name="ctrlForensics"
-                Margin="60"
-                RequestClose="HandleForensicClose" />
+            <Grid Margin="24">
+                <components:BasicQuestionForensicView
+                    x:Name="ctrlBasicForensics"
+                    RequestClose="HandleForensicClose"
+                    Visibility="Collapsed" />
+
+                <components:QuestionForensicsView
+                    x:Name="ctrlDeepForensics"
+                    RequestClose="HandleForensicClose"
+                    Visibility="Collapsed" />
+            </Grid>
         </Border>
 
         <Border

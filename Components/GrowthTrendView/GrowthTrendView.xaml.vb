@@ -9,10 +9,13 @@ Namespace Components
     Public Class GrowthTrendView
         Inherits UserControl
 
+        Private _isMasteryMode As Boolean
+
         Private _currentExamId As Integer
         Private _currentUserId As Integer?
 
-        Public Event PointForensicsRequested(sender As Object, logs As List(Of QuestionForensicWrapper))
+        Public Event BasicForensicsRequested(sender As Object, examId As Integer, userId As Integer, attemptIndex As Integer, reviewees As List(Of RevieweeStatusOut), attemptMap As Dictionary(Of Integer, Integer), dateLabel As String)
+        Public Event DeepForensicsRequested(sender As Object, examId As Integer, userId As Integer, attemptIndex As Integer, reviewees As List(Of RevieweeStatusOut), attemptMap As Dictionary(Of Integer, Integer), dateLabel As String)
         Public Event LoadingStateChanged(sender As Object, isLoading As Boolean)
 
         Public Sub New()
@@ -24,8 +27,18 @@ Namespace Components
             _currentUserId = userId
         End Sub
 
+        Private _loadedReviewees As List(Of RevieweeStatusOut)
+        Private _examineesPerPoint As New Dictionary(Of Integer, List(Of Integer))()
+        Private _attemptIndexPerUser As New Dictionary(Of Integer, Dictionary(Of Integer, Integer))() ' pointIndex → (userId → attemptIndex)
+
+        Public Sub SetReviewees(reviewees As List(Of RevieweeStatusOut))
+            _loadedReviewees = If(reviewees, New List(Of RevieweeStatusOut)())
+        End Sub
+
         ' vb
         Public Sub RenderMultiSlotTrend(resp As GrowthTrendResponse)
+            _isMasteryMode = True
+
             If resp IsNot Nothing AndAlso resp.history IsNot Nothing Then
                 Dim seriesData As New SeriesCollection()
                 Dim historyList = resp.history.Cast(Of SlotHistoryPoint)()
@@ -76,7 +89,11 @@ Namespace Components
             End If
         End Sub
 
-        Public Sub RenderTrend(data As ComparativeTrendResponse)
+        Public Sub RenderTrend(data As ComparativeTrendResponse)    
+            _isMasteryMode = False
+            _examineesPerPoint.Clear()
+            _attemptIndexPerUser.Clear()
+
             Dim accuracyFormatter As Func(Of ChartPoint, String) = Function(cp) $"({cp.Y:N2}%)"
 
             If data.history IsNot Nothing AndAlso data.history.Count > 0 Then
@@ -95,6 +112,17 @@ Namespace Components
                         labelText &= $" ({row.examinee_count} Reviewee/s)"
                     End If
                     labels.Add(labelText)
+
+                    Dim pointIdx = labels.Count - 1
+                    _examineesPerPoint(pointIdx) = If(row.examinee_ids, New List(Of Integer)())
+
+                    Dim userAttemptMap As New Dictionary(Of Integer, Integer)()
+                    Dim ids = If(row.examinee_ids, New List(Of Integer)())
+                    Dim idxs = If(row.attempt_indices, New List(Of Integer)())
+                    For i = 0 To Math.Min(ids.Count, idxs.Count) - 1
+                        userAttemptMap(ids(i)) = idxs(i)
+                    Next
+                    _attemptIndexPerUser(pointIdx) = userAttemptMap
                 Next
 
                 Dim series As New LineSeries With {
@@ -123,44 +151,42 @@ Namespace Components
             End If
         End Sub
 
-        Private Async Sub chartGrowth_DataClick(sender As Object, chartPoint As ChartPoint)
-            If _currentExamId = 0 Then Return
-
-            RaiseEvent LoadingStateChanged(Me, True)
+        Private Sub chartGrowth_DataClick(sender As Object, chartPoint As ChartPoint)
+            Dim dateLabel = axisX.Labels(CInt(chartPoint.X))
+            Dim isDeepAnalysisRequested = (cmbClickAction.SelectedIndex = 1)
             Try
-                Dim label = axisX.Labels(CInt(chartPoint.X))
-                Dim req As New ForensicAttemptRequest With {
-                    .examination_id = _currentExamId,
-                    .user_id = If(_currentUserId.HasValue, _currentUserId.Value, -1),
-                    .attempt_index = CInt(chartPoint.X) + 1
-                }
+                If _isMasteryMode Then
+                    MessageBox.Show("Question forensics are not available in Mastery Growth view.", "NOT AVAILABLE")
+                    Return
+                End If
 
-                Dim resp = Await AnalyticsRepo.get_attempt_forensicsAsync(req)
-                If resp.Data?.Success AndAlso resp.Data.comparative_items IsNot Nothing Then
-                    Dim forensicList As New List(Of QuestionForensicWrapper)
-                    For Each log In resp.Data.comparative_items
-                        Dim wrapper As New QuestionForensicWrapper With {
-                            .CategoryId = log.category_id,
-                            .CategoryName = log.category_name,
-                            .SlotName = log.slot_name,
-                            .QuestionText = log.question_text,
-                            .CorrectAnswer = log.correct_answer,
-                            .StudentAnswer = log.student_answer,
-                            .IsCorrect = log.is_correct,
-                            .OptionA_Analysis = log.option_a_analysis,
-                            .OptionB_Analysis = log.option_b_analysis,
-                            .OptionC_Analysis = log.option_c_analysis,
-                            .OptionD_Analysis = log.option_d_analysis
-                        }
+                Dim pointIndex = CInt(chartPoint.X)
+                Dim revieweesForPoint As List(Of RevieweeStatusOut)
+                Dim attemptToPass As Integer
 
-                        If Not String.IsNullOrWhiteSpace(log.previous_student_answer) Then
-                            wrapper.IsComparative = True
-                            wrapper.PreviousAnswer = log.previous_student_answer
-                            wrapper.WasCorrect = log.previous_is_correct
-                        End If
-                        forensicList.Add(wrapper)
-                    Next
-                    Me.Dispatcher.Invoke(Sub() RaiseEvent PointForensicsRequested(Me, forensicList))
+                If _currentUserId.HasValue AndAlso _currentUserId.Value > 0 Then
+                    revieweesForPoint = If(_loadedReviewees?.Where(Function(r) r.id = _currentUserId.Value).ToList(), New List(Of RevieweeStatusOut)())
+                    attemptToPass = pointIndex + 1
+                Else
+                    Dim ids As List(Of Integer) = Nothing
+                    If _examineesPerPoint.TryGetValue(pointIndex, ids) AndAlso ids IsNot Nothing AndAlso ids.Count > 0 Then
+                        revieweesForPoint = If(_loadedReviewees?.Where(Function(r) ids.Contains(r.id)).ToList(), New List(Of RevieweeStatusOut)())
+                    Else
+                        revieweesForPoint = If(_loadedReviewees, New List(Of RevieweeStatusOut)())
+                    End If
+                    
+                    attemptToPass = -1
+                End If
+
+                Dim userAttemptMap As New Dictionary(Of Integer, Integer)()
+                If _attemptIndexPerUser.TryGetValue(pointIndex, userAttemptMap) Then
+                    ' already set
+                End If
+
+                If Not isDeepAnalysisRequested Then
+                    RaiseEvent BasicForensicsRequested(Me, _currentExamId, If(_currentUserId, -1), attemptToPass, revieweesForPoint, userAttemptMap, dateLabel)
+                Else
+                    RaiseEvent DeepForensicsRequested(Me, _currentExamId, If(_currentUserId, -1), attemptToPass, revieweesForPoint, userAttemptMap, dateLabel)
                 End If
             Catch ex As Exception
                 MessageBox.Show($"> Forensic Load Error: {ex.Message}")
@@ -170,6 +196,7 @@ Namespace Components
         End Sub
 
         Public Sub ClearChart()
+            _examineesPerPoint.Clear()
             Me.Dispatcher.Invoke(Sub()
                 If chartGrowth.Series IsNot Nothing Then
                     chartGrowth.Series.Clear()

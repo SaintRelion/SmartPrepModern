@@ -27,6 +27,11 @@ Namespace APISync.Repositories
             Return Await ApiService.PostAsync(Of List(Of RevieweeStatusOut))("exam/get_exam_reviewees", req)
         End Function
 
+        ''' <summary> Calls: GET exam/get_exam_rule </summary>
+        Public Shared Async Function get_exam_ruleAsync(req As ExamRuleRequest) As Task(Of ApiResponse(Of ExamRuleResponse))
+            Return Await ApiService.GetAsync(Of ExamRuleResponse)("exam/get_exam_rule", req)
+        End Function
+
         ''' <summary> Calls: GET exam/list_exams </summary>
         Public Shared Async Function list_examsAsync(req As ExamListRequest) As Task(Of ApiResponse(Of List(Of DailyExamListGroup)))
             Return Await ApiService.GetAsync(Of List(Of DailyExamListGroup))("exam/list_exams", req)
@@ -40,6 +45,11 @@ Namespace APISync.Repositories
         ''' <summary> Calls: POST exam/submit_answers </summary>
         Public Shared Async Function submit_answersAsync(req As SubmitAnswerRequest) As Task(Of ApiResponse(Of SubmissionSummary))
             Return Await ApiService.PostAsync(Of SubmissionSummary)("exam/submit_answers", req)
+        End Function
+
+        ''' <summary> Calls: POST exam/upsert_exam_rule </summary>
+        Public Shared Async Function upsert_exam_ruleAsync(req As ExamRuleRequest) As Task(Of ApiResponse(Of ExamRuleResponse))
+            Return Await ApiService.PostAsync(Of ExamRuleResponse)("exam/upsert_exam_rule", req)
         End Function
     End Class
 

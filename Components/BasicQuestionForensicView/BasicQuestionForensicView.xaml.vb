@@ -1,27 +1,26 @@
 ' vb
-Imports System.ComponentModel
-Imports System.Windows.Data
-Imports SmartPrepModern.APISync.Models
-Imports SmartPrepModern.Components.Models
 Imports SmartPrepModern.APISync.Repositories
+Imports SmartPrepModern.APISync.Models
 
 Namespace Components
-    Public Class QuestionForensicsView
+    Public Class BasicQuestionForensicView
         Inherits UserControl
 
         Public Event RequestClose()
-        Private _masterList As List(Of QuestionForensicWrapper)
+        Private _masterList As List(Of BasicAttemptLogItem)
 
         Private _allReviewees As List(Of RevieweeStatusOut)
         Private _attemptMap As New Dictionary(Of Integer, Integer)()
         Private _currentExamId As Integer
         Private _currentAttemptIndex As Integer
         Private _categoryId As Integer = -1
+
+        Private _selectedUserId As Integer? = Nothing
         Private _isBatchMode As Boolean = False
 
-        ' Stripped date label of the clicked batch chart point -- truth anchor
-        ' for resolving a reviewee's attempt index from their individual trend.
-        ' e.g. "May 03" (suffix already stripped by StripDateLabel)
+        ' The stripped date label of the batch chart point that was clicked.
+        ' e.g. "May 03" -- used as the truth anchor when resolving a reviewee's
+        ' attempt index from their individual trend response.
         Private _batchPointDateLabel As String = String.Empty
 
         Public Sub New()
@@ -53,19 +52,21 @@ Namespace Components
             colRevieweeStrip.Width = New GridLength(0)
         End Sub
 
-        Public Async Function LoadContext(examId As Integer, userId As Integer, attemptIndex As Integer, categoryId As Integer, Optional batchPointDateLabel As String = "") As Task
+        Public Async Function LoadContext(examId As Integer, userId As Integer, attemptIndex As Integer, categoryId As Integer, title As String, Optional batchPointDateLabel As String = "") As Task
             _currentExamId = examId
             _currentAttemptIndex = attemptIndex
             _categoryId = categoryId
             _isBatchMode = (userId = -1)
             _batchPointDateLabel = StripDateLabel(batchPointDateLabel)
 
+            txtTitle.Text = $"SCORECARD: {title.ToUpper()}"
+
             If _isBatchMode Then
                 _masterList = Nothing
                 Me.Dispatcher.Invoke(Sub()
                     RemoveHandler lstTopics.SelectionChanged, AddressOf Topic_SelectionChanged
                     RemoveHandler cmbStatusFilter.SelectionChanged, AddressOf Status_SelectionChanged
-                    lstForensicQuestions.ItemsSource = Nothing
+                    lstBasicQuestions.ItemsSource = Nothing
                     lstTopics.ItemsSource = New List(Of String) From {"ALL TOPICS"}
                     lstTopics.SelectedIndex = 0
                     cmbStatusFilter.SelectedIndex = 0
@@ -80,28 +81,14 @@ Namespace Components
             End If
         End Function
 
-        ' Strips "(4 Reviewee/s)" or "(YOU)" suffix from an X-axis date label.
-        ' "May 03 (4 Reviewee/s)" -> "May 03"
-        ' "May 03 (YOU)"          -> "May 03"
-        ' "May 03"                -> "May 03"
         Private Shared Function StripDateLabel(raw As String) As String
             If String.IsNullOrWhiteSpace(raw) Then Return String.Empty
             Dim parenPos = raw.IndexOf(" (")
             Return If(parenPos > 0, raw.Substring(0, parenPos).Trim(), raw.Trim())
         End Function
 
-        ' Resolves the correct attempt_index for a user to pass to get_attempt_forensicsAsync.
-        '
-        ' Strategy (matches Python truth):
-        '   1. Fast path: _attemptMap has this user's index from the batch point's
-        '      attempt_map field -- use it directly.
-        '   2. Slow path: call get_comparative_trendAsync(userId) for their individual
-        '      history, find the entry whose date matches _batchPointDateLabel, then
-        '      read attempt_map(userId) from that entry.
-        '      Safe across skipped/deleted attempts because Python uses closest-left
-        '      MAX(attempt_index) per date, not a positional index.
         Private Async Function ResolveAttemptIndexForUser(userId As Integer) As Task(Of Integer)
-            ' Fast path: batch already gave us the per-user map
+            ' Fast path: batch point already gave us the per-user map
             Dim mappedIndex As Integer = -1
             If _attemptMap.TryGetValue(userId, mappedIndex) AndAlso mappedIndex > 0 Then
                 Return mappedIndex
@@ -121,6 +108,7 @@ Namespace Components
 
                     ' Each BatchPerformance has attempt_map As Dictionary(Of Integer, Integer)
                     ' keyed by user_id -- this is the Python truth, not a positional index.
+                    ' Find the entry whose date matches the clicked batch point and read from map.
                     If Not String.IsNullOrWhiteSpace(_batchPointDateLabel) Then
                         For Each entry In resp.Data.history
                             If StripDateLabel(entry.date_recorded) = _batchPointDateLabel Then
@@ -147,29 +135,29 @@ Namespace Components
                 End If
 
             Catch ex As Exception
-                Debug.WriteLine($"[QuestionForensicsView] ResolveAttemptIndexForUser error: {ex.Message}")
+                Debug.WriteLine($"[BasicQuestionForensic] ResolveAttemptIndexForUser error: {ex.Message}")
             End Try
 
             Return -1
         End Function
 
-        Private Async Function FetchAndDisplay(userId As Integer, resolvedAttemptIndex As Integer) As Task
+        Private Async Function FetchAndDisplay(userId As Integer?, resolvedAttemptIndex As Integer) As Task
             pnlLoadingOverlay.Visibility = Visibility.Visible
             Try
                 Dim req As New ForensicAttemptRequest With {
                     .examination_id = _currentExamId,
-                    .user_id = userId,
+                    .user_id = If(userId.HasValue, userId.Value, -1),
                     .attempt_index = resolvedAttemptIndex
                 }
-                Dim resp = Await AnalyticsRepo.get_attempt_forensicsAsync(req)
-                If resp Is Nothing OrElse resp.Data Is Nothing OrElse Not resp.Data.Success OrElse resp.Data.comparative_items Is Nothing Then Return
-
-                Dim filtered = If(_categoryId > 0,
-                    resp.Data.comparative_items.Where(Function(x) x.category_id = _categoryId).ToList(),
-                    resp.Data.comparative_items.ToList())
-
-                Dim wrappers = BuildWrappers(filtered)
-                Me.Dispatcher.Invoke(Sub() LoadForensics(wrappers))
+                Dim resp = Await AnalyticsRepo.get_attempt_basic_comparisonAsync(req)
+                If resp.Data?.Success AndAlso resp.Data.items IsNot Nothing Then
+                    Dim items = resp.Data.items
+                    If _categoryId > 0 Then
+                        items = items.Where(Function(x) x.category_id = _categoryId).ToList()
+                    End If
+                    _masterList = items
+                    Me.Dispatcher.Invoke(Sub() RefreshTopicsAndFilter())
+                End If
             Finally
                 Me.Dispatcher.Invoke(Sub() pnlLoadingOverlay.Visibility = Visibility.Collapsed)
             End Try
@@ -193,74 +181,41 @@ Namespace Components
             End Try
         End Sub
 
-        ' Shared wrapper builder -- no duplication between FetchAndDisplay and strip selection
-        Private Function BuildWrappers(items As List(Of ForensicLogItem)) As List(Of QuestionForensicWrapper)
-            Return items.Select(Function(log) New QuestionForensicWrapper With {
-                .CategoryId = log.category_id,
-                .CategoryName = log.category_name,
-                .SlotName = log.slot_name,
-                .QuestionText = log.question_text,
-                .CorrectAnswer = log.correct_answer,
-                .StudentAnswer = log.student_answer,
-                .IsCorrect = log.is_correct,
-                .OptionA_Analysis = log.option_a_analysis,
-                .OptionB_Analysis = log.option_b_analysis,
-                .OptionC_Analysis = log.option_c_analysis,
-                .OptionD_Analysis = log.option_d_analysis,
-                .IsComparative = Not String.IsNullOrWhiteSpace(log.previous_student_answer),
-                .PreviousAnswer = log.previous_student_answer,
-                .WasCorrect = log.previous_is_correct
-            }).ToList()
-        End Function
-
-        Public Sub LoadForensics(items As List(Of QuestionForensicWrapper))
-            Dim idx As Integer = 1
-            For Each item In items
-                item.Id = idx
-                idx += 1
-            Next
-            _masterList = items
-
-            RemoveHandler lstTopics.SelectionChanged, AddressOf Topic_SelectionChanged
-            RemoveHandler cmbStatusFilter.SelectionChanged, AddressOf Status_SelectionChanged
-
-            Dim uniqueSlots = _masterList.Select(Function(x) x.SlotName).Distinct().OrderBy(Function(s) s).ToList()
+        Private Sub RefreshTopicsAndFilter()
+            If _masterList Is Nothing Then Return
+            Dim uniqueSlots = _masterList.Select(Function(x) x.slot_name).Distinct().OrderBy(Function(s) s).ToList()
             Dim topicCards As New List(Of String) From {"ALL TOPICS"}
             topicCards.AddRange(uniqueSlots)
             lstTopics.ItemsSource = topicCards
             lstTopics.SelectedIndex = 0
             cmbStatusFilter.SelectedIndex = 0
-
-            AddHandler lstTopics.SelectionChanged, AddressOf Topic_SelectionChanged
-            AddHandler cmbStatusFilter.SelectionChanged, AddressOf Status_SelectionChanged
-
             ApplyFilter()
         End Sub
 
         Private Sub ApplyFilter()
             If _masterList Is Nothing OrElse lstTopics.SelectedItem Is Nothing Then Return
 
-            Dim view As IEnumerable(Of QuestionForensicWrapper) = _masterList
+            Dim view As IEnumerable(Of BasicAttemptLogItem) = _masterList
 
             Dim selectedTopic = lstTopics.SelectedItem.ToString()
             If selectedTopic <> "ALL TOPICS" Then
-                view = view.Where(Function(x) x.SlotName = selectedTopic)
+                view = view.Where(Function(x) x.slot_name = selectedTopic)
             End If
 
             Dim statusItem = TryCast(cmbStatusFilter.SelectedItem, ComboBoxItem)
             If statusItem IsNot Nothing Then
                 Dim statusText = statusItem.Content.ToString()
                 If statusText = "CORRECT ONLY" Then
-                    view = view.Where(Function(x) x.IsCorrect = True)
+                    view = view.Where(Function(x) x.is_correct = True)
                 ElseIf statusText = "INCORRECT ONLY" Then
-                    view = view.Where(Function(x) x.IsCorrect = False)
+                    view = view.Where(Function(x) x.is_correct = False)
                 End If
             End If
 
-            lstForensicQuestions.ItemsSource = view.ToList()
+            lstBasicQuestions.ItemsSource = view.ToList()
 
             Dim total = view.Count()
-            Dim correct = view.Count(Function(x) x.IsCorrect)
+            Dim correct = view.Count(Function(x) x.is_correct)
             Dim wrong = total - correct
             txtItemCount.Text = $"{correct} Correct • {wrong} Wrong"
         End Sub

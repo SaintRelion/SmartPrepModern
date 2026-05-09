@@ -7,6 +7,16 @@ Namespace APISync.Repositories
 
     Public Class AnalyticsRepo
 
+        ''' <summary> Calls: POST analytics/generate_overall_analysis </summary>
+        Public Shared Async Function generate_overall_analysisAsync(req As GenerateAnalysisRequest) As Task(Of ApiResponse(Of GenerateAnalysisResponse))
+            Return Await ApiService.PostAsync(Of GenerateAnalysisResponse)("analytics/generate_overall_analysis", req)
+        End Function
+
+        ''' <summary> Calls: POST analytics/get_attempt_basic_comparison </summary>
+        Public Shared Async Function get_attempt_basic_comparisonAsync(req As ForensicAttemptRequest) As Task(Of ApiResponse(Of BasicAttemptResponse))
+            Return Await ApiService.PostAsync(Of BasicAttemptResponse)("analytics/get_attempt_basic_comparison", req)
+        End Function
+
         ''' <summary> Calls: POST analytics/get_attempt_forensics </summary>
         Public Shared Async Function get_attempt_forensicsAsync(req As ForensicAttemptRequest) As Task(Of ApiResponse(Of ForensicAttemptResponse))
             Return Await ApiService.PostAsync(Of ForensicAttemptResponse)("analytics/get_attempt_forensics", req)

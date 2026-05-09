@@ -9,10 +9,14 @@ Namespace Views.Analytics
 
         Private _currentExamId As Integer = 0
 
+        Private _currentUserId As Integer = -1
+        Private _lastClickedAttemptIndex As Integer = 1
+
         Public Sub New()
             InitializeComponent()
             
-            AddHandler ctrlGrowthChart.PointForensicsRequested, AddressOf HandleGraphPointClick
+            AddHandler ctrlGrowthChart.BasicForensicsRequested, AddressOf HandleBasicForensics
+            AddHandler ctrlGrowthChart.DeepForensicsRequested, AddressOf HandleDeepForensics
             AddHandler ctrlGrowthChart.LoadingStateChanged, AddressOf HandleChartLoading
 
             AddHandler Me.Loaded, Async Sub() 
@@ -83,11 +87,20 @@ Namespace Views.Analytics
                 Dim loadGlobalTrend = RefreshTrend(Nothing)
                 
                 Await Task.WhenAll(loadStudents, loadGlobalTrend)
+                ctrlGrowthChart.SetReviewees(ctrlReviewees.GetLoadedReviewees())
+                
+                _currentUserId = -1
+                ctrlBasicForensics.ShowRevieweeStrip()
+                ctrlDeepForensics.ShowRevieweeStrip()
             End If
         End Sub
 
         ' When a specific Reviewee is clicked: Show their personal growth
         Private Async Sub HandleUserChange(sender As Object, userId As Integer)
+            _currentUserId = userId
+
+            ctrlBasicForensics.HideRevieweeStrip()
+            ctrlDeepForensics.HideRevieweeStrip()
             Await RefreshTrend(userId)
         End Sub
 
@@ -130,11 +143,7 @@ Namespace Views.Analytics
                 pnlLoading.Visibility = Visibility.Collapsed
             End Try
         End Function
-
-        Private Sub HandleForensicClose()
-            pnlForensicContainer.Visibility = Visibility.Collapsed
-        End Sub
-
+    
         Private Sub HandleChartLoading(sender As Object, isLoading As Boolean)
             If isLoading Then
                 pnlLoading.Visibility = Visibility.Visible
@@ -143,9 +152,45 @@ Namespace Views.Analytics
             End If
         End Sub
 
-        Private Sub HandleGraphPointClick(sender As Object, logs As List(Of QuestionForensicWrapper))
-            ctrlForensics.LoadForensics(logs)
+        Private Async Sub HandleBasicForensics(sender As Object, examId As Integer, userId As Integer, attemptIndex As Integer, reviewees As List(Of RevieweeStatusOut), attemptMap As Dictionary(Of Integer, Integer), dateLabel As String)
+            pnlLoading.Visibility = Visibility.Visible
+            _lastClickedAttemptIndex = attemptIndex
+            ctrlDeepForensics.Visibility = Visibility.Collapsed
+            ctrlBasicForensics.Visibility = Visibility.Visible
+            Dim safeReviewees = If(reviewees, New List(Of RevieweeStatusOut)())
+            ctrlBasicForensics.SetReviewees(safeReviewees, examId, attemptIndex, -1, attemptMap)
+            If _currentUserId > 0 Then
+                ctrlBasicForensics.HideRevieweeStrip()
+            Else
+                ctrlBasicForensics.ShowRevieweeStrip()
+            End If
             pnlForensicContainer.Visibility = Visibility.Visible
+            Await ctrlBasicForensics.LoadContext(examId, userId, attemptIndex, -1, $"Trend Point ({dateLabel})", dateLabel)
+            pnlLoading.Visibility = Visibility.Collapsed
+        End Sub
+
+        Private Async Sub HandleDeepForensics(sender As Object, examId As Integer, userId As Integer, attemptIndex As Integer, reviewees As List(Of RevieweeStatusOut), attemptMap As Dictionary(Of Integer, Integer), dateLabel As String)
+            pnlLoading.Visibility = Visibility.Visible
+            _lastClickedAttemptIndex = attemptIndex
+            ctrlBasicForensics.Visibility = Visibility.Collapsed
+            ctrlDeepForensics.Visibility = Visibility.Visible
+            Dim safeReviewees = If(reviewees, New List(Of RevieweeStatusOut)())
+            ctrlDeepForensics.SetReviewees(safeReviewees, examId, attemptIndex, -1, attemptMap)
+            If _currentUserId > 0 Then
+                ctrlDeepForensics.HideRevieweeStrip()
+            Else
+                ctrlDeepForensics.ShowRevieweeStrip()
+            End If
+            pnlForensicContainer.Visibility = Visibility.Visible
+            Await ctrlDeepForensics.LoadContext(examId, userId, attemptIndex, -1)
+            pnlLoading.Visibility = Visibility.Collapsed
+        End Sub
+
+        Private Sub HandleForensicClose()
+            pnlForensicContainer.Visibility = Visibility.Collapsed
+            ctrlDeepForensics.Visibility = Visibility.Collapsed
+            ctrlBasicForensics.Visibility = Visibility.Collapsed
+            _lastClickedAttemptIndex = 1
         End Sub
 
         Private Async Sub ResetToGlobal_Click(sender As Object, e As RoutedEventArgs)

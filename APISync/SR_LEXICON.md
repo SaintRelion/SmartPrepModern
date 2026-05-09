@@ -116,6 +116,7 @@ End Class
 ### QuestionOut
 - id: `Integer`
 - question_text: `String`
+- correct_answer: `String`
 - option_a: `String`
 - option_b: `String`
 - option_c: `String`
@@ -128,6 +129,15 @@ End Class
 - username: `String`
 - email: `String`
 - has_taken: `Boolean`
+### ExamRuleRequest
+- examination_id: `Integer`
+- per_question_timer: `Integer`
+- review_timer: `Integer`
+- status: `Integer`
+### ExamRuleResponse
+- success: `Boolean`
+- message: `String`
+- rule: `ExamRuleRequest`
 ### ExamListRequest
 - user_id: `Integer`
 - exam_name: `String`
@@ -163,10 +173,32 @@ End Class
 - score: `Integer`
 - total: `Integer`
 - percentage: `Double`
+### GenerateAnalysisRequest
+- examination_id: `Integer`
+### GenerateAnalysisResponse
+- success: `Boolean`
+- message: `String`
+- data: `AIAnalysisData`
+### AIAnalysisData
+- summary: `String`
+- recommendations: `List(Of String)`
 ### ForensicAttemptRequest
 - examination_id: `Integer`
 - attempt_index: `Integer`
 - user_id: `Integer`
+### BasicAttemptResponse
+- success: `Boolean`
+- items: `List(Of BasicAttemptLogItem)`
+### BasicAttemptLogItem
+- category_id: `Integer`
+- category_name: `String`
+- slot_name: `String`
+- question_text: `String`
+- correct_answer: `String`
+- student_answer: `String`
+- is_correct: `Boolean`
+- previous_student_answer: `String`
+- previous_is_correct: `Boolean`
 ### ForensicAttemptResponse
 - success: `Boolean`
 - comparative_items: `List(Of ForensicLogItem)`
@@ -202,10 +234,14 @@ End Class
 - attempt_number: `Integer`
 - average_accuracy: `Double`
 - examinee_count: `Integer`
+- examinee_ids: `List(Of Integer)`
+- attempt_indices: `List(Of Integer)`
+- attempt_map: `Dictionary(Of Integer, Integer)`
 - date_recorded: `String`
 ### ExamAnalyticsResponse
 - overall_competency: `Double`
 - topic_breakdown: `List(Of PerformanceMetric)`
+- ai_analysis: `AIAnalysisData`
 ### PerformanceMetric
 - id: `Integer`
 - label: `String`
@@ -264,10 +300,14 @@ End Class
 - `generate_examAsync`(req: `ExamGenerationRequest`) -> `ExamGenerationResponse`
 - `get_examAsync`(req: `ExamGetRequest`) -> `ExamOut`
 - `get_exam_revieweesAsync`(req: `RevieweeStatusIn`) -> `List(Of RevieweeStatusOut)`
+- `get_exam_ruleAsync`(req: `ExamRuleRequest`) -> `ExamRuleResponse`
 - `list_examsAsync`(req: `ExamListRequest`) -> `List(Of DailyExamListGroup)`
 - `rename_examAsync`(req: `ExamRenameRequest`) -> `ExamRenameResponse`
 - `submit_answersAsync`(req: `SubmitAnswerRequest`) -> `SubmissionSummary`
+- `upsert_exam_ruleAsync`(req: `ExamRuleRequest`) -> `ExamRuleResponse`
 ### AnalyticsRepo
+- `generate_overall_analysisAsync`(req: `GenerateAnalysisRequest`) -> `GenerateAnalysisResponse`
+- `get_attempt_basic_comparisonAsync`(req: `ForensicAttemptRequest`) -> `BasicAttemptResponse`
 - `get_attempt_forensicsAsync`(req: `ForensicAttemptRequest`) -> `ForensicAttemptResponse`
 - `get_comparative_trendAsync`(req: `StatsRequest`) -> `ComparativeTrendResponse`
 - `get_exam_analyticsAsync`(req: `StatsRequest`) -> `ExamAnalyticsResponse`

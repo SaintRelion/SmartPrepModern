@@ -79,3 +79,5 @@ D:\ClientProjects\SmartPrepProject\SmartPrepModern\obj\Debug\net9.0-windows\Comp
 D:\ClientProjects\SmartPrepProject\SmartPrepModern\obj\Debug\net9.0-windows\Components\QuestionPreviewDialog\QuestionPreviewDialog.g.vb
 D:\ClientProjects\SmartPrepProject\SmartPrepModern\obj\Debug\net9.0-windows\Views\ReviewDirector\ManageExam\ManageExam.baml
 D:\ClientProjects\SmartPrepProject\SmartPrepModern\obj\Debug\net9.0-windows\Views\ReviewDirector\ManageExam\ManageExam.g.vb
+D:\ClientProjects\SmartPrepProject\SmartPrepModern\obj\Debug\net9.0-windows\Components\BasicQuestionForensicView\BasicQuestionForensicView.g.vb
+D:\ClientProjects\SmartPrepProject\SmartPrepModern\obj\Debug\net9.0-windows\Components\BasicQuestionForensicView\BasicQuestionForensicView.baml

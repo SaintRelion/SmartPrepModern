@@ -155,7 +155,9 @@ Namespace Components
                 If res.Success AndAlso res.Data IsNot Nothing Then
                     Dim dialog As New QuestionPreviewDialog()
                     dialog.LoadItems(res.Data, True)
-                    dialog.ShowDialog()  ' plain Window — no DialogHost conflict
+                    
+                    ' Use a separate host or close properly before reuse
+                    Await MaterialDesignThemes.Wpf.DialogHost.Show(dialog, "QuestionPreviewDialog")
                 End If
             Catch ex As Exception
                 MessageBox.Show($"Failed to load preview: {ex.Message}")

@@ -9,142 +9,144 @@
         d:DesignWidth="1280"
         mc:Ignorable="d">
         <Grid>
-                <materialDesign:DialogHost x:Name="MainDialogHost" Identifier="SlotsRootDialog">
-                        <materialDesign:DialogHost.DialogContent>
-                                <Border
-                                        Width="350"
-                                        Margin="24"
-                                        Background="{DynamicResource MaterialDesignPaper}"
-                                        CornerRadius="12">
-                                        <StackPanel x:Name="pnlDialogContainer">
+                <materialDesign:DialogHost Identifier="QuestionPreviewDialog">
+                        <materialDesign:DialogHost x:Name="MainDialogHost" Identifier="SlotsRootDialog">
+                                <materialDesign:DialogHost.DialogContent>
+                                        <Border
+                                                Width="350"
+                                                Margin="24"
+                                                Background="{DynamicResource MaterialDesignPaper}"
+                                                CornerRadius="12">
+                                                <StackPanel x:Name="pnlDialogContainer">
 
-                                                <StackPanel x:Name="pnlAddCategory" Visibility="Collapsed">
-                                                        <TextBlock
-                                                                Margin="0,0,0,16"
-                                                                FontSize="18"
-                                                                FontWeight="Black"
-                                                                Text="NEW CATEGORY" />
-                                                        <TextBox
-                                                                x:Name="txtNewCategoryName"
-                                                                materialDesign:HintAssist.Hint="Category Name (e.g., Criminal Law)"
-                                                                Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
-                                                        <StackPanel
-                                                                Margin="0,24,0,0"
-                                                                HorizontalAlignment="Right"
-                                                                Orientation="Horizontal">
-                                                                <Button
-                                                                        Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
-                                                                        Content="CANCEL"
-                                                                        Style="{StaticResource MaterialDesignFlatButton}" />
-                                                                <Button Click="ConfirmAddCategory_Click" Content="CREATE CATEGORY" />
-                                                        </StackPanel>
-                                                </StackPanel>
-
-                                                <StackPanel x:Name="pnlAddSlot" Visibility="Collapsed">
-                                                        <TextBlock
-                                                                Margin="0,0,0,8"
-                                                                FontSize="18"
-                                                                FontWeight="Black"
-                                                                Text="CREATE TOPIC SLOT" />
-                                                        <TextBlock
-                                                                Margin="0,0,0,20"
-                                                                FontSize="12"
-                                                                Opacity="0.6"
-                                                                Text="This creates a container for a single study material and its corresponding questionnaire."
-                                                                TextWrapping="Wrap" />
-
-                                                        <TextBox
-                                                                x:Name="txtNewSlotName"
-                                                                materialDesign:HintAssist.Hint="Topic Name (e.g., Chapter 1: Introduction)"
-                                                                Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
-
-                                                        <StackPanel
-                                                                Margin="0,24,0,0"
-                                                                HorizontalAlignment="Right"
-                                                                Orientation="Horizontal">
-                                                                <Button
-                                                                        Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
-                                                                        Content="CANCEL"
-                                                                        Style="{StaticResource MaterialDesignFlatButton}" />
-                                                                <Button
-                                                                        x:Name="btnConfirmAddSlot"
-                                                                        Click="ConfirmAddSlot_Click"
-                                                                        Content="CREATE SLOT" />
-                                                        </StackPanel>
-                                                </StackPanel>
-
-                                        </StackPanel>
-                                </Border>
-                        </materialDesign:DialogHost.DialogContent>
-
-                        <Grid Background="#F5F7FA">
-                                <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="*" />
-                                </Grid.RowDefinitions>
-
-                                <Border
-                                        Grid.Row="0"
-                                        Padding="30,20"
-                                        Background="White">
-                                        <Grid>
-                                                <StackPanel Orientation="Horizontal">
-                                                        <StackPanel VerticalAlignment="Center">
+                                                        <StackPanel x:Name="pnlAddCategory" Visibility="Collapsed">
                                                                 <TextBlock
-                                                                        FontSize="24"
+                                                                        Margin="0,0,0,16"
+                                                                        FontSize="18"
                                                                         FontWeight="Black"
-                                                                        Text="REPOSITORY MANAGEMENT" />
+                                                                        Text="NEW CATEGORY" />
+                                                                <TextBox
+                                                                        x:Name="txtNewCategoryName"
+                                                                        materialDesign:HintAssist.Hint="Category Name (e.g., Criminal Law)"
+                                                                        Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
+                                                                <StackPanel
+                                                                        Margin="0,24,0,0"
+                                                                        HorizontalAlignment="Right"
+                                                                        Orientation="Horizontal">
+                                                                        <Button
+                                                                                Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
+                                                                                Content="CANCEL"
+                                                                                Style="{StaticResource MaterialDesignFlatButton}" />
+                                                                        <Button Click="ConfirmAddCategory_Click" Content="CREATE CATEGORY" />
+                                                                </StackPanel>
+                                                        </StackPanel>
+
+                                                        <StackPanel x:Name="pnlAddSlot" Visibility="Collapsed">
                                                                 <TextBlock
+                                                                        Margin="0,0,0,8"
+                                                                        FontSize="18"
+                                                                        FontWeight="Black"
+                                                                        Text="CREATE TOPIC SLOT" />
+                                                                <TextBlock
+                                                                        Margin="0,0,0,20"
                                                                         FontSize="12"
-                                                                        Opacity="0.5"
-                                                                        Text="Unified Study Materials and AI-Extracted Questions" />
+                                                                        Opacity="0.6"
+                                                                        Text="This creates a container for a single study material and its corresponding questionnaire."
+                                                                        TextWrapping="Wrap" />
+
+                                                                <TextBox
+                                                                        x:Name="txtNewSlotName"
+                                                                        materialDesign:HintAssist.Hint="Topic Name (e.g., Chapter 1: Introduction)"
+                                                                        Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
+
+                                                                <StackPanel
+                                                                        Margin="0,24,0,0"
+                                                                        HorizontalAlignment="Right"
+                                                                        Orientation="Horizontal">
+                                                                        <Button
+                                                                                Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
+                                                                                Content="CANCEL"
+                                                                                Style="{StaticResource MaterialDesignFlatButton}" />
+                                                                        <Button
+                                                                                x:Name="btnConfirmAddSlot"
+                                                                                Click="ConfirmAddSlot_Click"
+                                                                                Content="CREATE SLOT" />
+                                                                </StackPanel>
                                                         </StackPanel>
 
-                                                        <Separator
-                                                                Width="1"
-                                                                Height="40"
-                                                                Margin="30,0"
-                                                                Background="#EEE" />
-
-                                                        <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
-                                                                <TextBlock
-                                                                        VerticalAlignment="Center"
-                                                                        FontSize="11"
-                                                                        FontWeight="Black"
-                                                                        Opacity="0.4"
-                                                                        Text="CATEGORY FILTER:" />
-
-                                                                <ComboBox
-                                                                        x:Name="cmbCategoryFilter"
-                                                                        Width="200"
-                                                                        Margin="15,0,0,0"
-                                                                        materialDesign:HintAssist.Hint="Select Category"
-                                                                        SelectionChanged="cmbCategoryFilter_SelectionChanged"
-                                                                        Style="{StaticResource MaterialDesignOutlinedComboBox}">
-                                                                        <!--  Items will be populated dynamically in code-behind  -->
-                                                                </ComboBox>
-                                                        </StackPanel>
                                                 </StackPanel>
+                                        </Border>
+                                </materialDesign:DialogHost.DialogContent>
 
-                                                <Button
-                                                        HorizontalAlignment="Right"
-                                                        Click="OpenAddCategory_Click"
-                                                        Style="{StaticResource MaterialDesignRaisedButton}">
+                                <Grid Background="#F5F7FA">
+                                        <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+
+                                        <Border
+                                                Grid.Row="0"
+                                                Padding="30,20"
+                                                Background="White">
+                                                <Grid>
                                                         <StackPanel Orientation="Horizontal">
-                                                                <materialDesign:PackIcon VerticalAlignment="Center" Kind="Plus" />
-                                                                <TextBlock
-                                                                        Margin="8,0,0,0"
-                                                                        VerticalAlignment="Center"
-                                                                        Text="ADD CATEGORY" />
-                                                        </StackPanel>
-                                                </Button>
-                                        </Grid>
-                                </Border>
+                                                                <StackPanel VerticalAlignment="Center">
+                                                                        <TextBlock
+                                                                                FontSize="24"
+                                                                                FontWeight="Black"
+                                                                                Text="REPOSITORY MANAGEMENT" />
+                                                                        <TextBlock
+                                                                                FontSize="12"
+                                                                                Opacity="0.5"
+                                                                                Text="Unified Study Materials and AI-Extracted Questions" />
+                                                                </StackPanel>
 
-                                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-                                        <ItemsControl x:Name="icCategoryGroups" Margin="30" />
-                                </ScrollViewer>
-                        </Grid>
+                                                                <Separator
+                                                                        Width="1"
+                                                                        Height="40"
+                                                                        Margin="30,0"
+                                                                        Background="#EEE" />
+
+                                                                <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                                                                        <TextBlock
+                                                                                VerticalAlignment="Center"
+                                                                                FontSize="11"
+                                                                                FontWeight="Black"
+                                                                                Opacity="0.4"
+                                                                                Text="CATEGORY FILTER:" />
+
+                                                                        <ComboBox
+                                                                                x:Name="cmbCategoryFilter"
+                                                                                Width="200"
+                                                                                Margin="15,0,0,0"
+                                                                                materialDesign:HintAssist.Hint="Select Category"
+                                                                                SelectionChanged="cmbCategoryFilter_SelectionChanged"
+                                                                                Style="{StaticResource MaterialDesignOutlinedComboBox}">
+                                                                                <!--  Items will be populated dynamically in code-behind  -->
+                                                                        </ComboBox>
+                                                                </StackPanel>
+                                                        </StackPanel>
+
+                                                        <Button
+                                                                HorizontalAlignment="Right"
+                                                                Click="OpenAddCategory_Click"
+                                                                Style="{StaticResource MaterialDesignRaisedButton}">
+                                                                <StackPanel Orientation="Horizontal">
+                                                                        <materialDesign:PackIcon VerticalAlignment="Center" Kind="Plus" />
+                                                                        <TextBlock
+                                                                                Margin="8,0,0,0"
+                                                                                VerticalAlignment="Center"
+                                                                                Text="ADD CATEGORY" />
+                                                                </StackPanel>
+                                                        </Button>
+                                                </Grid>
+                                        </Border>
+
+                                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                                                <ItemsControl x:Name="icCategoryGroups" Margin="30" />
+                                        </ScrollViewer>
+                                </Grid>
+                        </materialDesign:DialogHost>
                 </materialDesign:DialogHost>
 
                 <Grid

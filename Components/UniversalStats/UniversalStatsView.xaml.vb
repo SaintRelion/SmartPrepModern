@@ -50,6 +50,7 @@ Namespace Components
                         pnlEmptyState.Visibility = Visibility.Collapsed
                         
                         txtOverallComp.Text = $"{_examIntel.overall_competency}%"
+                        txtAccuracyLabel.Text = If(_currentUserId > 0, "INDIVIDUAL ACCURACY", "OVERALL ACCURACY")
                         icTopicBreakdown.ItemsSource = _examIntel.topic_breakdown
 
                         If _examIntel.ai_analysis IsNot Nothing Then

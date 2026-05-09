@@ -234,8 +234,11 @@
 
         <Border
             x:Name="pnlNuclearDelete"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
             Panel.ZIndex="1000"
             Background="#CC000000"
+            CornerRadius="15"
             Visibility="Collapsed">
             <materialDesign:Card
                 Width="450"
@@ -256,9 +259,50 @@
                         FontWeight="Black"
                         Foreground="#D32F2F"
                         Text="CASCADING EXAM PURGE" />
+                    <TextBlock
+                        FontSize="14"
+                        LineHeight="20"
+                        TextAlignment="Center"
+                        TextWrapping="Wrap">
+                        You are about to permanently delete:<LineBreak />
+                        <Run
+                            FontSize="16"
+                            FontWeight="Black"
+                            Text="{Binding exam_name}" /><LineBreak /><LineBreak />
+                        <Run FontWeight="Bold" Foreground="#D32F2F">THIS ACTION WILL:</Run>
+                    </TextBlock>
+                    <Border
+                        Margin="0,15"
+                        Padding="15"
+                        Background="#FFF5F5"
+                        CornerRadius="8">
+                        <StackPanel>
+                            <TextBlock
+                                Margin="0,0,0,5"
+                                FontSize="12"
+                                FontWeight="SemiBold"
+                                Text="• ERASE all student scores, analytics and rankings for this exam." />
+                            <TextBlock
+                                Margin="0,0,0,5"
+                                FontSize="12"
+                                FontWeight="SemiBold"
+                                Text="• DELETE all attempt history for this exam." />
+                            <TextBlock
+                                FontSize="12"
+                                FontWeight="SemiBold"
+                                Text="• UNLINK all questionnaire topics from this record." />
+                        </StackPanel>
+                    </Border>
+                    <TextBlock
+                        Margin="0,0,0,5"
+                        HorizontalAlignment="Center"
+                        FontSize="11"
+                        FontWeight="Bold"
+                        Opacity="0.6"
+                        Text="Type 'PURGE' to confirm deletion:" />
                     <TextBox
                         x:Name="txtConfirmPurge"
-                        Margin="0,20,0,25"
+                        Margin="0,0,0,25"
                         HorizontalContentAlignment="Center"
                         FontSize="18"
                         FontWeight="Black" />
@@ -269,12 +313,15 @@
                         </Grid.ColumnDefinitions>
                         <Button
                             Grid.Column="0"
+                            Margin="0,0,5,0"
                             Click="CancelDelete_Click"
                             Content="CANCEL"
                             Style="{StaticResource MaterialDesignFlatButton}" />
                         <Button
+                            x:Name="btnExecuteDelete"
                             Grid.Column="1"
                             Background="#D32F2F"
+                            BorderBrush="#D32F2F"
                             Click="ExecuteDelete_Click"
                             Content="PURGE EXAM"
                             Foreground="White" />

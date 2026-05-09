@@ -79,29 +79,14 @@ Namespace Components
                 Await FetchAndDisplay(userId, attemptIndex)
             End If
         End Function
-
-        ' Strips "(4 Reviewee/s)" or "(YOU)" suffix from an X-axis date label.
-        ' "May 03 (4 Reviewee/s)" -> "May 03"
-        ' "May 03 (YOU)"          -> "May 03"
-        ' "May 03"                -> "May 03"
+        
         Private Shared Function StripDateLabel(raw As String) As String
             If String.IsNullOrWhiteSpace(raw) Then Return String.Empty
             Dim parenPos = raw.IndexOf(" (")
             Return If(parenPos > 0, raw.Substring(0, parenPos).Trim(), raw.Trim())
         End Function
 
-        ' Resolves the correct attempt_index for a user to pass to get_attempt_forensicsAsync.
-        '
-        ' Strategy (matches Python truth):
-        '   1. Fast path: _attemptMap has this user's index from the batch point's
-        '      attempt_map field -- use it directly.
-        '   2. Slow path: call get_comparative_trendAsync(userId) for their individual
-        '      history, find the entry whose date matches _batchPointDateLabel, then
-        '      read attempt_map(userId) from that entry.
-        '      Safe across skipped/deleted attempts because Python uses closest-left
-        '      MAX(attempt_index) per date, not a positional index.
         Private Async Function ResolveAttemptIndexForUser(userId As Integer) As Task(Of Integer)
-            ' Fast path: batch already gave us the per-user map
             Dim mappedIndex As Integer = -1
             If _attemptMap.TryGetValue(userId, mappedIndex) AndAlso mappedIndex > 0 Then
                 Return mappedIndex

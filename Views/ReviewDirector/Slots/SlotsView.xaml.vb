@@ -83,7 +83,7 @@ Namespace Views.ReviewDirector
             pnlAddSlot.Visibility = Visibility.Visible
             btnConfirmAddSlot.Tag = categoryId
             txtNewSlotName.Clear()
-            MainDialogHost.IsOpen = True
+            Me.Dispatcher.Invoke(Sub() MainDialogHost.IsOpen = True)
         End Sub
 
         Private Sub HandleCategoryDeleted(sender As Object, categoryId As Integer)

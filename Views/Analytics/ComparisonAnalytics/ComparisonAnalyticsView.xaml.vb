@@ -169,7 +169,7 @@ Namespace Views.Analytics
             pnlDeepAnalysisOverlay.Visibility = Visibility.Visible
         End Sub
 
-        Private Sub HandleDeepCloseClick(sender As Object, e As RoutedEventArgs)
+        Private Sub HandleForensicClose()
             pnlDeepAnalysisOverlay.Visibility = Visibility.Collapsed
             ctrlDeepAnalysis.Visibility = Visibility.Collapsed
         End Sub

@@ -372,7 +372,7 @@ Namespace Components
 
         ' ── Batch comparison strip builder ───────────────────────────────────────────
         Private Sub RenderBatchStrip()
-            If _cachedData.Count <= 1 Then
+            If _cachedData.Count <= 0 Then
                 pnlBatchStrip.Visibility = Visibility.Collapsed
                 Return
             End If
@@ -423,7 +423,7 @@ Namespace Components
             Next
 
             icBatchStats.ItemsSource = batches
-            pnlBatchStrip.Visibility = If(batches.Count > 1, Visibility.Visible, Visibility.Collapsed)
+            pnlBatchStrip.Visibility = If(batches.Count > 0, Visibility.Visible, Visibility.Collapsed)
         End Sub
 
         Private Sub dgItems_MouseLeftButtonUp(sender As Object, e As MouseButtonEventArgs)

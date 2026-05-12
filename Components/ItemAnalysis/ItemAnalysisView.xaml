@@ -212,7 +212,7 @@
                                                     Background="#FEF2F2"
                                                     CornerRadius="3">
                                                     <TextBlock
-                                                        FontSize="8"
+                                                        FontSize="10"
                                                         FontWeight="Black"
                                                         Foreground="#E53935"
                                                         Text="{Binding HardCount, StringFormat={}H:{0}}" />
@@ -223,7 +223,7 @@
                                                     Background="#FFF7ED"
                                                     CornerRadius="3">
                                                     <TextBlock
-                                                        FontSize="8"
+                                                        FontSize="10"
                                                         FontWeight="Black"
                                                         Foreground="#FB8C00"
                                                         Text="{Binding ModCount, StringFormat={}M:{0}}" />
@@ -233,7 +233,7 @@
                                                     Background="#F0FDF4"
                                                     CornerRadius="3">
                                                     <TextBlock
-                                                        FontSize="8"
+                                                        FontSize="10"
                                                         FontWeight="Black"
                                                         Foreground="#43A047"
                                                         Text="{Binding EasyCount, StringFormat={}E:{0}}" />

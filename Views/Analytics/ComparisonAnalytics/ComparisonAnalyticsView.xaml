@@ -184,30 +184,16 @@
             Panel.ZIndex="2000"
             Background="#D90F172A"
             Visibility="Collapsed">
-            <Grid Margin="40">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-                <Button
-                    Margin="0,0,0,15"
-                    HorizontalAlignment="Right"
-                    Background="White"
-                    Click="HandleDeepCloseClick"
-                    Foreground="Black"
-                    Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}">
-                    <materialDesign:PackIcon Kind="Close" />
-                </Button>
-                <Border
-                    Grid.Row="1"
-                    Background="White"
-                    ClipToBounds="True"
-                    CornerRadius="12">
-                    <components:QuestionForensicsView x:Name="ctrlDeepAnalysis" Visibility="Collapsed" />
-                </Border>
-            </Grid>
+            <Border
+                Grid.Row="1"
+                Background="White"
+                ClipToBounds="True"
+                CornerRadius="12">
+                <components:QuestionForensicsView
+                    x:Name="ctrlDeepAnalysis"
+                    RequestClose="HandleForensicClose"
+                    Visibility="Collapsed" />
+            </Border>
         </Border>
-
-
     </Grid>
 </UserControl>

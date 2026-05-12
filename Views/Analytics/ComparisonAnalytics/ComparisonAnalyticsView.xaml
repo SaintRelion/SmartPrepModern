@@ -90,6 +90,14 @@
                                     FontSize="13"
                                     Opacity="0.6"
                                     Text="Analyze performance growth and item efficiency across batches." />
+                                <TextBlock
+                                    x:Name="tbSelectedExamTitle"
+                                    Margin="0,4,0,0"
+                                    FontSize="14"
+                                    FontWeight="SemiBold"
+                                    Foreground="#6366F1"
+                                    Text=""
+                                    Visibility="Collapsed" />
                             </StackPanel>
                         </StackPanel>
                     </Grid>

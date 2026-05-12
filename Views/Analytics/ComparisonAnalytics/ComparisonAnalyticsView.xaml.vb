@@ -53,6 +53,8 @@ Namespace Views.Analytics
             If _currentExamId <= 0 Then
                 pnlNoSelection.Visibility = Visibility.Visible
                 pnlDashboard.Visibility = Visibility.Collapsed
+                tbSelectedExamTitle.Visibility = Visibility.Collapsed
+                tbSelectedExamTitle.Text = ""
                 HideAnalysisPanel()
                 RestoreExamListPanel()
                 Return
@@ -60,6 +62,10 @@ Namespace Views.Analytics
 
             pnlNoSelection.Visibility = Visibility.Collapsed
             pnlDashboard.Visibility = Visibility.Visible
+
+            tbSelectedExamTitle.Text = exam.exam_name
+            tbSelectedExamTitle.Visibility = Visibility.Visible
+
             CollapseExamListPanel()
 
             If UserSession.Role = "Reviewee" Then

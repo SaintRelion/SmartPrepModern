@@ -48,6 +48,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
@@ -68,6 +69,16 @@
                         FontWeight="Black"
                         Foreground="#94A3B8"
                         Text="— items" />
+                    <!-- <Button
+                        x:Name="btnExportPdf"
+                        Margin="8,0"
+                        Padding="12,6"
+                        Background="#2563EB"
+                        Click="btnExportPdf_Click"
+                        Content="⬇ Export PDF"
+                        Cursor="Hand"
+                        FontWeight="SemiBold"
+                        Foreground="White" />-->
                 </StackPanel>
                 <Button
                     x:Name="btnDeepAnalysis"
@@ -291,9 +302,70 @@
                 </StackPanel>
             </Border>
 
+            <Border
+                Grid.Row="3"
+                Margin="0,0,0,8"
+                Background="#F8FAFC"
+                BorderBrush="#E2E8F0"
+                BorderThickness="0.5"
+                CornerRadius="8">
+                <StackPanel Margin="12,8" Orientation="Horizontal">
+                    <TextBlock
+                        Margin="0,0,10,0"
+                        VerticalAlignment="Center"
+                        FontSize="10"
+                        FontWeight="Black"
+                        Foreground="#94A3B8"
+                        Text="SORT BY" />
+                    <RadioButton
+                        x:Name="rbSortNumber"
+                        Margin="0,0,6,0"
+                        Checked="SortChanged"
+                        Content="Q#"
+                        GroupName="SortGroup"
+                        IsChecked="True"
+                        Style="{StaticResource MaterialDesignTabRadioButton}" />
+                    <RadioButton
+                        x:Name="rbSortCorrect"
+                        Margin="0,0,6,0"
+                        Checked="SortChanged"
+                        Content="Correct %"
+                        GroupName="SortGroup"
+                        Style="{StaticResource MaterialDesignTabRadioButton}" />
+                    <RadioButton
+                        x:Name="rbSortDistractor"
+                        Margin="0,0,6,0"
+                        Checked="SortChanged"
+                        Content="Top wrong"
+                        GroupName="SortGroup"
+                        Style="{StaticResource MaterialDesignTabRadioButton}" />
+                    <!-- <RadioButton
+                        x:Name="rbSortDelta"
+                        Checked="SortChanged"
+                        Content="Δ vs prev"
+                        GroupName="SortGroup"
+                        Style="{StaticResource MaterialDesignTabRadioButton}" />-->
+                    <Separator Margin="10,0" Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
+                    <RadioButton
+                        x:Name="rbAsc"
+                        Margin="0,0,4,0"
+                        Checked="SortChanged"
+                        Content="↑ Asc"
+                        GroupName="OrderGroup"
+                        IsChecked="True"
+                        Style="{StaticResource MaterialDesignTabRadioButton}" />
+                    <RadioButton
+                        x:Name="rbDesc"
+                        Checked="SortChanged"
+                        Content="↓ Desc"
+                        GroupName="OrderGroup"
+                        Style="{StaticResource MaterialDesignTabRadioButton}" />
+                </StackPanel>
+            </Border>
+
             <DataGrid
                 x:Name="dgItems"
-                Grid.Row="3"
+                Grid.Row="4"
                 AutoGenerateColumns="False"
                 Background="Transparent"
                 BorderThickness="0"
@@ -386,7 +458,7 @@
                     </DataGridTemplateColumn>
 
                     <!--  Δ vs prev batch  -->
-                    <DataGridTemplateColumn Width="68" Header="VS PREV">
+                    <!-- <DataGridTemplateColumn Width="68" Header="VS PREV">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -399,7 +471,7 @@
                                 </StackPanel>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
+                    </DataGridTemplateColumn>-->
 
                     <!--  A % — highlighted green if correct  -->
                     <DataGridTemplateColumn Width="58" Header="A">

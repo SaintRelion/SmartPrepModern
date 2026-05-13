@@ -28,7 +28,17 @@ Namespace Components
             End Set
         End Property
 
+        Private _rowNumber As Integer
         Public Property RowNumber As Integer
+            Get
+                Return _rowNumber
+            End Get
+            Set(value As Integer)
+                _rowNumber = value
+                OnPropertyChanged(NameOf(RowNumber))
+            End Set
+        End Property
+
         Public Property QuestionId As Integer
         Public Property QuestionText As String
         Public Property CorrectAnswer As String
@@ -54,7 +64,7 @@ Namespace Components
             End Get
         End Property
 
-        Private Function GetCorrectPct() As Double
+        Public Function GetCorrectPct() As Double
             Select Case CorrectAnswer?.ToUpper()
                 Case "A" : Return PctA
                 Case "B" : Return PctB
@@ -118,8 +128,31 @@ Namespace Components
             End Get
         End Property
 
-        Public Property PrevPValue As Double 
-        Public Property HasPrev As Boolean    
+        Private _hasPrev As Boolean
+        Public Property HasPrev As Boolean
+            Get
+                Return _hasPrev
+            End Get
+            Set(value As Boolean)
+                _hasPrev = value
+                OnPropertyChanged(NameOf(HasPrev))
+                OnPropertyChanged(NameOf(DeltaLabel))
+                OnPropertyChanged(NameOf(DeltaColor))
+            End Set
+        End Property
+
+        Private _prevPValue As Double
+        Public Property PrevPValue As Double
+            Get
+                Return _prevPValue
+            End Get
+            Set(value As Double)
+                _prevPValue = value
+                OnPropertyChanged(NameOf(PrevPValue))
+                OnPropertyChanged(NameOf(DeltaLabel))
+                OnPropertyChanged(NameOf(DeltaColor))
+            End Set
+        End Property
 
         Public ReadOnly Property DeltaLabel As String
             Get
@@ -221,6 +254,64 @@ Namespace Components
             End Try
         End Function
 
+        Private Sub SortChanged(sender As Object, e As RoutedEventArgs)
+            ApplySort()
+        End Sub
+
+        Private Sub ApplySort()
+            If rbSortNumber Is Nothing OrElse rbDesc Is Nothing Then Return
+
+            Dim rows = TryCast(dgItems.ItemsSource, List(Of ItemAnalysisRow))
+            If rows Is Nothing OrElse rows.Count = 0 Then Return
+
+            Dim descending As Boolean = rbDesc.IsChecked = True
+
+            Dim sorted As List(Of ItemAnalysisRow)
+
+            If rbSortCorrect.IsChecked Then
+                sorted = If(descending,
+                            rows.OrderByDescending(Function(r) r.GetCorrectPct()).ToList(),
+                            rows.OrderBy(Function(r) r.GetCorrectPct()).ToList())
+
+            ElseIf rbSortDistractor.IsChecked Then
+                sorted = If(descending,
+                            rows.OrderByDescending(Function(r) TopDistractorPct(r)).ToList(),
+                            rows.OrderBy(Function(r) TopDistractorPct(r)).ToList())
+
+            ' ElseIf rbSortDelta.IsChecked Then
+            '     Dim withPrev = rows.Where(Function(r) r.HasPrev)
+            '     Dim noPrev = rows.Where(Function(r) Not r.HasPrev)
+            '     Dim orderedWithPrev = If(descending,
+            '                             withPrev.OrderByDescending(Function(r) r.PValue - r.PrevPValue),
+            '                             withPrev.OrderBy(Function(r) r.PValue - r.PrevPValue))
+            '     sorted = orderedWithPrev.Concat(noPrev).ToList()
+
+            Else ' rbSortNumber
+                sorted = If(descending,
+                            rows.OrderByDescending(Function(r) r.QuestionId).ToList(),
+                            rows.OrderBy(Function(r) r.QuestionId).ToList())
+            End If
+
+            For i = 0 To sorted.Count - 1
+                sorted(i).RowNumber = i + 1
+            Next
+
+            dgItems.ItemsSource = Nothing
+            dgItems.ItemsSource = sorted
+        End Sub
+
+
+        Private Function TopDistractorPct(r As ItemAnalysisRow) As Double
+            ' Returns the highest % among the wrong answers
+            Dim candidates As New List(Of (ans As String, pct As Double)) From {
+                ("A", r.PctA), ("B", r.PctB), ("C", r.PctC), ("D", r.PctD)
+            }
+            Return candidates _
+                .Where(Function(x) x.ans <> r.CorrectAnswer) _
+                .Max(Function(x) x.pct)
+        End Function
+
+
         Public Sub PopulateGrid(dateKey As String)
             Dim key As String = NormaliseDateKey(dateKey)
             ' MessageBox.Show($"PopulateGrid. key passed: '{key}' | cache keys: {String.Join(", ", _cachedData.Keys)}")
@@ -294,7 +385,6 @@ Namespace Components
                 pnlSummary.Visibility = Visibility.Collapsed
             End If
 
-            ' ── Batch comparison strip (all cached dates) ─────────────────────────
             RenderBatchStrip()
 
             Dim sortedKeys = _cachedData.Keys.OrderBy(Function(x) x).ToList()
@@ -302,7 +392,7 @@ Namespace Components
             Dim prevKey As String = If(currentIdx > 0, sortedKeys(currentIdx - 1), Nothing)
             Dim prevDataNode As JsonObject = If(prevKey IsNot Nothing, _cachedData(prevKey), Nothing)
             Dim prevDist As JsonObject = If(prevDataNode IsNot Nothing, TryCast(prevDataNode("questions"), JsonObject), Nothing)
-
+            
             Dim rows As New List(Of ItemAnalysisRow)()
             Dim index As Integer = 1
 
@@ -312,6 +402,15 @@ Namespace Components
                     Dim qIdStr = prop.Key
                     Dim qId As Integer
                     If Not Integer.TryParse(qIdStr, qId) Then Continue For
+
+                    If prevDist IsNot Nothing AndAlso prevDist.ContainsKey(qIdStr) Then
+                        Dim pqData = CType(prevDist(qIdStr), JsonObject)
+                        Dim pa = SafeDouble(pqData("A"))
+                        Dim pb = SafeDouble(pqData("B"))
+                        Dim pc = SafeDouble(pqData("C"))
+                        Dim pd = SafeDouble(pqData("D"))
+                        Dim ptotal = pa + pb + pc + pd
+                    End If
 
                     Dim qData As JsonNode = prop.Value
                     Dim a = SafeDouble(qData("A"))
@@ -358,6 +457,8 @@ Namespace Components
                         End If
                     End If
 
+                    ' MessageBox.Show($"HasPrev:{row.HasPrev} | PValue:{row.PValue} | PrevPValue:{row.PrevPValue} | DeltaLabel:{row.DeltaLabel}")
+
                     rows.Add(row)
                     index += 1
                 Next
@@ -370,7 +471,6 @@ Namespace Components
             ' txtSubtitle.Text = $"Showing data for {dateLabel}"
         End Sub
 
-        ' ── Batch comparison strip builder ───────────────────────────────────────────
         Private Sub RenderBatchStrip()
             If _cachedData.Count <= 0 Then
                 pnlBatchStrip.Visibility = Visibility.Collapsed
@@ -425,6 +525,43 @@ Namespace Components
             icBatchStats.ItemsSource = batches
             pnlBatchStrip.Visibility = If(batches.Count > 0, Visibility.Visible, Visibility.Collapsed)
         End Sub
+
+        ' Private Async Sub btnExportPdf_Click(sender As Object, e As RoutedEventArgs)
+        '     Dim rows = TryCast(dgItems.ItemsSource, List(Of ItemAnalysisRow))
+        '     If rows Is Nothing OrElse rows.Count = 0 Then
+        '         MessageBox.Show("No data to export.")
+        '         Return
+        '     End If
+
+        '     Dim summary As String = If(pnlSummary.Visibility = Visibility.Visible,
+        '                             txtBatchSummary.Text, Nothing)
+        '     Dim batches = TryCast(icBatchStats.ItemsSource, List(Of BatchSummaryItem))
+
+        '     Dim saveDlg As New Microsoft.Win32.SaveFileDialog With {
+        '         .Filter = "PDF Files (*.pdf)|*.pdf",
+        '         .FileName = $"ItemAnalysis_{_selectedDate}.pdf"
+        '     }
+        '     If saveDlg.ShowDialog() <> True Then Return
+
+        '     btnExportPdf.IsEnabled = False
+        '     btnExportPdf.Content = "Exporting…"
+        '     Try
+        '         Await ItemAnalysisReportExporter.ExportAsync(
+        '             outputPath:=saveDlg.FileName,
+        '             dateLabel:=_selectedDate,
+        '             rows:=rows,
+        '             batches:=batches,
+        '             batchSummary:=summary
+        '         )
+        '         MessageBox.Show("PDF exported successfully.", "Export Complete")
+        '     Catch ex As Exception
+        '         MessageBox.Show($"Export failed: {ex.Message}", "Error")
+        '     Finally
+        '         btnExportPdf.IsEnabled = True
+        '         btnExportPdf.Content = "⬇ Export PDF"
+        '     End Try
+        ' End Sub
+
 
         Private Sub dgItems_MouseLeftButtonUp(sender As Object, e As MouseButtonEventArgs)
             Dim row = TryCast(ItemsControl.ContainerFromElement(dgItems, TryCast(e.OriginalSource, DependencyObject)), DataGridRow)

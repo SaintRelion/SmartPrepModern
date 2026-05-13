@@ -15,7 +15,7 @@ Imports System.Reflection
 <Assembly: System.Reflection.AssemblyCompanyAttribute("SmartPrepModern"),  _
  Assembly: System.Reflection.AssemblyConfigurationAttribute("Debug"),  _
  Assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0"),  _
- Assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8d9a2ded2daf0a16a98d04bc3656bc60dbd4d9c2"),  _
+ Assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ab37528d64a1c89bdbd9ac1585c45c47f15b504d"),  _
  Assembly: System.Reflection.AssemblyProductAttribute("SmartPrepModern"),  _
  Assembly: System.Reflection.AssemblyTitleAttribute("SmartPrepModern"),  _
  Assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0"),  _

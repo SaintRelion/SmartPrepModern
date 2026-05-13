@@ -297,6 +297,7 @@ Namespace Components
             Next
 
             dgItems.ItemsSource = Nothing
+            dgItems.UpdateLayout()
             dgItems.ItemsSource = sorted
         End Sub
 

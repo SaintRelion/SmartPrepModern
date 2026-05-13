@@ -325,6 +325,7 @@
                         GroupName="SortGroup"
                         IsChecked="True"
                         Style="{StaticResource MaterialDesignTabRadioButton}" />
+
                     <RadioButton
                         x:Name="rbSortCorrect"
                         Margin="0,0,6,0"
@@ -403,6 +404,14 @@
                         FontWeight="Black"
                         Foreground="#CBD5E1"
                         Header="Q#" />
+
+                    <DataGridTextColumn
+                        Width="55"
+                        Binding="{Binding CorrectAnswer}"
+                        FontSize="11"
+                        FontWeight="Black"
+                        Foreground="#64748B"
+                        Header="ANS" />
 
                     <!--  Question text  -->
                     <DataGridTemplateColumn

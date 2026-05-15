@@ -254,6 +254,24 @@ End Class
 - score: `Double`
 - total: `Double`
 - percentage: `Double`
+### ItemAnalysisRequest
+- examination_id: `Integer`
+### ItemAnalysisResponse
+- examination_id: `Integer`
+- items: `List(Of ItemAnalysisBatch)`
+### ItemAnalysisBatch
+- dateBatch: `String`
+- questions: `QuestionDistribution`
+- analysis: `Object`
+- calculated_at: `Object`
+### QuestionDistribution
+- A: `Integer`
+- B: `Integer`
+- C: `Integer`
+- D: `Integer`
+- total: `Integer`
+- question_text: `Object`
+- correct_answer: `Object`
 ### GlobalExcellenceResponse
 - success: `Boolean`
 - subject_leaderboards: `List(Of SubjectLeaderboard)`
@@ -311,5 +329,6 @@ End Class
 - `get_attempt_forensicsAsync`(req: `ForensicAttemptRequest`) -> `ForensicAttemptResponse`
 - `get_comparative_trendAsync`(req: `StatsRequest`) -> `ComparativeTrendResponse`
 - `get_exam_analyticsAsync`(req: `StatsRequest`) -> `ExamAnalyticsResponse`
+- `get_item_analysisAsync`(req: `ItemAnalysisRequest`) -> `ItemAnalysisResponse`
 - `get_leaderboardAsync`() -> `GlobalExcellenceResponse`
 - `get_slot_growth_trendAsync`(req: `StatsRequest`) -> `GrowthTrendResponse`

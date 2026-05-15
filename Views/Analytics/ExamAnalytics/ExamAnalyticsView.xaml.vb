@@ -20,10 +20,8 @@ Namespace Views.Analytics
         Public Sub New()
             InitializeComponent()
 
-            ctrlBasicForensics.HideRevieweeStrip()
             ctrlDeepForensics.HideRevieweeStrip()
 
-            AddHandler ctrlStatsTerminal.BasicForensicsRequested, AddressOf HandleBasicForensics
             AddHandler ctrlStatsTerminal.DeepForensicsRequested, AddressOf HandleDeepForensics
 
             AddHandler Me.Loaded, Async Sub() Await ctrlExamSelector.RefreshList()
@@ -35,10 +33,6 @@ Namespace Views.Analytics
             End If
         End Sub
 
-        ' Resolves the latest attempt_index for the given user by calling
-        ' get_comparative_trendAsync and reading the last history entry's
-        ' attempt_map(userId). This is the same Python truth used by the
-        ' chart path -- latest entry = most recent attempt date.
         Private Async Function ResolveLatestAttemptIndex(userId As Integer) As Task(Of Integer)
             If _selectedExamId = 0 OrElse userId <= 0 Then Return -1
             Try
@@ -49,11 +43,8 @@ Namespace Views.Analytics
                 Dim resp = Await AnalyticsRepo.get_comparative_trendAsync(req)
                 If resp?.Success AndAlso resp.Data?.history IsNot Nothing AndAlso resp.Data.history.Count > 0 Then
                     Dim lastEntry = resp.Data.history.Last()
-                    Dim idx As Integer = -1
-                    If lastEntry.attempt_map IsNot Nothing AndAlso
-                       lastEntry.attempt_map.TryGetValue(userId, idx) AndAlso idx > 0 Then
-                        Return idx
-                    End If
+                    ' attempt_number from ROW_NUMBER() = their sequential attempt count = latest attempt_index
+                    Return CInt(lastEntry.attempt_number)
                 End If
             Catch ex As Exception
                 Debug.WriteLine($"[ExamAnalyticsView] ResolveLatestAttemptIndex error: {ex.Message}")
@@ -91,7 +82,6 @@ Namespace Views.Analytics
             _currentUserId = userId
             _resolvedAttemptIndex = -1
 
-            ctrlBasicForensics.HideRevieweeStrip()
             ctrlDeepForensics.HideRevieweeStrip()
 
             If _selectedExamId > 0 Then
@@ -103,23 +93,7 @@ Namespace Views.Analytics
             End If
         End Sub
 
-        Private Async Sub HandleBasicForensics(sender As Object, categoryId As Integer, categoryName As String)
-            ctrlDeepForensics.Visibility = Visibility.Collapsed
-            ctrlBasicForensics.Visibility = Visibility.Visible
-
-            Dim reviewees = If(ctrlRevieweeSelector.GetLoadedReviewees(), New List(Of RevieweeStatusOut)())
-            ctrlBasicForensics.SetReviewees(reviewees, _selectedExamId, _resolvedAttemptIndex, categoryId)
-            ctrlBasicForensics.HideRevieweeStrip()
-
-            ' Pass empty dateLabel -- no chart point was clicked here.
-            ' LoadContext will use _resolvedAttemptIndex directly (individual mode),
-            ' or -1 for batch if no reviewee is selected, which hits PATH 3 on the API.
-            Await ctrlBasicForensics.LoadContext(_selectedExamId, _currentUserId, _resolvedAttemptIndex, categoryId, categoryName)
-            pnlForensicContainer.Visibility = Visibility.Visible
-        End Sub
-
         Private Async Sub HandleDeepForensics(sender As Object, categoryId As Integer)
-            ctrlBasicForensics.Visibility = Visibility.Collapsed
             ctrlDeepForensics.Visibility = Visibility.Visible
 
             Dim reviewees = If(ctrlRevieweeSelector.GetLoadedReviewees(), New List(Of RevieweeStatusOut)())
@@ -133,7 +107,6 @@ Namespace Views.Analytics
         Private Sub HandleForensicClose()
             pnlForensicContainer.Visibility = Visibility.Collapsed
             ctrlDeepForensics.Visibility = Visibility.Collapsed
-            ctrlBasicForensics.Visibility = Visibility.Collapsed
             _forensicCategoryId = -1
         End Sub
     End Class

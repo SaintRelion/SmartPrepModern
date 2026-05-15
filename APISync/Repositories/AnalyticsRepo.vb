@@ -32,6 +32,11 @@ Namespace APISync.Repositories
             Return Await ApiService.PostAsync(Of ExamAnalyticsResponse)("analytics/get_exam_analytics", req)
         End Function
 
+        ''' <summary> Calls: POST analytics/get_item_analysis </summary>
+        Public Shared Async Function get_item_analysisAsync(req As ItemAnalysisRequest) As Task(Of ApiResponse(Of ItemAnalysisResponse))
+            Return Await ApiService.PostAsync(Of ItemAnalysisResponse)("analytics/get_item_analysis", req)
+        End Function
+
         ''' <summary> Calls: GET analytics/get_leaderboard </summary>
         Public Shared Async Function get_leaderboardAsync() As Task(Of ApiResponse(Of GlobalExcellenceResponse))
             Return Await ApiService.GetAsync(Of GlobalExcellenceResponse)("analytics/get_leaderboard")

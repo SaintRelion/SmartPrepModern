@@ -10,11 +10,11 @@ none
 false
 ;NET;NET9_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NET9_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
 D:\ClientProjects\SmartPrepProject\SmartPrepModern\Application.xaml
-27-1381259409
+27-290612066
 22712056460
-1011703730891
+105-533655593
 205887442316
-Components\ActiveExamView\ActiveExamView.xaml;Components\BasicQuestionForensicView\BasicQuestionForensicView.xaml;Components\CategoryGroup\CategoryGroupView.xaml;Components\ExamConfig\ExamConfig.xaml;Components\ExamSelectorView\ExamSelectorView.xaml;Components\ExtractedItems\ExtractedItemsView.xaml;Components\GrowthTrendView\GrowthTrendView.xaml;Components\QuestionForensicView\QuestionForensicView.xaml;Components\QuestionPreviewDialog\QuestionPreviewDialog.xaml;Components\RevieweeSelectorView\RevieweeSelectorView.xaml;Components\TopicDiscoveryView\TopicDiscoveryView.xaml;Components\UniversalStats\UniversalStatsView.xaml;Layout\MainLayout.xaml;MainWindow.xaml;Views\Account\AccountView.xaml;Views\Admin\AddUserPopup\AddUserPopup.xaml;Views\Admin\ManageUsers\ManageUsersView.xaml;Views\Analytics\ComparisonAnalytics\ComparisonAnalyticsView.xaml;Views\Analytics\ExamAnalytics\ExamAnalyticsView.xaml;Views\Analytics\Leaderboard\LeaderboardView.xaml;Views\Auth\Login\LoginView.xaml;Views\Auth\Register\RegisterView.xaml;Views\Auth\ResetPassword\ResetPasswordView.xaml;Views\ReviewDirector\Generate\GenerateView.xaml;Views\ReviewDirector\ManageExam\ManageExam.xaml;Views\ReviewDirector\Slots\SlotsView.xaml;Views\Reviewee\ExamList\ExamSessionView.xaml;
+Components\ActiveExamView\ActiveExamView.xaml;Components\CategoryGroup\CategoryGroupView.xaml;Components\ExamConfig\ExamConfig.xaml;Components\ExamSelectorView\ExamSelectorView.xaml;Components\ExtractedItems\ExtractedItemsView.xaml;Components\GrowthTrendView\GrowthTrendView.xaml;Components\ItemAnalysis\ItemAnalysisView.xaml;Components\QuestionForensicView\QuestionForensicsView.xaml;Components\QuestionPreviewDialog\QuestionPreviewDialog.xaml;Components\RevieweeSelectorView\RevieweeSelectorView.xaml;Components\TopicDiscoveryView\TopicDiscoveryView.xaml;Components\UniversalStats\UniversalStatsView.xaml;Layout\MainLayout.xaml;MainWindow.xaml;Views\Account\AccountView.xaml;Views\Admin\AddUserPopup\AddUserPopup.xaml;Views\Admin\ManageUsers\ManageUsersView.xaml;Views\Analytics\ComparisonAnalytics\ComparisonAnalyticsView.xaml;Views\Analytics\ExamAnalytics\ExamAnalyticsView.xaml;Views\Analytics\Leaderboard\LeaderboardView.xaml;Views\Auth\Login\LoginView.xaml;Views\Auth\Register\RegisterView.xaml;Views\Auth\ResetPassword\ResetPasswordView.xaml;Views\ReviewDirector\Generate\GenerateView.xaml;Views\ReviewDirector\ManageExam\ManageExam.xaml;Views\ReviewDirector\Slots\SlotsView.xaml;Views\Reviewee\ExamList\ExamSessionView.xaml;
 
 True
 

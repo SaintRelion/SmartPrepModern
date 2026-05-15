@@ -58,9 +58,6 @@ Namespace Components
             txtTotalCounter.Foreground = If(total = 100, Brushes.Green, Brushes.Red)
         End Sub
 
-        ''' <summary>
-        ''' Final generation logic with 100-item validation
-        ''' </summary>
         Private Async Sub btnGenerate_Click(sender As Object, e As RoutedEventArgs)
             Dim examName = txtExamName.Text.Trim()
             If String.IsNullOrEmpty(examName) Then

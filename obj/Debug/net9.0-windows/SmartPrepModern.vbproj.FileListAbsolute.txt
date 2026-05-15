@@ -69,8 +69,6 @@ D:\ClientProjects\SmartPrepProject\SmartPrepModern\obj\Debug\net9.0-windows\Comp
 D:\ClientProjects\SmartPrepProject\SmartPrepModern\obj\Debug\net9.0-windows\Components\GrowthTrendView\GrowthTrendView.g.vb
 D:\ClientProjects\SmartPrepProject\SmartPrepModern\obj\Debug\net9.0-windows\Views\Analytics\Leaderboard\LeaderboardView.baml
 D:\ClientProjects\SmartPrepProject\SmartPrepModern\obj\Debug\net9.0-windows\Views\Analytics\Leaderboard\LeaderboardView.g.vb
-D:\ClientProjects\SmartPrepProject\SmartPrepModern\obj\Debug\net9.0-windows\Components\QuestionForensicView\QuestionForensicView.baml
-D:\ClientProjects\SmartPrepProject\SmartPrepModern\obj\Debug\net9.0-windows\Components\QuestionForensicView\QuestionForensicView.g.vb
 D:\ClientProjects\SmartPrepProject\SmartPrepModern\obj\Debug\net9.0-windows\Components\ExamConfig\ExamConfig.baml
 D:\ClientProjects\SmartPrepProject\SmartPrepModern\obj\Debug\net9.0-windows\Components\ExamConfig\ExamConfig.g.vb
 D:\ClientProjects\SmartPrepProject\SmartPrepModern\obj\Debug\net9.0-windows\Components\TopicDiscoveryView\TopicDiscoveryView.g.vb
@@ -79,5 +77,7 @@ D:\ClientProjects\SmartPrepProject\SmartPrepModern\obj\Debug\net9.0-windows\Comp
 D:\ClientProjects\SmartPrepProject\SmartPrepModern\obj\Debug\net9.0-windows\Components\QuestionPreviewDialog\QuestionPreviewDialog.g.vb
 D:\ClientProjects\SmartPrepProject\SmartPrepModern\obj\Debug\net9.0-windows\Views\ReviewDirector\ManageExam\ManageExam.baml
 D:\ClientProjects\SmartPrepProject\SmartPrepModern\obj\Debug\net9.0-windows\Views\ReviewDirector\ManageExam\ManageExam.g.vb
-D:\ClientProjects\SmartPrepProject\SmartPrepModern\obj\Debug\net9.0-windows\Components\BasicQuestionForensicView\BasicQuestionForensicView.g.vb
-D:\ClientProjects\SmartPrepProject\SmartPrepModern\obj\Debug\net9.0-windows\Components\BasicQuestionForensicView\BasicQuestionForensicView.baml
+D:\ClientProjects\SmartPrepProject\SmartPrepModern\obj\Debug\net9.0-windows\Components\ItemAnalysis\ItemAnalysisView.g.vb
+D:\ClientProjects\SmartPrepProject\SmartPrepModern\obj\Debug\net9.0-windows\Components\ItemAnalysis\ItemAnalysisView.baml
+D:\ClientProjects\SmartPrepProject\SmartPrepModern\obj\Debug\net9.0-windows\Components\QuestionForensicView\QuestionForensicsView.baml
+D:\ClientProjects\SmartPrepProject\SmartPrepModern\obj\Debug\net9.0-windows\Components\QuestionForensicView\QuestionForensicsView.g.vb

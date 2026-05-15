@@ -20,7 +20,6 @@ Namespace Views.Reviewee
         End Sub
 
         Public Async Function RefreshExamList() As Task
-            ' Requesting all exams for the current user session
             Dim resp = Await ExamRepo.list_examsAsync(New ExamListRequest())
             If resp IsNot Nothing AndAlso resp.Success Then
                 _masterExamList = resp.Data
@@ -36,7 +35,6 @@ Namespace Views.Reviewee
             If String.IsNullOrWhiteSpace(searchTerm) Then
                 lstExams.ItemsSource = _masterExamList
             Else
-                ' Filter deep into the nested exam groups based on the exam name
                 Dim filtered = _masterExamList.Select(Function(group) New DailyExamListGroup With {
                     .exam_date = group.exam_date,
                     .exams = group.exams.Where(Function(ex) ex.exam_name.ToLower().Contains(searchTerm) OrElse
@@ -47,28 +45,21 @@ Namespace Views.Reviewee
             End If
         End Sub
 
-        ''' <summary>
-        ''' Handler for clicking an exam card. Transitions to the ActiveExamView component.
-        ''' </summary>
         Private Sub ExamCard_Click(sender As Object, e As MouseButtonEventArgs)
             Dim border = TryCast(sender, Border)
             Dim selectedExam = TryCast(border?.DataContext, ExamListOut)
 
             If selectedExam IsNot Nothing Then
-                ' 1. Initialize the child component session
                 ctrlActiveExam.LoadExam(selectedExam)
 
-                ' 2. Lock the Sidebar via MainLayout bridge
                 LockUI(True)
 
-                ' 3. Trigger the Entry Animation defined in XAML
                 Dim sb = TryCast(Me.Resources("TransitionToExam"), Storyboard)
                 sb?.Begin()
             End If
         End Sub
 
         Private Async Sub OnExamFinished(sender As Object, e As EventArgs)
-            ' 1. Trigger the Exit Animation (Returns to list)
             Dim sb = TryCast(Me.Resources("ExitExamAnimation"), Storyboard)
             sb?.Begin()
 

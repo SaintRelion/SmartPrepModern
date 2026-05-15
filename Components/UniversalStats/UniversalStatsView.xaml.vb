@@ -7,7 +7,6 @@ Namespace Components
     Public Class UniversalStatsView
         Inherits UserControl
 
-        Public Event BasicForensicsRequested(sender As Object, categoryId As Integer, categoryName As String)
         Public Event DeepForensicsRequested(sender As Object, categoryId As Integer)
 
         Private _examIntel As ExamAnalyticsResponse 
@@ -30,10 +29,8 @@ Namespace Components
             _currentExamId = examId
             _currentUserId = If(userId.HasValue, userId.Value, -1)
 
-            ' 1. SHOW LOADING START
             Me.Dispatcher.Invoke(Sub()
                 pnlLoading.Visibility = Visibility.Visible
-                ' Reset context tag
                 Me.Tag = If(userId.HasValue, "Individual", "Global")
             End Sub)
             
@@ -63,7 +60,6 @@ Namespace Components
                             txtAnalysisWarning.Visibility = Visibility.Visible
                         End If
 
-                        ' Only allow manual generation if viewing GLOBAL stats (Admin level)
                         If _currentUserId <= 0 Then
                             btnRefreshAI.Visibility = Visibility.Visible
                         Else
@@ -83,19 +79,6 @@ Namespace Components
                 Me.Dispatcher.Invoke(Sub() pnlLoading.Visibility = Visibility.Collapsed)
             End Try
         End Function
-
-        Private Sub SubjectCard_Click(sender As Object, e As MouseButtonEventArgs)
-            If _currentUserId <= 0 Then
-                MessageBox.Show("Please select a specific reviewee to view their scorecard.", "Select Reviewee", MessageBoxButton.OK, MessageBoxImage.Information)
-                Return
-            End If
-            If TypeOf e.OriginalSource Is Path OrElse TypeOf e.OriginalSource Is Button Then Return
-
-            Dim metric = TryCast(DirectCast(sender, Border).DataContext, PerformanceMetric)
-            If metric Is Nothing Then Return
-
-            RaiseEvent BasicForensicsRequested(Me, metric.id, metric.label)
-        End Sub
 
         Private Sub btnDeepAnalysis_Click(sender As Object, e As RoutedEventArgs)
             e.Handled = True

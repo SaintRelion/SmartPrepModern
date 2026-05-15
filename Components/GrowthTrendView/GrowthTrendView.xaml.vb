@@ -14,8 +14,7 @@ Namespace Components
         Private _currentExamId As Integer
         Private _currentUserId As Integer?
 
-        Public Event BasicForensicsRequested(sender As Object, examId As Integer, userId As Integer, attemptIndex As Integer, reviewees As List(Of RevieweeStatusOut), attemptMap As Dictionary(Of Integer, Integer), dateLabel As String)
-        Public Event DeepForensicsRequested(sender As Object, examId As Integer, userId As Integer, attemptIndex As Integer, reviewees As List(Of RevieweeStatusOut), attemptMap As Dictionary(Of Integer, Integer), dateLabel As String)
+        Public Event QuestionForensicsRequested(sender As Object, examId As Integer, userId As Integer, attemptIndex As Integer, reviewees As List(Of RevieweeStatusOut), attemptMap As Dictionary(Of Integer, Integer), dateLabel As String)
         Public Event LoadingStateChanged(sender As Object, isLoading As Boolean)
 
         Public Sub New()
@@ -28,6 +27,7 @@ Namespace Components
         End Sub
 
         Private _loadedReviewees As List(Of RevieweeStatusOut)
+        Private _isoDatePerPoint As New Dictionary(Of Integer, String)()
         Private _examineesPerPoint As New Dictionary(Of Integer, List(Of Integer))()
         Private _attemptIndexPerUser As New Dictionary(Of Integer, Dictionary(Of Integer, Integer))() ' pointIndex → (userId → attemptIndex)
 
@@ -114,6 +114,8 @@ Namespace Components
                     labels.Add(labelText)
 
                     Dim pointIdx = labels.Count - 1
+                    _isoDatePerPoint(pointIdx) = row.date_recorded
+
                     _examineesPerPoint(pointIdx) = If(row.examinee_ids, New List(Of Integer)())
 
                     Dim userAttemptMap As New Dictionary(Of Integer, Integer)()
@@ -152,50 +154,56 @@ Namespace Components
         End Sub
 
         Private Sub chartGrowth_DataClick(sender As Object, chartPoint As ChartPoint)
-            Dim dateLabel = axisX.Labels(CInt(chartPoint.X))
-            Dim isDeepAnalysisRequested = (cmbClickAction.SelectedIndex = 1)
-            Try
-                If _isMasteryMode Then
-                    MessageBox.Show("Question forensics are not available in Mastery Growth view.", "NOT AVAILABLE")
-                    Return
-                End If
+            Dim pointIndex = CInt(chartPoint.X)
+            Dim dateLabel = axisX.Labels(pointIndex)
+            Dim isoDate = If(_isoDatePerPoint.TryGetValue(pointIndex, Nothing),
+                            _isoDatePerPoint(pointIndex),
+                            dateLabel)
 
-                Dim pointIndex = CInt(chartPoint.X)
+            If _isMasteryMode Then Return
+
+            Try
                 Dim revieweesForPoint As List(Of RevieweeStatusOut)
                 Dim attemptToPass As Integer
 
                 If _currentUserId.HasValue AndAlso _currentUserId.Value > 0 Then
-                    revieweesForPoint = If(_loadedReviewees?.Where(Function(r) r.id = _currentUserId.Value).ToList(), New List(Of RevieweeStatusOut)())
+                    revieweesForPoint = If(
+                        _loadedReviewees?.Where(Function(r) r.id = _currentUserId.Value).ToList(),
+                        New List(Of RevieweeStatusOut)())
                     attemptToPass = pointIndex + 1
                 Else
                     Dim ids As List(Of Integer) = Nothing
-                    If _examineesPerPoint.TryGetValue(pointIndex, ids) AndAlso ids IsNot Nothing AndAlso ids.Count > 0 Then
-                        revieweesForPoint = If(_loadedReviewees?.Where(Function(r) ids.Contains(r.id)).ToList(), New List(Of RevieweeStatusOut)())
+                    If _examineesPerPoint.TryGetValue(pointIndex, ids) AndAlso
+                    ids IsNot Nothing AndAlso ids.Count > 0 Then
+                        revieweesForPoint = If(
+                            _loadedReviewees?.Where(Function(r) ids.Contains(r.id)).ToList(),
+                            New List(Of RevieweeStatusOut)())
                     Else
                         revieweesForPoint = If(_loadedReviewees, New List(Of RevieweeStatusOut)())
                     End If
-                    
                     attemptToPass = -1
                 End If
 
                 Dim userAttemptMap As New Dictionary(Of Integer, Integer)()
-                If _attemptIndexPerUser.TryGetValue(pointIndex, userAttemptMap) Then
-                    ' already set
-                End If
+                _attemptIndexPerUser.TryGetValue(pointIndex, userAttemptMap)
 
-                If Not isDeepAnalysisRequested Then
-                    RaiseEvent BasicForensicsRequested(Me, _currentExamId, If(_currentUserId, -1), attemptToPass, revieweesForPoint, userAttemptMap, dateLabel)
-                Else
-                    RaiseEvent DeepForensicsRequested(Me, _currentExamId, If(_currentUserId, -1), attemptToPass, revieweesForPoint, userAttemptMap, dateLabel)
-                End If
+                RaiseEvent QuestionForensicsRequested(
+                    Me,
+                    _currentExamId,
+                    If(_currentUserId, -1),
+                    attemptToPass,
+                    revieweesForPoint,
+                    userAttemptMap,
+                    isoDate) 
             Catch ex As Exception
-                MessageBox.Show($"> Forensic Load Error: {ex.Message}")
+                Debug.WriteLine($"> Chart Click Error: {ex.Message}")
             Finally
                 RaiseEvent LoadingStateChanged(Me, False)
             End Try
         End Sub
 
         Public Sub ClearChart()
+            _isoDatePerPoint.Clear()
             _examineesPerPoint.Clear()
             Me.Dispatcher.Invoke(Sub()
                 If chartGrowth.Series IsNot Nothing Then

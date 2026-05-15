@@ -4,6 +4,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
 
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
+    </UserControl.Resources>
+
     <Border Background="#F8F9FA" CornerRadius="12">
         <Grid>
             <Grid Margin="24">
@@ -36,15 +40,26 @@
                             Opacity="0.5"
                             Text="Select a topic to read detailed AI reasoning for each item." />
                     </StackPanel>
-                    <Button
-                        HorizontalAlignment="Right"
-                        Click="Close_Click"
-                        Style="{StaticResource MaterialDesignIconButton}">
-                        <materialDesign:PackIcon
-                            Width="24"
-                            Height="24"
-                            Kind="Close" />
-                    </Button>
+                    <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                        <Button
+                            x:Name="btnToggleAI"
+                            Margin="0,0,8,0"
+                            BorderBrush="#6C5CE7"
+                            Click="ToggleAI_Click"
+                            Content="Hide AI Breakdown"
+                            FontSize="11"
+                            Foreground="#6C5CE7"
+                            Style="{StaticResource MaterialDesignOutlinedButton}" />
+                        <Button
+                            HorizontalAlignment="Right"
+                            Click="Close_Click"
+                            Style="{StaticResource MaterialDesignIconButton}">
+                            <materialDesign:PackIcon
+                                Width="24"
+                                Height="24"
+                                Kind="Close" />
+                        </Button>
+                    </StackPanel>
                 </Grid>
 
                 <Grid Grid.Row="1">
@@ -331,11 +346,13 @@
                                             </WrapPanel>
 
                                             <Border
+                                                x:Name="borderAIBreakdown"
                                                 Padding="16"
                                                 Background="#F9F9FC"
                                                 BorderBrush="#E2E2F2"
                                                 BorderThickness="1"
-                                                CornerRadius="8">
+                                                CornerRadius="8"
+                                                Visibility="{Binding IsAIVisible, Converter={StaticResource BoolToVisConverter}}">
                                                 <StackPanel>
                                                     <StackPanel Margin="0,0,0,12" Orientation="Horizontal">
                                                         <materialDesign:PackIcon

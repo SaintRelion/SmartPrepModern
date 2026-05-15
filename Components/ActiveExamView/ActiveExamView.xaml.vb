@@ -36,9 +36,9 @@ Namespace Components
         End Enum
 
         Private _phase As ExamPhase
-        Private _currentIndex As Integer        ' 0-based index into _displayQuestions
-        Private _perQuestionSeconds As Integer  ' from rule: per_question_timer
-        Private _reviewSeconds As Integer       ' from rule: review_timer
+        Private _currentIndex As Integer        
+        Private _perQuestionSeconds As Integer  
+        Private _reviewSeconds As Integer       
         Private _secondsRemaining As Integer
 
         Private _countdownTimer As DispatcherTimer
@@ -149,12 +149,8 @@ Namespace Components
             rbC.Content = q.option_c
             rbD.Content = q.option_d
 
-            ' Bind the current question's real ID to each radio via Tag
-            ' (we store it in the GroupName of the named radios via DataContext trick —
-            '  instead we just set a shared field for the current question ID)
             _currentQuestionId = q.id
 
-            ' Restore any previously selected answer for this question
             rbA.IsChecked = False
             rbB.IsChecked = False
             rbC.IsChecked = False
@@ -228,7 +224,6 @@ Namespace Components
             _secondsRemaining -= 1
             UpdateTimerDisplay()
 
-            ' Pulse red when ≤ 10 s
             If _secondsRemaining <= 10 Then
                 Dim timerBorder = TryCast(txtTimer.Parent, Border)
                 If timerBorder IsNot Nothing Then
@@ -238,17 +233,32 @@ Namespace Components
 
             If _secondsRemaining <= 0 Then
                 StopTimer()
-
                 If _phase = ExamPhase.PerQuestion Then
-                    ' Time's up for this question — advance
                     _currentIndex += 1
                     ShowQuestion(_currentIndex)
                 Else
-                    ' Review time expired — auto-submit
+                    ' Fill all unanswered questions with a deliberately wrong answer before submitting
+                    ForceAnswerUnansweredQuestions()
                     btnSubmit_Click(Nothing, Nothing)
                 End If
             End If
         End Sub
+
+        Private Sub ForceAnswerUnansweredQuestions()
+            For Each wrapper In _displayQuestions
+                Dim q = wrapper.QuestionData
+                If Not _userAnswers.ContainsKey(q.id) Then
+                    _userAnswers(q.id) = GetForcedWrongAnswer(q)
+                End If
+            Next
+        End Sub
+
+        Private Function GetForcedWrongAnswer(q As QuestionOut) As String
+            ' Pick the first option that is NOT the correct answer
+            Dim allOptions = {"A", "B", "C", "D"}
+            Dim wrong = allOptions.FirstOrDefault(Function(o) o <> q.answer)
+            Return If(wrong, "A") ' fallback to A (extremely unlikely to be needed)
+        End Function
 
         Private Sub UpdateTimerDisplay()
             Dim mins = _secondsRemaining \ 60
@@ -308,6 +318,8 @@ Namespace Components
                     MessageBoxButton.YesNo,
                     MessageBoxImage.Warning)
                 If result <> MessageBoxResult.Yes Then Return
+
+                ForceAnswerUnansweredQuestions()
             End If
 
             Dim requestBody As New SubmitAnswerRequest With {.answers = New List(Of AnswerIn)()}

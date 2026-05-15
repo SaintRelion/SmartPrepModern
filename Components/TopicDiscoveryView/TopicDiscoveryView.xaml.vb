@@ -12,15 +12,11 @@ Namespace Components
             InitializeComponent()
         End Sub
 
-        ''' <summary>
-        ''' Called by the parent view to initialize categories
-        ''' </summary>
         Public Async Sub LoadInitialData()
             Try
                 Dim resp = Await SlotsRepo.get_categoriesAsync()
                 If resp IsNot Nothing AndAlso resp.Success Then
                     Me.Dispatcher.Invoke(Sub()
-                        ' Create a list with a dummy "ALL" category for consistent filtering[cite: 11]
                         Dim categoryList As New List(Of CategoryItem)
                         categoryList.Add(New CategoryItem With {.id = -1, .name = "ALL CATEGORIES"})
                         categoryList.AddRange(resp.Data)
@@ -30,7 +26,6 @@ Namespace Components
                     End Sub)
                 End If
             Catch ex As Exception
-                ' Error handling should ideally be bubbled up or logged
             End Try
         End Sub
 

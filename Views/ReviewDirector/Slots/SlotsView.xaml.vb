@@ -24,7 +24,6 @@ Namespace Views.ReviewDirector
         Private Async Sub LoadRepository()
             SetLoading(True)
             Try
-                ' 1. Fetch Categories
                 Dim response = Await SlotsRepo.get_categoriesAsync()
                 
                 If response IsNot Nothing AndAlso response.Success AndAlso response.Data IsNot Nothing Then
@@ -34,7 +33,6 @@ Namespace Views.ReviewDirector
                 
                         cmbCategoryFilter.Items.Add("ALL")
 
-                        ' Create the View objects
                         For Each cat In response.Data
                             cmbCategoryFilter.Items.Add(cat.name.ToUpper())
 
@@ -97,7 +95,6 @@ Namespace Views.ReviewDirector
             MainDialogHost.IsOpen = False
             SetLoading(True)
             Try
-                ' GenericResponse usually returns the id in .id
                 Dim resp = Await SlotsRepo.create_categoryAsync(New CategoryCreateRequest With {.name = catName})
                 If resp.Success Then LoadRepository()
             Finally

@@ -52,8 +52,7 @@
                                         Padding="16"
                                         Background="#F8F8F8"
                                         CornerRadius="8"
-                                        Cursor="Hand"
-                                        MouseLeftButtonDown="SubjectCard_Click">
+                                        Cursor="Hand">
                                         <Grid>
                                             <StackPanel>
                                                 <!--  Category Label  -->

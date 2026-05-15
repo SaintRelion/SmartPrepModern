@@ -19,9 +19,6 @@ Namespace Components
         Private _categoryId As Integer = -1
         Private _isBatchMode As Boolean = False
 
-        ' Stripped date label of the clicked batch chart point -- truth anchor
-        ' for resolving a reviewee's attempt index from their individual trend.
-        ' e.g. "May 03" (suffix already stripped by StripDateLabel)
         Private _batchPointDateLabel As String = String.Empty
 
         Public Sub New()
@@ -155,6 +152,14 @@ Namespace Components
 
                 Dim wrappers = BuildWrappers(filtered)
                 Me.Dispatcher.Invoke(Sub() LoadForensics(wrappers))
+
+                btnToggleAI.Content = If(_showAI, "Hide AI Breakdown", "Show AI Breakdown")
+
+                If _masterList IsNot Nothing Then
+                    For Each item In _masterList
+                        item.IsAIVisible = _showAI
+                    Next
+                End If
             Finally
                 Me.Dispatcher.Invoke(Sub() pnlLoadingOverlay.Visibility = Visibility.Collapsed)
             End Try
@@ -256,6 +261,19 @@ Namespace Components
 
         Private Sub Status_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
             ApplyFilter()
+        End Sub
+
+        Private _showAI As Boolean = True
+        Private Sub ToggleAI_Click(sender As Object, e As RoutedEventArgs)
+            _showAI = Not _showAI
+
+            btnToggleAI.Content = If(_showAI, "Hide AI Breakdown", "Show AI Breakdown")
+
+            If _masterList IsNot Nothing Then
+                For Each item In _masterList
+                    item.IsAIVisible = _showAI
+                Next
+            End If
         End Sub
 
         Private Sub Close_Click(sender As Object, e As RoutedEventArgs)

@@ -4,94 +4,159 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:components="clr-namespace:SmartPrepModern.Components"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+
     <Grid x:Name="LayoutRoot" Background="#F5F5F5">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="350" />
-            <ColumnDefinition x:Name="colReviewee" Width="0" />
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition x:Name="colExamSelector" Width="350" />
+            <ColumnDefinition x:Name="colDashboard" Width="*" />
         </Grid.ColumnDefinitions>
 
         <components:ExamSelectorView
             x:Name="ctrlExams"
             Grid.Column="0"
-            ExamSelected="HandleExamChange" />
-
+            ExamSelected="HandleExamSelection" />
         <components:RevieweeSelectorView
             x:Name="ctrlReviewees"
-            Grid.Column="1"
-            RevieweeSelected="HandleUserChange"
+            Grid.Column="0"
+            Width="0"
             Visibility="Collapsed" />
+        <Border Grid.Column="1" Padding="30,24,30,0">
+            <Grid>
+                <StackPanel
+                    x:Name="pnlNoSelection"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Visibility="Visible">
+                    <materialDesign:PackIcon
+                        Width="72"
+                        Height="72"
+                        Margin="0,0,0,15"
+                        HorizontalAlignment="Center"
+                        Foreground="#CFD8DC"
+                        Kind="ChartBoxOutline" />
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        FontSize="20"
+                        FontWeight="Black"
+                        Foreground="#90A4AE"
+                        Text="COMPARATIVE ANALYTICS" />
+                    <TextBlock
+                        Margin="0,5,0,0"
+                        HorizontalAlignment="Center"
+                        FontSize="14"
+                        Foreground="#B0BEC5"
+                        Text="Select an examination from the left to view batch progression and item analysis." />
+                </StackPanel>
+                <Grid x:Name="pnlDashboard" Visibility="Collapsed">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="20" />
+                        <RowDefinition x:Name="rowChart" Height="1*" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition x:Name="rowAnalysis" Height="0*" />
+                    </Grid.RowDefinitions>
 
-        <Border Grid.Column="2" Padding="30">
-            <StackPanel>
-                <Button
-                    Margin="0,0,0,10"
-                    HorizontalAlignment="Left"
-                    Click="ResetToGlobal_Click">
-                    <Button.Style>
-                        <Style BasedOn="{StaticResource MaterialDesignFlatButton}" TargetType="Button">
-                            <Setter Property="Visibility" Value="Collapsed" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding ElementName=colReviewee, Path=Width.Value}" Value="280">
-                                    <Setter Property="Visibility" Value="Visible" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
-                    <StackPanel Orientation="Horizontal">
-                        <materialDesign:PackIcon
-                            VerticalAlignment="Center"
-                            Foreground="#2196F3"
-                            Kind="ArrowLeft" />
-                        <TextBlock
-                            Margin="8,0,0,0"
-                            VerticalAlignment="Center"
-                            FontSize="10"
-                            FontWeight="Black"
-                            Foreground="#2196F3"
-                            Text="BACK TO GLOBAL OVERVIEW" />
-                    </StackPanel>
-                </Button>
+                    <Grid Grid.Row="0">
+                        <StackPanel Orientation="Horizontal">
+                            <Button
+                                x:Name="btnBackToGlobal"
+                                Margin="0,0,16,0"
+                                Padding="12,0"
+                                Click="BtnBackToGlobal_Click"
+                                Style="{StaticResource MaterialDesignOutlinedButton}"
+                                ToolTip="Back to Exam List"
+                                Visibility="Collapsed">
+                                <StackPanel Orientation="Horizontal">
+                                    <materialDesign:PackIcon
+                                        Width="16"
+                                        Height="16"
+                                        Margin="0,0,6,0"
+                                        VerticalAlignment="Center"
+                                        Kind="ArrowLeft" />
+                                    <TextBlock
+                                        VerticalAlignment="Center"
+                                        FontSize="12"
+                                        FontWeight="SemiBold"
+                                        Text="Exam List" />
+                                </StackPanel>
+                            </Button>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock
+                                    FontSize="24"
+                                    FontWeight="Black"
+                                    Foreground="#1E293B"
+                                    Text="COMPARATIVE PROGRESSION" />
+                                <TextBlock
+                                    FontSize="13"
+                                    Opacity="0.6"
+                                    Text="Analyze performance growth and item efficiency across batches." />
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
 
-                <components:GrowthTrendView
-                    x:Name="ctrlGrowthChart"
-                    Height="450"
-                    VerticalAlignment="Top" />
-            </StackPanel>
-        </Border>
+                    <Border
+                        x:Name="pnlChartContainer"
+                        Grid.Row="2"
+                        Margin="0,0,0,4">
+                        <components:GrowthTrendView x:Name="ctrlGrowthChart" />
+                    </Border>
 
-        <Border
-            x:Name="pnlForensicContainer"
-            Grid.ColumnSpan="3"
-            Panel.ZIndex="2000"
-            Background="#AA000000"
-            Visibility="Collapsed">
+                    <Border
+                        Grid.Row="3"
+                        Padding="16,8"
+                        Background="#F1F5F9"
+                        CornerRadius="12,12,0,0">
+                        <Grid>
+                            <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                                <materialDesign:PackIcon
+                                    Width="16"
+                                    Height="16"
+                                    Margin="0,0,8,0"
+                                    VerticalAlignment="Center"
+                                    Foreground="#6366F1"
+                                    Kind="TableEye" />
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    FontSize="11"
+                                    FontWeight="Black"
+                                    Foreground="#6366F1"
+                                    Text="ITEM ANALYSIS" />
+                            </StackPanel>
+                            <Button
+                                HorizontalAlignment="Right"
+                                Click="BtnMinimizeAnalysis_Click"
+                                Style="{StaticResource MaterialDesignFlatButton}"
+                                ToolTip="Expand / Minimize">
+                                <materialDesign:PackIcon
+                                    x:Name="iconMinimize"
+                                    Width="16"
+                                    Height="16"
+                                    Kind="ChevronUp" />
+                            </Button>
+                        </Grid>
+                    </Border>
 
-            <Grid Margin="24">
-                <components:BasicQuestionForensicView
-                    x:Name="ctrlBasicForensics"
-                    RequestClose="HandleForensicClose"
-                    Visibility="Collapsed" />
-
-                <components:QuestionForensicsView
-                    x:Name="ctrlDeepForensics"
-                    RequestClose="HandleForensicClose"
-                    Visibility="Collapsed" />
+                    <Border
+                        x:Name="pnlAnalysisContainer"
+                        Grid.Row="4"
+                        Background="White"
+                        CornerRadius="0,0,12,12">
+                        <components:ItemAnalysisView x:Name="ctrlItemAnalysis" MinHeight="200" />
+                    </Border>
+                </Grid>
             </Grid>
         </Border>
 
         <Border
             x:Name="pnlLoading"
-            Grid.ColumnSpan="3"
+            Grid.ColumnSpan="2"
             Panel.ZIndex="1000"
-            Background="White"
-            IsHitTestVisible="False"
-            Opacity="0.8"
+            Background="#E6FFFFFF"
             Visibility="Collapsed">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                 <ProgressBar
-                    Width="48"
-                    Height="48"
+                    Width="50"
+                    Height="50"
                     IsIndeterminate="True"
                     Style="{StaticResource MaterialDesignCircularProgressBar}" />
                 <TextBlock
@@ -103,5 +168,38 @@
                     Text="PROCESSING ANALYTICS..." />
             </StackPanel>
         </Border>
+
+        <!--  Deep Analysis overlay  -->
+        <Border
+            x:Name="pnlDeepAnalysisOverlay"
+            Grid.ColumnSpan="2"
+            Panel.ZIndex="2000"
+            Background="#D90F172A"
+            Visibility="Collapsed">
+            <Grid Margin="40">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Button
+                    Margin="0,0,0,15"
+                    HorizontalAlignment="Right"
+                    Background="White"
+                    Click="HandleDeepCloseClick"
+                    Foreground="Black"
+                    Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}">
+                    <materialDesign:PackIcon Kind="Close" />
+                </Button>
+                <Border
+                    Grid.Row="1"
+                    Background="White"
+                    ClipToBounds="True"
+                    CornerRadius="12">
+                    <components:QuestionForensicsView x:Name="ctrlDeepAnalysis" Visibility="Collapsed" />
+                </Border>
+            </Grid>
+        </Border>
+
+
     </Grid>
 </UserControl>

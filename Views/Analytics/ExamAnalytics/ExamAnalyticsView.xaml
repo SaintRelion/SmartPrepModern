@@ -35,12 +35,6 @@
             Visibility="Collapsed">
 
             <Grid Margin="24">
-
-                <components:BasicQuestionForensicView
-                    x:Name="ctrlBasicForensics"
-                    RequestClose="HandleForensicClose"
-                    Visibility="Collapsed" />
-
                 <components:QuestionForensicsView
                     x:Name="ctrlDeepForensics"
                     RequestClose="HandleForensicClose"

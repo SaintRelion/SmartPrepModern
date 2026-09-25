@@ -2,7 +2,7 @@
 
 SmartPrep Modern is the Windows desktop client for **SmartPrep**, a criminology review and examination platform built as a client-server system. The application supports review directors, reviewees, and administrators through role-specific workflows for source management, exam generation and delivery, user administration, and performance analytics.
 
-> **Project context:** SmartPrep was developed under a compressed delivery timeline of less than two months. The project demonstrates end-to-end integration across a native desktop client, REST API, relational database, background workers, Redis, WebSockets, PDF processing, and local/remote LLM-assisted analytics.
+> **Project context:** SmartPrep was developed in under two months as an end-to-end desktop and backend system combining exam workflows, analytics, PDF processing, background jobs, real-time updates, and LLM-assisted analysis.
 
 ## Screenshots
 
@@ -17,23 +17,14 @@ SmartPrep Modern is the Windows desktop client for **SmartPrep**, a criminology 
 6. Leaderboard or admin user management
 -->
 
-## What the application does
+## Key features
 
-SmartPrep organizes review material into categories and topic slots, allows questionnaire/source PDFs to be uploaded and processed, creates examinations from configured topics, runs review sessions for examinees, and exposes several layers of performance analytics.
-
-The desktop client contains dedicated interfaces for:
-
-- Authentication, registration, password recovery, and account management
-- Administrator user management and role assignment
-- Category and topic-slot management
-- Questionnaire and reference-material upload workflows
-- Exam generation, configuration, preview, rename, and deletion
-- Reviewee exam sessions and answer submission
-- Exam and comparative analytics
-- Growth-trend visualization
-- Leaderboards
-- Per-question item analysis and deeper attempt/question forensics
-- AI-generated performance summaries surfaced from the backend
+- **Source-based exam generation** — organize review material by category/topic, upload questionnaire PDFs, and generate exams from selected content.
+- **Exam delivery** — reviewees can take configured examinations and submit answers through the desktop client.
+- **Performance analytics** — dashboards for exam results, comparative performance, growth trends, and leaderboards.
+- **Question forensics** — per-question distributions and deeper attempt/item analysis for identifying strengths and problem areas.
+- **AI-assisted analysis** — surfaces structured performance summaries and recommendations produced by the backend.
+- **Role-based workflows** — dedicated interfaces for administrators, review directors, and reviewees.
 
 ## Architecture
 

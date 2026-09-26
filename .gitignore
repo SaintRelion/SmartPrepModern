@@ -2,6 +2,8 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=visualbasic
 
 Documents/
+bin/
+obj/
 
 ### VisualBasic ###
 ## Ignore Visual Studio temporary files, build results, and

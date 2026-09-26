@@ -44,15 +44,27 @@ SmartPrep Modern requires the separate **SmartPrepPython** backend:
 
 https://github.com/SaintRelion/SmartPrepPython
 
-For the quickest setup, start the backend using its Docker Compose configuration:
+### 1. Start the backend
+
+Follow the SmartPrepPython setup instructions. The quickest setup uses Docker Compose:
 
 ```powershell
 docker compose up -d --build
 ```
 
-Then run SmartPrep Modern on Windows.
+### 2. Download SmartPrep Modern
 
-The backend address is configured in `APISync/Services/ApiService.vb` through `ApiService.BaseUrl`. Update that value if you are running the backend at a different address.
+Download the latest **Windows x64** build from this repository's **Releases** page.
+
+Extract the downloaded archive and run:
+
+```text
+SmartPrepModern.exe
+```
+
+The release is self-contained, so the .NET runtime does not need to be installed separately.
+
+The desktop client must be able to connect to the SmartPrepPython backend.
 
 ## First administrator
 
@@ -68,9 +80,9 @@ Questionnaires and other source documents are runtime/local data and are intenti
 
 The preserved SmartPrep backend expects questionnaires in a structured format because its ingestion pipeline uses deterministic parsing. See the **SmartPrepPython** README for the supported format, the reasoning behind the original design, and the planned modernization toward LLM-assisted document extraction.
 
-## Local setup
+## Local development
 
-This section is only needed when running the desktop client directly during development.
+This section is only needed when building or modifying the desktop client.
 
 Requirements:
 
@@ -86,7 +98,13 @@ dotnet restore
 dotnet run
 ```
 
-Before starting the client, make sure `ApiService.BaseUrl` points to the backend instance you want to use.
+To produce a build without running it:
+
+```powershell
+dotnet build
+```
+
+Before building, make sure `ApiService.BaseUrl` points to the backend instance you want the compiled client to use.
 
 ## Author
 
